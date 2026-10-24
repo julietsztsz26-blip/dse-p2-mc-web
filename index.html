@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DSE 卷二 MC</title>
+<meta name="description" content="HKDSE 數學卷二 MC：分級限時挑戰（DSE 2022–2026）及逐步互動解說（DSE 2018–2026）。">
+<style>
+:root{
+  --desk:#E9ECEF; --paper:#FFFFFF; --text:#24272C; --muted:#5D646E; --rule:#D8DCE1; --graphite:#24272C;
+  --mc:#C4245A; --mc-tint:#FBE4EC; --lesson:#007E80; --lesson-tint:#E5F5F1;
+  --sans:"PingFang HK","PingFang TC","Noto Sans HK","Noto Sans TC","Noto Sans CJK TC","Microsoft JhengHei",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --desk:#15171B; --paper:#1F2227; --text:#E8EAED; --muted:#A3AAB4; --rule:#353A42; --graphite:#E8EAED;
+    --mc:#F2709C; --mc-tint:#3B2030; --lesson:#3FC7BD; --lesson-tint:#173A36;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;background:var(--desk);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-tap-highlight-color:transparent}
+.timing{height:10px;background:repeating-linear-gradient(90deg,var(--graphite) 0 14px,transparent 14px 34px);opacity:.85}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px 32px}
+header{padding:28px 2px 18px}
+.kicker{margin:0;font-size:13px;letter-spacing:.08em;color:var(--muted)}
+h1{margin:4px 0 6px;font-size:30px;line-height:1.25;letter-spacing:.02em}
+.lead{margin:0;color:var(--muted);font-size:15px}
+.cards{display:grid;gap:14px}
+a.card{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:18px 16px;background:var(--paper);border:1px solid var(--rule);border-radius:6px;color:inherit;text-decoration:none;position:relative;overflow:hidden}
+a.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--accent)}
+a.card:active{transform:scale(.99)}
+a.card:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.mc{--accent:var(--mc);--tint:var(--mc-tint)}
+.lesson{--accent:var(--lesson);--tint:var(--lesson-tint)}
+.badge{width:52px;height:52px;border-radius:12px;background:var(--tint);color:var(--accent);display:grid;place-items:center}
+.badge svg{width:30px;height:30px}
+.card h2{margin:0 0 2px;font-size:19px;line-height:1.35}
+.card p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+.go{color:var(--accent);font-size:22px;font-weight:700;padding-left:2px}
+.note{margin:22px 2px 0;padding-top:14px;border-top:1px dashed var(--rule);color:var(--muted);font-size:13px}
+.note p{margin:0 0 6px}
+.note .copy{margin-top:12px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="timing" aria-hidden="true"></div>
+<main class="wrap">
+  <header>
+    <p class="kicker">HKDSE MATHEMATICS · PAPER 2</p>
+    <h1>DSE 卷二 MC</h1>
+    <p class="lead">DSE 卷二多項選擇題：分級限時挑戰（DSE 2022–2026）及逐步互動解說（DSE 2018–2026）。</p>
+  </header>
+
+  <nav class="cards" aria-label="選擇功能">
+    <a class="card mc" href="DSE_Paper2_MC_Challenge.html">
+      <span class="badge" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2">
+          <ellipse cx="6.5" cy="16" rx="3.6" ry="5.2"/><ellipse cx="16" cy="16" rx="3.6" ry="5.2" fill="currentColor"/><ellipse cx="25.5" cy="16" rx="3.6" ry="5.2"/>
+        </svg>
+      </span>
+      <span>
+        <h2>卷二 MC 實戰</h2>
+        <p>揀級別、年份及題數，限時作答，交卷後即時看分析及講解。</p>
+      </span>
+      <span class="go" aria-hidden="true">›</span>
+    </a>
+
+    <a class="card lesson" href="DSE_P2_Interactive_Lessons.html">
+      <span class="badge" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 26 L12 14 L18 20 L28 6"/><circle cx="12" cy="14" r="2.4" fill="currentColor"/><circle cx="18" cy="20" r="2.4" fill="currentColor"/><path d="M4 29h24"/>
+        </svg>
+      </span>
+      <span>
+        <h2>MC 解說教室</h2>
+        <p>Level 3 至 5** 題目（DSE 2018–2025）及 DSE 2026 常錯題的逐步互動圖解。</p>
+      </span>
+      <span class="go" aria-hidden="true">›</span>
+    </a>
+  </nav>
+
+  <footer class="note">
+    <p>網頁版：用電腦、平板或手機瀏覽器打開都可以。交卷後成績會傳送到老師的 Google Sheet。</p>
+    <p class="copy">© 2026 DSE 卷二 MC。網頁設計、程式及講解內容版權所有，未經作者書面許可，不得複製、轉載、修改或作商業用途。題目版權屬香港考試及評核局。</p>
+  </footer>
+</main>
+</body>
+</html>
