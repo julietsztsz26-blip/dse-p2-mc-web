@@ -597,6 +597,52 @@ html.ink-lock,html.ink-lock body{overflow:hidden}
 .flag.yr{background:#e9eef1;color:#36515d}
 .step p:empty{display:none}
 @media(max-width:700px){.stage svg.flowsvg{max-height:none}}
+
+/* ===== DSE 2025 Q22／Q38：按步驟用顏色標示相關的角；Q35、Q37、Q42、Q44 老師解法 ===== */
+.ca-o,.ca-o b{color:var(--orange);font-weight:700}
+.ca-t,.ca-t b{color:var(--teal);font-weight:700}
+.ca-p,.ca-p b{color:#7b3fc4;font-weight:700}
+.ca-r,.ca-r b{color:var(--red);font-weight:700}
+.ca-g,.ca-g b{color:var(--green);font-weight:700}
+.fp{fill:#e6d6f7;stroke:none}
+.ap{stroke:#7b3fc4;stroke-width:3;fill:none;stroke-linecap:round}
+.op5{opacity:.5}
+.pbox{fill:none;stroke:#7b3fc4;stroke-width:3}
+.xbar{text-decoration:overline;text-decoration-thickness:1.5px}
+.q37-def{display:flex;gap:6px 40px;flex-wrap:wrap;align-items:center;font-family:var(--math);font-size:22px;line-height:1.5}
+.q37-def .g{color:#1d7a4f;font-weight:600}
+.q37-giv{font-family:var(--math);font-size:20px;color:var(--orange);margin-top:4px}
+.q37-giv b{color:var(--orange)}
+.q37-col{font-family:var(--math);font-size:20px;line-height:1.55}
+.q37-col .h{font-weight:700;font-size:18px;margin-bottom:8px}
+.q37-col.mg .h,.q37-col.mg .b{color:#c2188f}
+.q37-col.rd .h,.q37-col.rd .b{color:var(--red)}
+.q37-col.pu .h,.q37-col.pu .b{color:#7b3fc4}
+.q37-col .b{line-height:2.1;font-size:21px}
+.q37-col .fr{font-size:.95em}
+.q37-col .fr .fr{font-size:.92em}
+.q37-col .w{font-size:20px;color:var(--ink);margin-top:8px}
+.q37-col .v{font-family:var(--sans);font-weight:800;font-size:18px;margin-top:6px}
+.q37-col .v.ok{color:var(--green)}
+.q37-col .v.no{color:var(--red)}
+.q42-row{font-family:var(--math);font-size:20px;line-height:1.6;white-space:nowrap}
+.q42-row b{color:var(--teal)}
+.q44-f{text-align:center;font-family:var(--math)}
+.q44-f .big{font-size:30px;line-height:1.35}
+.q44-f .lab{font-family:var(--sans);font-size:14px;color:var(--muted)}
+.q44-f .g{color:#1d7a4f;font-weight:700}
+.q44-c{font-family:var(--math);font-size:19px;line-height:1.5}
+.q44-c .h{font-family:var(--sans);font-weight:800;font-size:16px;color:var(--ink)}
+.q44-c .who{color:var(--muted);font-size:17px;margin:2px 0 6px}
+.q44-c .e{margin:4px 0}
+.q44-c .n{color:#7b3fc4;font-family:var(--sans);font-weight:700}
+.q44-c .z{margin-top:8px;font-size:24px;font-weight:700;color:var(--teal)}
+/* ===== 「2D 互動圖解」畫畫 ===== */
+.vis-head{flex:1 1 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
+.svgwrap>.ink-wrap{width:100%}
+.stage>.ink-bar{margin:10px 18px 4px}
+#modelCard.ink-focus .stage svg{max-height:calc(100vh - 300px)}
+#modelCard.ink-focus .svgwrap>.ink-wrap{width:100%}
 </style>
 </head>
 <body>
@@ -689,7 +735,7 @@ html.ink-lock,html.ink-lock body{overflow:hidden}
 
     <section class="card model-card" id="modelCard">
       <div class="panel-head">
-        <div><div class="panel-title">2D 互動圖解 · VISUAL</div><div class="panel-sub">圖像、推理與解題步驟同步 · 新元素會淡入</div></div>
+        <div class="vis-head"><div><div class="panel-title">2D 互動圖解 · VISUAL</div><div class="panel-sub">圖像、推理與解題步驟同步 · 新元素會淡入</div></div><button type="button" class="ink-toggle" id="vinkBtn" aria-pressed="false" title="在圖解上寫字、畫畫、用螢光筆"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4.5-1L19 8.5 15.5 5 5 15.5z"/><path d="M13.5 7l3.5 3.5"/></svg><span>畫畫</span></button></div>
         <div class="transport"><button id="prev" type="button">← 上一步</button><button id="play" class="primary" type="button">▶ 自動播放</button><button id="next" type="button">下一步 →</button></div>
       </div>
       <div class="stage">
@@ -723,7 +769,7 @@ html.ink-lock,html.ink-lock body{overflow:hidden}
 
     <div class="bottomnav"><button id="prevQ" type="button">← 上一題</button><button id="nextQ" type="button">下一題 →</button></div>
     </div>
-    <div class="footer">題目圖片取自 HKDSE 2018、2019、2020、2021、2022、2023、2024、2025、2026 數學卷二（香港考試及評核局版權所有）。DSE 2022–2026 答案及全港答對率來自《DSE MC Answer 考生常錯題目 With Rating》（2026 答對率未公佈）；DSE 2018–2021 答案及全港答對率來自 mathseasy.hk「HKDSE Maths Paper II 題解」，解法亦參考該網站，每題附原文連結；Advance Level 標示來自 DSE 2022–2025 答案表（黃色標示）。DSE 2026 常錯題及錯選人數來自本校 Level 4、Level 5 及 Level 5*／5** 學生答題紙（共 8 份）。級別：Level 3＝答對率 60%–90%（DSE 2018–2025）；Level 4＝40%–60%；Level 5＝低於 40%；Level 5*＝低於 35% 或 Advance Level 題目；Level 5**＝低於 30% 或 Advance Level 題目。左面的題目按題型排列，相類近的題目放在一起。「常見錯選」是按題目分析得出的典型錯誤，並非統計數據。完整題解可參考 mathseasy.hk。單一 HTML，毋須網絡連線。<span id="chFoot">限時練習請用同一資料夾內的 <a id="chLink" href="DSE_Paper2_MC_Challenge.html" target="_blank" rel="noopener">DSE_Paper2_MC_Challenge.html</a>。</span><br>更新 2026-10-14（三）：排列改為兩步——Step 1 頂部揀 Level，Step 2 左邊揀 By Year／By Topic；「各 Level 挑戰」為獨立頁面（按右上角按鈕打開）；按 DSE 2022–2025 答案表補上 2024–2025 Advance Level 標示；每個課題一種顏色。<br>更新 2026-10-16（五）：Level 3 新增 DSE 2022（18 題）及 DSE 2023（19 題）互動解說，解法參考 mathseasy.hk；「要點」卡加入「方法二／驗算」。<br>更新 2026-10-23（五）：新增 DSE 2018、2019、2020、2021 四年共 178 題（全港答對率低於 90% 的全部題目），按答對率分入 Level 3 至 5**；每題有原題、即時對錯分析、逐步解題路線圖解、常見錯誤及 mathseasy.hk 詳細講解連結。<br>更新 2026-10-24（六）：DSE 2025 Q11、Q14、Q17、Q27、Q30、Q33、Q36 的解說按老師的解題方法重寫（Q14 加入斜率 −1 參考線；Q17 改為五步面積分拆 16 → 20、45 → 40、15 → 9；Q36 加入截距表及區域方向）。<br><b class="copyright">© 2026 DSE 卷二 MC。網頁設計、程式及講解內容版權所有，未經作者書面許可，不得複製、轉載、修改或作商業用途。題目版權屬香港考試及評核局。</b></div>
+    <div class="footer">題目圖片取自 HKDSE 2018、2019、2020、2021、2022、2023、2024、2025、2026 數學卷二（香港考試及評核局版權所有）。DSE 2022–2026 答案及全港答對率來自《DSE MC Answer 考生常錯題目 With Rating》（2026 答對率未公佈）；DSE 2018–2021 答案及全港答對率來自 mathseasy.hk「HKDSE Maths Paper II 題解」，解法亦參考該網站，每題附原文連結；Advance Level 標示來自 DSE 2022–2025 答案表（黃色標示）。DSE 2026 常錯題及錯選人數來自本校 Level 4、Level 5 及 Level 5*／5** 學生答題紙（共 8 份）。級別：Level 3＝答對率 60%–90%（DSE 2018–2025）；Level 4＝40%–60%；Level 5＝低於 40%；Level 5*＝低於 35% 或 Advance Level 題目；Level 5**＝低於 30% 或 Advance Level 題目。左面的題目按題型排列，相類近的題目放在一起。「常見錯選」是按題目分析得出的典型錯誤，並非統計數據。完整題解可參考 mathseasy.hk。單一 HTML，毋須網絡連線。<span id="chFoot">限時練習請用同一資料夾內的 <a id="chLink" href="DSE_Paper2_MC_Challenge.html" target="_blank" rel="noopener">DSE_Paper2_MC_Challenge.html</a>。</span><br>更新 2026-10-14（三）：排列改為兩步——Step 1 頂部揀 Level，Step 2 左邊揀 By Year／By Topic；「各 Level 挑戰」為獨立頁面（按右上角按鈕打開）；按 DSE 2022–2025 答案表補上 2024–2025 Advance Level 標示；每個課題一種顏色。<br>更新 2026-10-16（五）：Level 3 新增 DSE 2022（18 題）及 DSE 2023（19 題）互動解說，解法參考 mathseasy.hk；「要點」卡加入「方法二／驗算」。<br>更新 2026-10-23（五）：新增 DSE 2018、2019、2020、2021 四年共 178 題（全港答對率低於 90% 的全部題目），按答對率分入 Level 3 至 5**；每題有原題、即時對錯分析、逐步解題路線圖解、常見錯誤及 mathseasy.hk 詳細講解連結。<br>更新 2026-10-24（六）：DSE 2025 Q11、Q14、Q27、Q30、Q33、Q35、Q36、Q37、Q42、Q44 的解說按老師的解題方法重寫（Q14 加入斜率 −1 參考線；Q35 四個一組相消；Q36 加入截距表及區域方向；Q37 用等差、等比的定義逐句檢查；Q42 列出經理人數的可能性；Q44 用 x = x̄ + zσ 分兩個情況）；Q17 沿用原本的設長度方法；Q22、Q38 圖解按步驟用顏色標示相關的角；「2D 互動圖解」加入畫畫功能。<br><b class="copyright">© 2026 DSE 卷二 MC。網頁設計、程式及講解內容版權所有，未經作者書面許可，不得複製、轉載、修改或作商業用途。題目版權屬香港考試及評核局。</b></div>
   </main>
 </div>
 
@@ -738,6 +784,7 @@ html.ink-lock,html.ink-lock body{overflow:hidden}
 <li>部分題目有探索控制（滑桿或按鈕），可以自己改數值觀察變化；按步驟按鈕會回到該步的預設畫面。</li>
 <li>下面兩張卡：「常見錯選」分析最容易中伏的選項錯在哪裏；「要點」整理方法及陷阱，部分題目另有「方法二／驗算」（例如代入數值、比較係數以外的做法）。</li>
 <li><b>畫畫</b>：按原題右上角的「畫畫」，可以直接在題目上寫字、畫圖（筆）、highlight 重點（螢光筆）、打字（文字）或擦走筆跡（擦膠），可揀顏色及粗幼。「草稿位」在題目下面加空白位計數；「放大」用全螢幕書寫（Esc 返回）；「存圖」把題目連筆跡存成圖片；「復原」（Ctrl + Z）救回上一步。每條題目的筆跡會分開保存在這部電腦的瀏覽器內，「各 Level 挑戰」的「試做」視窗也可以畫。用觸控筆時，手指可以照常捲動頁面。</li>
+<li><b>在圖解上畫畫</b>：「2D 互動圖解」右上角也有「畫畫」，工具一樣（筆、螢光筆、文字、擦膠、復原、清除、草稿位），可以直接在圖解上圈出重點、寫字或計數。切換步驟時筆跡會保留，每題分開保存；「放大」會把整張圖解連步驟按鈕放大到全螢幕，方便上課講解（Esc 返回）。</li>
 <li>右上角可切換中英對照、中文或英文解說。點擊原題圖片可放大（有筆跡時會連筆跡一起放大）。</li>
 </ol>
 <p>鍵盤：← → 切換步驟，空白鍵播放／暫停，J 快速跳題，Esc 關閉視窗。</p></div></div>
@@ -986,6 +1033,7 @@ function go(i) {
   renderControls();
   fitView(qq);
   renderStep();
+  INK.visual.load('vis:' + qq.key);
   try { if (location.hash !== '#' + qq.key.replace('-', 'q')) history.replaceState(null, '', '#' + qq.key.replace('-', 'q')); } catch (err) { /* embedded pages may block history */ }
   window.scrollTo({ top: 0 });
   navScrollToActive();
@@ -3155,57 +3203,36 @@ addQ({
 
 /* ---------- 2025 Q17 ---------- */
 addQ({
-  key: '2025-17', lv: '4', paper: '2025', q: 17, group: 'geo', short: '平行四邊形：相似 + 同高三角形分面積', topic: 'AREAS & SIMILAR TRIANGLES',
-  en: 'Areas inside a parallelogram', zh: '面積：由 △CGH = 16 出發，用相似三角形及同高三角形逐塊求面積', ans: 'B', hk: 40, trap: 'A',
+  key: '2025-17', lv: '4', paper: '2025', q: 17, group: 'geo', short: '平行四邊形：相似與同高三角形', topic: 'AREAS & SIMILAR TRIANGLES',
+  en: 'Areas inside a parallelogram', zh: '面積：相似三角形求 kh，再把四邊形分成兩個三角形', ans: 'B', hk: 40, trap: 'A',
   opts: { A: '46 cm²', B: '49 cm²', C: '105 cm²', D: '115 cm²' },
   why: {
-    A: '46 = 40 + 6：△DEF 的比例用反了。DF : FA = 3 : 2，△DFE = 15 × 3/5 = 9，不是 15 × 2/5 = 6（6 是 △AFE）。',
-    B: '△DFE = 9，△DEG = 40 ⇒ DFEG = 9 + 40 = 49 cm²。',
-    C: '105 cm² 太大：整個平行四邊形只有 120 cm²，DFEG 不到一半。',
+    A: '46 = 40 + 6：△DEF 的比例用反了。DF : DA = 3 : 5，△DEF = ⅗ × 15 = 9，不是 ⅖ × 15 = 6。',
+    B: '△DEG = 40，△DEF = 9，DFEG = 49 cm²。',
+    C: '105 cm² 太大：整個平行四邊形只有 12kh = 120 cm²，DFEG 不到一半。',
     D: '115 cm² 太大，原因同 C。',
   },
-  diag: '選 A 是 △DEF 的比例用反了。2DF = 3AF ⇒ DF : FA = 3 : 2，所以 △DFE : △AFE = 3 : 2，△ADE = 15 分成 9 和 6，DFEG 用的是 9。',
-  rule: '「三角形對高」：同高三角形面積比 = 底的比（例如底 2 : 3 ⇒ 面積 4 : 6）；相似三角形面積比 = 邊長比的平方（A₁ : A₂ = (2 : 3)²）。',
-  pit: 'BE = 3AE ⇒ AE : EB = 1 : 3；DG = 2CG ⇒ DG : GC = 2 : 1；2DF = 3AF ⇒ DF : FA = 3 : 2。三個比例都要先寫清楚。',
-  alt: '用相似三角形驗算 △HBE：△HCG ~ △HBE，相似比 4 : 9 ⇒ △HBE = 16 × (9/4)² = 81 = 16 + 20 + 45 ✓。',
+  diag: '選 A 是 △DEF 的比例用反了。F 把 AD 分成 DF : FA = 3 : 2，△DEF 與 △DEA 同高（由 E 到 AD），所以面積比 = DF : DA = 3 : 5。',
+  rule: '同高三角形面積比 = 底的比。相似三角形面積比 = 邊長比的平方。',
+  pit: '2DF = 3AF ⇒ DF : AF = 3 : 2（不是 2 : 3）。',
   steps: [
-    S('① 寫出比例', '① Set the ratios', 'AE : EB = 1 : 3，設 AB = CD = 4<br>DG : GC = 2 : 1 ⇒ DG = ' + FR('8', '3') + '，GC = ' + FR('4', '3'), '', '', { cap: '紅色＝AE : EB = 1 : 3。' }),
-    S('① 相似三角形', '① Similar triangles', 'GC ∥ EB ⇒ △HCG ~ △HBE<br>GC : EB = ' + FR('4', '3') + ' : 3 = 4 : 9<br>設 HB = 3 ⇒ HC = ' + FR('4', '3') + '，CB = 3 − ' + FR('4', '3') + ' = <b>' + FR('5', '3') + '</b>', 'HC : CB = 4 : 5。', 'HC : CB = 4 : 5.', { cap: '橙色＝△CGH（16 cm²）。' }),
-    S('② 連 GB', '② Join GB', '△GCB : △GCH = CB : CH = 5 : 4 ⇒ △GCB = 16 × ' + FR('5', '4') + ' = <b>20</b><br>HG : GE = 4 : 5 ⇒ △GEB = (16 + 20) × ' + FR('5', '4') + ' = <b>45</b>', '同高三角形：面積比 = 底的比。', 'Triangles with the same height: areas are in the ratio of the bases.', { key: true, cap: '藍線＝GB。' }),
-    S('③ 連 DE', '③ Join DE', '△DEG 與 △GEB 同高（DC ∥ AB）<br>△DEG = 45 × ' + FR('8/3', '3') + ' = <b>40</b>；△ADE = 45 × ' + FR('1', '3') + ' = <b>15</b>', '底：DG = 8/3、EB = 3、AE = 1。', 'Bases: DG = 8/3, EB = 3, AE = 1.', { cap: '橙線＝DE。' }),
-    S('④ F 分 AD', '④ F divides AD', 'DF : FA = 3 : 2 ⇒ △DFE = 15 × ' + FR('3', '5') + ' = <b>9</b>，△AFE = <b>6</b>', '△DFE 與 △AFE 同高（由 E 到 AD）。', '△DFE and △AFE share the height from E to AD.', { key: true, cap: '' }),
-    S('⑤ DFEG', '⑤ Area of DFEG', 'DFEG = △DFE + △DEG = 9 + 40 = <b>49 cm²</b> ⇒ B', '', '', { cap: '黃色＝DFEG。' }),
+    S('設長度', 'Set the lengths', 'AB = CD = 12<i>k</i>：AE = 3<i>k</i>，BE = 9<i>k</i>，DG = 8<i>k</i>，CG = 4<i>k</i>', '', '', { cap: '' }),
+    S('相似三角形', 'Similar triangles', '△HCG ~ △HBE，相似比 4 : 9<br>△HBE = 16 × (9/4)² = 81 ⇒ 梯形 BCGE = <b>65</b>', 'GC ∥ EB。', '', { cap: '紅色＝△HCG（16 cm²）。' }),
+    S('求 kh', 'Find kh', FR('(4<i>k</i> + 9<i>k</i>)<i>h</i>', '2') + ' = 65 ⇒ <b><i>kh</i> = 10</b>', 'h 是平行四邊形的高。', 'h is the height of the parallelogram.', { cap: '藍色＝梯形 BCGE。' }),
+    S('△DEG 與 △ADE', '△DEG and △ADE', '△DEG = ½(8<i>k</i>)<i>h</i> = 40，△ADE = ½(3<i>k</i>)<i>h</i> = 15', '', '', { cap: '' }),
+    S('△DEF', '△DEF', 'DF : DA = 3 : 5 ⇒ △DEF = ⅗ × 15 = 9<br>DFEG = 40 + 9 = <b>49 cm²</b> ⇒ B', '', '', { key: true, cap: '青色＝DFEG。' }),
   ],
   draw(i, st, at) {
     const s = 24, ox = 70, oy = 430, P = (x, y) => [ox + s * x, oy - s * y];
     const A = P(0, 0), B = P(12, 0), D = P(3, 8), C = P(15, 8), E = P(3, 0), G = P(11, 8), F = P(1.2, 3.2), H = P(17.4, 14.4);
-    const cen = (...q) => [q.reduce((a, b) => a + b[0], 0) / q.length, q.reduce((a, b) => a + b[1], 0) / q.length];
-    const badge = (p, n, c, tc, r = 15) => ci(p[0], p[1], r, 'fw') + ci(p[0], p[1], r, c) + tx(p[0], p[1] + 6, n, 'm ' + tc);
     let g = '';
-    // fills
-    if (i >= 1) g += pg([H, C, G], 'fb2 op');
-    if (i === 2) g += at(2, pg([G, C, B], 'fd op') + pg([G, E, B], 'fd op'));
-    if (i === 3) g += at(3, pg([D, E, G], 'fc op') + pg([A, D, E], 'fc op'));
-    if (i === 4) g += at(4, pg([D, F, E], 'fd op') + pg([A, F, E], 'fb2 op'));
-    if (i >= 5) g += at(5, pg([D, F, E, G], 'hgY'));
-    // figure
-    g += pg([A, B, C, D], 'ln') + ln(...C, ...H) + ln(...E, ...H) + ln(...F, ...E);
-    if (i >= 2) g += (i === 2 ? at(2, ln(...G, ...B, 'lb')) : ln(...G, ...B, 'lb'));
-    if (i >= 3) g += (i === 3 ? at(3, ln(...D, ...E, 'lo')) : ln(...D, ...E, 'lo'));
-    if (i >= 5) g += at(5, pl([D, F, E, G, D], 'gs'));
-    // ratio labels
-    g += tx((A[0] + E[0]) / 2, A[1] + 24, '1', 'm r') + tx((E[0] + B[0]) / 2, A[1] + 24, '3', 'm r');
-    g += tx((D[0] + G[0]) / 2, D[1] - 12, i >= 0 ? '8/3' : '', 'm hl') + tx((G[0] + C[0]) / 2, D[1] + 22, '4/3', 'm hl');
-    if (i >= 1) g += at(1, tx((C[0] + H[0]) / 2 + 12, (C[1] + H[1]) / 2, '4/3', 'm g', 'start') + tx((C[0] + B[0]) / 2 + 12, (C[1] + B[1]) / 2, '5/3', 'm g', 'start'));
-    if (i >= 4) g += at(4, tx((D[0] + F[0]) / 2 - 12, (D[1] + F[1]) / 2, '3', 'm o', 'end') + tx((F[0] + A[0]) / 2 - 12, (F[1] + A[1]) / 2, '2', 'm o', 'end'));
-    // area badges
-    if (i >= 1) g += badge(cen(H, C, G), '16', 'o', 'o');
-    if (i >= 2 && i <= 3) g += badge(cen(G, C, B), '20', 'r', 'r') + badge(cen(G, E, B), '45', 'r', 'r');
-    if (i >= 3) g += badge(cen(D, E, G), '40', 'lp', 'pu');
-    if (i === 3) g += badge(cen(A, D, E), '15', 'lp', 'pu', 13);
-    if (i >= 4) g += badge(cen(D, F, E), '9', 'pk', 'mg', 13);
-    if (i === 4) g += badge(cen(A, F, E), '6', 'pk', 'mg', 12);
-    if (i >= 5) g += at(5, tx(P(8, 12)[0], P(8, 12)[1], 'DFEG = 9 + 40 = 49', 'big hl'));
+    if (i === 1) g += pg([H, C, G], 'fd');
+    if (i === 2) g += pg([B, C, G, E], 'fc op');
+    if (i === 3) g += pg([D, E, G], 'fa op') + pg([A, D, E], 'fb2 op');
+    if (i >= 4) g += pg([D, F, E, G], 'fa op');
+    g += pg([A, B, C, D], 'ln') + ln(...B, ...H) + ln(...E, ...H) + ln(...F, ...E);
+    if (i >= 3) g += ln(...D, ...E, 'thin dash');
+    g += tx((A[0] + E[0]) / 2, A[1] + 22, '3k', 'm') + tx((E[0] + B[0]) / 2, A[1] + 22, '9k', 'm') + tx((D[0] + G[0]) / 2, D[1] - 10, '8k', 'm') + tx((G[0] + C[0]) / 2, D[1] - 10, '4k', 'm');
     const L = (p, t, dx, dy) => tx(p[0] + dx, p[1] + dy, t, 'm');
     g += L(A, 'A', -10, 18) + L(B, 'B', 10, 18) + L(C, 'C', 14, 4) + L(D, 'D', -10, -6) + L(E, 'E', 0, 22) + L(F, 'F', -12, 4) + L(G, 'G', -6, -10) + L(H, 'H', 8, -6);
     return g;
@@ -3298,21 +3325,47 @@ addQ({
   rule: '圓內接四邊形對角互補；平行線錯角相等；三角形內角和 = 180°。',
   pit: '∠TRV = ∠TRU + ∠URV = y + 33°。',
   steps: [
-    S('設未知數', 'Unknowns', '∠RUT = <i>x</i>，∠URT = ∠TRS = <i>y</i>', 'RT 平分 ∠SRU。', 'RT bisects ∠SRU.', { cap: '' }),
-    S('平行線', 'Parallel lines', 'RT ∥ VU ⇒ ∠RUV = ∠URT = <i>y</i>（錯角）', '', '', { cap: '' }),
-    S('四邊形 UTRV', 'Cyclic quadrilateral UTRV', '(<i>x</i> + <i>y</i>) + (<i>y</i> + 33°) = 180° ⇒ <b><i>x</i> + 2<i>y</i> = 147°</b>', '∠TUV + ∠TRV = 180°。', 'Opposite angles are supplementary.', { key: true, cap: '' }),
-    S('四邊形 UTSR＋△RST', 'Quadrilateral UTSR and △RST', '∠TSR = 180° − <i>x</i><br>(180° − <i>x</i>) + <i>y</i> + 33° = 180° ⇒ <b><i>x</i> − <i>y</i> = 33°</b>', '', '', { cap: '' }),
-    S('解方程', 'Solve', '<i>y</i> = 38°，<b><i>x</i> = 71°</b> ⇒ D', '', '', { cap: '' }),
+    S('設未知數', 'Unknowns', '<span class="ca-o">∠RUT = <i>x</i></span>，<span class="ca-t">∠URT = ∠TRS = <i>y</i></span>', 'RT 平分 ∠SRU，所以 ∠URT = ∠TRS。', 'RT bisects ∠SRU, so ∠URT = ∠TRS.', { cap: '橙色＝x；青色＝y。' }),
+    S('平行線', 'Parallel lines', 'RT ∥ VU ⇒ <span class="ca-t">∠RUV = ∠URT = <i>y</i></span>（錯角）', 'UR 是截線，兩個 y 是一對錯角。', 'UR cuts the parallel lines: the two y are alternate angles.', { cap: '藍線＝RT ∥ VU；青色＝一對錯角。' }),
+    S('四邊形 UTRV', 'Cyclic quadrilateral UTRV', '∠TUV = <span class="ca-o"><i>x</i></span> + <span class="ca-t"><i>y</i></span>，∠TRV = <span class="ca-t"><i>y</i></span> + <span class="ca-p">33°</span><br>(<span class="ca-o"><i>x</i></span> + <span class="ca-t"><i>y</i></span>) + (<span class="ca-t"><i>y</i></span> + <span class="ca-p">33°</span>) = 180° ⇒ <b><i>x</i> + 2<i>y</i> = 147°</b>', '∠TUV + ∠TRV = 180°（對角互補）。', 'Opposite angles are supplementary.', { key: true, cap: '黃色＝圓內接四邊形 UTRV。' }),
+    S('四邊形 UTSR＋△RST', 'Quadrilateral UTSR and △RST', '∠TSR = <span class="ca-r">180° − <i>x</i></span>（UTSR 對角互補）<br>△RST：(<span class="ca-r">180° − <i>x</i></span>) + <span class="ca-t"><i>y</i></span> + <span class="ca-p">33°</span> = 180° ⇒ <b><i>x</i> − <i>y</i> = 33°</b>', '∠RUT 和 ∠TSR 是圓內接四邊形 UTSR 的一對對角。', '∠RUT and ∠TSR are opposite angles of UTSR.', { cap: '紅色＝△RST。' }),
+    S('解方程', 'Solve', '(<i>x</i> + 2<i>y</i>) − (<i>x</i> − <i>y</i>) = 147° − 33° ⇒ 3<i>y</i> = 114°<br><span class="ca-t"><i>y</i> = 38°</span>，<span class="ca-o"><b><i>x</i> = 71°</b></span> ⇒ D', '', '', { cap: '' }),
   ],
   draw(i, st, at) {
     const O = [330, 240], Rr = 175, P_ = d => pol(O[0], O[1], Rr, d);
     const R = P_(20), S0 = P_(-46), T = P_(-122), U = P_(162), V = P_(96);
-    let g = ci(O[0], O[1], Rr) + ln(...R, ...T) + ln(...V, ...U) + ln(...U, ...R) + ln(...U, ...T) + ln(...R, ...S0) + ln(...S0, ...T) + ln(...V, ...R);
-    g += parMark(T, R, 'thin') + parMark(U, V, 'thin');
-    g += angMark(T, R, S0, 30, 'thin', '33°', 's', 48) + angMark(R, U, V, 40, 'thin', '33°', 's', 58);
-    g += angMark(U, R, T, 46, 'o', 'x', 'o', 64) + angMark(R, U, T, 34, 'hl', 'y', 'hl', 52) + angMark(R, T, S0, 50, 'hl', 'y', 'hl', 68);
-    if (i >= 1) g += at(1, angMark(U, R, V, 34, 'hl', 'y', 'hl', 50));
-    if (i >= 3) g += at(3, angMark(S0, T, R, 30, 'r', '180° − x', 'r', 66));
+    // 角：[頂點, 邊1, 邊2, 半徑, 標籤半徑, 標籤, 顏色]；顏色 o 橙、t 青、p 紫、r 紅
+    const AG = {
+      xU: [U, R, T, 46, 66, i === 4 ? 'x = 71°' : 'x', 'o'],
+      yU: [U, R, V, 34, 52, i === 4 ? '38°' : 'y', 't'],
+      yR1: [R, U, T, 34, 54, i === 4 ? '38°' : 'y', 't'],
+      yR2: [R, T, S0, 52, 72, i === 4 ? '38°' : 'y', 't'],
+      a33R: [R, U, V, 40, 60, '33°', 'p'],
+      a33T: [T, R, S0, 32, 52, '33°', 'p'],
+      sS: [S0, T, R, 30, 68, '180° − x', 'r'],
+    };
+    const HI = [['xU', 'yR1', 'yR2'], ['yU', 'yR1'], ['xU', 'yU', 'yR1', 'a33R'], ['xU', 'sS', 'yR2', 'a33T'], ['xU', 'yU', 'yR1', 'yR2']][i];
+    const show = { yU: i >= 1, sS: i >= 3 };
+    const FILL = { o: 'fb2', t: 'fa', p: 'fp', r: 'fd' }, ARC = { o: 'o', t: 'hl', p: 'ap', r: 'r' }, TXT = { o: 'o', t: 'hl', p: 'pu', r: 'r' };
+    const ang = k => {
+      const [Vx, A, B, r, lr, lab, c] = AG[k], on = HI.includes(k);
+      let a0 = angOf(Vx, A), a1 = angOf(Vx, B), d = (((a1 - a0) % 360) + 360) % 360;
+      if (d > 180) { [a0, a1] = [a1, a0]; d = 360 - d; }
+      const m = pol(Vx[0], Vx[1], lr, a0 + d / 2);
+      return (on ? sector(Vx[0], Vx[1], r, a0, a0 + d, FILL[c] + ' op') + ph(arcD(Vx[0], Vx[1], r, a0, a0 + d), ARC[c]) : ph(arcD(Vx[0], Vx[1], r, a0, a0 + d), 'thin'))
+        + tx(m[0], m[1] + 6, lab, on ? 'm ' + TXT[c] : 's');
+    };
+    let g = '';
+    if (i === 2) g += at(2, pg([U, T, R, V], 'hgY op5'));
+    if (i === 3) g += at(3, pg([R, S0, T], 'fd op5'));
+    g += ci(O[0], O[1], Rr) + ln(...R, ...T) + ln(...V, ...U) + ln(...U, ...R) + ln(...U, ...T) + ln(...R, ...S0) + ln(...S0, ...T) + ln(...V, ...R);
+    if (i === 1) g += at(1, ln(...R, ...T, 'lb thick') + ln(...V, ...U, 'lb thick'));
+    g += parMark(T, R, i === 1 ? 'lb' : 'thin') + parMark(U, V, i === 1 ? 'lb' : 'thin');
+    Object.keys(AG).forEach(k => {
+      if (k in show && !show[k]) return;
+      const s = ang(k);
+      g += (k === 'yU' && i === 1) || (k === 'sS' && i === 3) ? at(i, s) : s;
+    });
     const L = (p, t, dx, dy) => tx(p[0] + dx, p[1] + dy, t, 'm');
     g += L(R, 'R', 14, 4) + L(S0, 'S', 10, 14) + L(T, 'T', 0, 24) + L(U, 'U', -14, 4) + L(V, 'V', 0, -10);
     return g;
@@ -3524,33 +3577,51 @@ addQ({
 
 /* ---------- 2025 Q35 ---------- */
 addQ({
-  key: '2025-35', lv: '4', paper: '2025', q: 35, group: 'secb', short: 'i 的冪：四個一循環', topic: 'COMPLEX NUMBERS',
-  en: 'i⁹ + i¹⁰ + … + i⁹⁹⁹', zh: '複數：i 的冪四個一循環，每四項之和 = 0', ans: 'A', hk: 41, trap: 'B',
+  key: '2025-35', lv: '4', paper: '2025', q: 35, group: 'secb', short: 'i 的冪：四個一組相消', topic: 'COMPLEX NUMBERS',
+  en: 'i⁹ + i¹⁰ + … + i⁹⁹⁹', zh: '複數：i 的冪四個一組，每組之和 = 0，只剩最後三項', ans: 'A', hk: 41, trap: 'B',
   opts: { A: '−1', B: '0', C: '1', D: '<i>i</i>' },
   why: {
-    A: '共 991 項 = 4 × 247 + 3；頭 988 項相消，剩下 i⁹⁹⁷ + i⁹⁹⁸ + i⁹⁹⁹ = i − 1 − i = −1。',
-    B: '0：以為所有項剛好四個一組相消，但 991 = 4 × 247 + 3，多出 3 項。',
+    A: 'i⁹ 至 i⁹⁹⁶ 四個一組，每組 = 0；剩下 i⁹⁹⁷ + i⁹⁹⁸ + i⁹⁹⁹ = i + (−1) + (−i) = −1。',
+    B: '0：以為所有項剛好四個一組相消，但組到 i⁹⁹⁶ 就完，後面還有 i⁹⁹⁷、i⁹⁹⁸、i⁹⁹⁹ 三項。',
     C: '1 不對：剩下的三項是 i、−1、−i，和為 −1。',
     D: 'i 不對：剩下的三項之和是 −1。',
   },
-  diag: '選 B 是以為所有項剛好四個一組相消。先數項數：999 − 9 + 1 = 991，除以 4 餘 3，最後剩下三項。',
-  rule: 'i¹ = i，i² = −1，i³ = −i，i⁴ = 1，每四個一循環；連續四項之和 = 0。',
-  pit: '項數 = 最後 − 最先 + 1。',
+  diag: '選 B 是以為所有項剛好四個一組相消。由 i⁹ 開始四個一組：9–12、13–16、…、993–996，每組 = 0；996 是 4 的倍數，所以最後一組到 i⁹⁹⁶ 就完，後面還剩 i⁹⁹⁷、i⁹⁹⁸、i⁹⁹⁹ 三項。',
+  rule: 'i¹ = i，i² = −1，i³ = −i，i⁴ = 1，四個一循環；連續四項之和 = i + (−1) + (−i) + 1 = 0。',
+  pit: '最後一組在哪裏完？指數是 4 的倍數的一項（i⁹⁹⁶ = 1）就是一組的最後一項。',
+  alt: '數項數驗算：999 − 9 + 1 = 991 = 4 × 247 + 3，即 247 組，再剩 3 項 ✓。',
   steps: [
-    S('數項數', 'Count the terms', '999 − 9 + 1 = <b>991</b> = 4 × 247 + 3', '', '', { cap: '' }),
-    S('四個一組', 'Groups of four', '<i>i</i>⁹ + <i>i</i>¹⁰ + <i>i</i>¹¹ + <i>i</i>¹² = <i>i</i> − 1 − <i>i</i> + 1 = 0', '連續四項剛好轉一圈。', 'Four consecutive powers go once round the circle.', { key: true, cap: '' }),
-    S('剩下三項', 'Three terms left', '<i>i</i>⁹⁹⁷ + <i>i</i>⁹⁹⁸ + <i>i</i>⁹⁹⁹ = <i>i</i> − 1 − <i>i</i> = <b>−1</b> ⇒ A', '997 = 4 × 249 + 1，所以 i⁹⁹⁷ = i。', '997 leaves remainder 1 on division by 4.', { cap: '' }),
+    S('四個一組', 'Groups of four', '指數 9, 10, 11, 12：<br><i>i</i>⁹ + <i>i</i>¹⁰ + <i>i</i>¹¹ + <i>i</i>¹² = <i>i</i> + (−1) + (−<i>i</i>) + 1 = <b>0</b>', 'i⁹ = i⁸ × i = i；i¹² = (i⁴)³ = 1。', 'i⁹ = i and i¹² = 1.', { key: true, cap: '橙框＝一組四個指數。' }),
+    S('每組都 = 0', 'Every group is 0', '<i>i</i>⁹ + <i>i</i>¹⁰ + <i>i</i>¹¹ + <i>i</i>¹² = 0<br>+ <i>i</i>¹³ + <i>i</i>¹⁴ + <i>i</i>¹⁵ + <i>i</i>¹⁶ = 0<br>+ ⋯<br>+ <i>i</i>⁹⁹³ + <i>i</i>⁹⁹⁴ + <i>i</i>⁹⁹⁵ + <i>i</i>⁹⁹⁶ = 0', '996 是 4 的倍數，所以一組到 i⁹⁹⁶ 剛好完。', '996 is a multiple of 4, so a group ends at i⁹⁹⁶.', { cap: '' }),
+    S('剩下三項', 'Three terms left', '+ <i>i</i>⁹⁹⁷ + <i>i</i>⁹⁹⁸ + <i>i</i>⁹⁹⁹<br>= <i>i</i> + (−1) + (−<i>i</i>) = <b>−1</b> ⇒ A', 'i 和 −i 互相抵消，只剩 −1。', 'i and −i cancel, leaving −1.', { cap: '紅框＝最後剩下的三項。' }),
   ],
   draw(i, st, at) {
-    const O = [200, 230], R = 130, pts0 = [[0, '1', 'i⁴ = 1'], [90, 'i', 'i¹ = i'], [180, '−1', 'i² = −1'], [270, '−i', 'i³ = −i']];
-    let g = ln(O[0] - 170, O[1], O[0] + 170, O[1], 'axis') + ln(O[0], O[1] + 170, O[0], O[1] - 170, 'axis') + ci(O[0], O[1], R, 'thin dash');
-    pts0.forEach(([d, v, lab]) => { const p = pol(O[0], O[1], R, d); g += dt(...p, 'hl') + tx(p[0] + (d === 180 ? -10 : 10), p[1] + (d === 270 ? 24 : -10), lab, 'm hl', d === 180 ? 'end' : 'start'); });
-    if (i >= 1) g += at(1, ph(arcD(O[0], O[1], R - 24, 95, 445), 'o') + tx(O[0], O[1] + 6, '一圈和 = 0', 'm o'));
-    const x0 = 420;
-    g += tx(x0, 70, '991 項', 'big', 'start');
-    if (i >= 1) g += at(1, rect(x0, 100, 230, 46, 'boxt', 8) + tx(x0 + 115, 130, '247 組 × 0 = 0', 'm hl'));
-    if (i >= 2) g += at(2, rect(x0, 170, 230, 46, 'boxo', 8) + tx(x0 + 115, 200, 'i − 1 − i = −1', 'm o') + tx(x0 + 115, 260, '總和 = −1', 'big hl'));
-    if (i === 0) g += tx(x0, 110, '991 ÷ 4 = 247 … 3', 'm', 'start');
+    let g = '';
+    const sp = (e, b = 22) => `i<tspan dy="${-b * 0.45}" font-size="${Math.round(b * 0.66)}">${e}</tspan><tspan dy="${b * 0.45}">​</tspan>`;
+    const run = (a, n, lead) => (lead ? '+ ' : '') + Array.from({ length: n }, (_, k) => sp(a + k)).join(' + ');
+    // 第 1 步：一組四個指數
+    g += rect(40, 22, 200, 50, 'boxo', 8) + tx(140, 55, '9, 10, 11, 12', 'm2 o');
+    g += tx(270, 56, 'i + (−1) + (−i) + 1', 'm2', 'start') + tx(500, 56, '= 0', 'm2 hl', 'start');
+    g += ph('M272 70 Q272 82 300 82 L366 82 Q382 82 384 94 Q386 82 402 82 L468 82 Q490 82 490 70', 'thin');
+    // 循環表
+    g += rect(560, 18, 150, 132, 'boxp', 8);
+    [[1, 'i', 46], [2, '−1', 76], [3, '−i', 106], [4, '1', 136]].forEach(([e, v, y]) => { g += tx(582, y, sp(e, 18) + ' = ' + v, 'm', 'start'); });
+    // 第 2 步：每組都 = 0
+    const rows = [[run(9, 4), 150], [run(13, 4, 1), 200], ['+ ⋯', 250], [run(993, 4, 1), 300]];
+    if (i >= 1) {
+      let s = '';
+      rows.forEach(([t, y], k) => { s += tx(k === 0 ? 74 : 60, y, t, 'm2', 'start') + (k === 2 ? tx(400, y, '（共 247 組）', 's', 'start') : tx(400, y, '= 0', 'm2 hl', 'start')); });
+      s += tx(560, 230, '996 是 4 的倍數', 's', 'start') + tx(560, 254, '⇒ 一組到 ' + sp(996, 13) + ' 剛好完', 's', 'start');
+      g += at(1, s);
+    }
+    // 第 3 步：剩下三項
+    if (i >= 2) {
+      let s = rect(42, 322, 330, 56, 'rbox', 10) + tx(60, 360, run(997, 3, 1), 'm2', 'start') + ln(30, 392, 460, 392, 'ln');
+      s += tx(66, 436, '=', 'm2') + tx(104, 436, 'i', 'm2') + tx(136, 436, '+', 'm2') + tx(182, 436, '(−1)', 'm2') + tx(230, 436, '+', 'm2') + tx(274, 436, '(−i)', 'm2') + tx(318, 437, '= −1', 'big hl', 'start');
+      s += ln(93, 446, 116, 418, 'r') + ln(252, 448, 296, 418, 'r');
+      s += tx(188, 472, 'i 和 −i 互相抵消', 's r');
+      g += at(2, s);
+    }
     return g;
   },
 });
@@ -3595,35 +3666,40 @@ addQ({
 /* ---------- 2025 Q37 ---------- */
 addQ({
   key: '2025-37', lv: '4', paper: '2025', q: 37, group: 'secb', short: '由等差數列變出的新數列', topic: 'SEQUENCES',
-  en: 'New sequences built from an arithmetic sequence', zh: '數列：用 q = p + d、r = p + 2d 逐句檢查', ans: 'A', hk: 55, trap: 'C',
+  en: 'New sequences built from an arithmetic sequence', zh: '數列：用等差（差相等）、等比（比相等）的定義逐句檢查', ans: 'A', hk: 55, trap: 'C',
   opts: { A: 'I only', B: 'II only', C: 'I and III only', D: 'II and III only' },
   why: {
-    A: '3^p、3^q、3^r 公比 3^d（I ✓）；5/p、5/q、5/r 一般不是等比（II ✗）；p − q、q − r、r − p = −d、−d、2d，不是等差（III ✗）。',
-    B: 'II 錯：例如 1、3、5 ⇒ 5、5/3、1，相鄰兩項的比 1/3 ≠ 3/5。',
-    C: 'III 錯：p − q 和 q − r 都是 −d，但 r − p = 2d，三項的公差不同。',
+    A: 'I：3^q ÷ 3^p = 3^(q − p) = 3^(r − q) = 3^r ÷ 3^q ✓；II：p/q ≠ q/r ✗；III：2q − r − p ≠ 2r − p − q ✗。',
+    B: 'II 錯：(5/q) ÷ (5/p) = p/q，(5/r) ÷ (5/q) = q/r，兩個比一般不相等。',
+    C: 'III 錯：(q − r) − (p − q) = 2q − r − p，(r − p) − (q − r) = 2r − p − q，兩個差不相等。',
     D: 'II、III 都錯；I 才正確。',
   },
-  diag: '選 C 是以為等差數列的「差」也成等差數列。p − q 和 q − r 都是 −d，但第三項 r − p = 2d，不是 −d。',
-  rule: '等差：後項 − 前項相同；等比：後項 ÷ 前項相同。用具體例子（例如 1、3、5）可以快速找反例。',
-  pit: '題目說「must be true」，只要一個反例就可以否定。',
+  diag: '選 C 是以為等差數列的「差」也成等差數列。用定義計兩個差：(q − r) − (p − q) = 2q − r − p，(r − p) − (q − r) = 2r − p − q，不相等。例如 1, 2, 3 ⇒ −1, −1, 2，差是 0 和 3。',
+  rule: '等差（AS）：b − a = c − b；等比（GS）：b/a = c/b。p, q, r 等差 ⇒ q − p = r − q。',
+  pit: '題目說「must be true」，只要一個反例（例如 1, 2, 3）就可以否定。',
+  alt: '用 1, 2, 3 驗算：I　3, 9, 27（公比 3 ✓）；II　5, 5/2, 5/3（比 1/2、2/3 ✗）；III　−1, −1, 2（差 0、3 ✗）。',
   steps: [
-    S('設公差', 'Let the common difference be d', '<i>q</i> = <i>p</i> + <i>d</i>，<i>r</i> = <i>p</i> + 2<i>d</i>（<i>d</i> ≠ 0）', '下圖用 p, q, r = 1, 3, 5 作例子。', 'Example: p, q, r = 1, 3, 5.', { cap: '' }),
-    S('I', 'Statement I', FR('3<sup>q</sup>', '3<sup>p</sup>') + ' = ' + FR('3<sup>r</sup>', '3<sup>q</sup>') + ' = 3<sup>d</sup> ⇒ 等比 ✓', '', '', { cap: '' }),
-    S('II', 'Statement II', '1, 3, 5 ⇒ 5, ' + FR('5', '3') + ', 1：比 ' + FR('1', '3') + ' ≠ ' + FR('3', '5') + ' ✗', '', '', { cap: '' }),
-    S('III', 'Statement III', '<i>p</i> − <i>q</i>, <i>q</i> − <i>r</i>, <i>r</i> − <i>p</i> = −<i>d</i>, −<i>d</i>, 2<i>d</i> ⇒ 不是等差 ✗ ⇒ A', '', '', { key: true, cap: '' }),
+    S('定義', 'Definitions', '等差（AS）：<i>b</i> − <i>a</i> = <i>c</i> − <i>b</i>　等比（GS）：' + FR('<i>b</i>', '<i>a</i>') + ' = ' + FR('<i>c</i>', '<i>b</i>') + '<br><i>p</i>, <i>q</i>, <i>r</i> 等差 ⇒ <b><i>q</i> − <i>p</i> = <i>r</i> − <i>q</i></b>', '等比看「比」，等差看「差」，逐句檢查。', 'Geometric: check the ratios; arithmetic: check the differences.', { cap: '' }),
+    S('I', 'Statement I', FR('3<sup><i>q</i></sup>', '3<sup><i>p</i></sup>') + ' = 3<sup><i>q</i> − <i>p</i></sup>，' + FR('3<sup><i>r</i></sup>', '3<sup><i>q</i></sup>') + ' = 3<sup><i>r</i> − <i>q</i></sup><br><i>q</i> − <i>p</i> = <i>r</i> − <i>q</i> ⇒ 兩個比相等 ⇒ 等比 ✓', '', '', { cap: '' }),
+    S('II', 'Statement II', FR(FR('5', '<i>q</i>'), FR('5', '<i>p</i>')) + ' = ' + FR('<i>p</i>', '<i>q</i>') + '，' + FR(FR('5', '<i>r</i>'), FR('5', '<i>q</i>')) + ' = ' + FR('<i>q</i>', '<i>r</i>') + '<br>' + FR('<i>p</i>', '<i>q</i>') + ' ≠ ' + FR('<i>q</i>', '<i>r</i>') + ' ⇒ 不是等比 ✗', '例如 1, 2, 3 ⇒ 5, 5/2, 5/3：比是 1/2 和 2/3。', 'Example 1, 2, 3 gives ratios 1/2 and 2/3.', { cap: '' }),
+    S('III', 'Statement III', '(<i>q</i> − <i>r</i>) − (<i>p</i> − <i>q</i>) = 2<i>q</i> − <i>r</i> − <i>p</i><br>(<i>r</i> − <i>p</i>) − (<i>q</i> − <i>r</i>) = 2<i>r</i> − <i>p</i> − <i>q</i><br>兩個差不相等 ⇒ 不是等差 ✗ ⇒ <b>A</b>', '例如 1, 2, 3 ⇒ −1, −1, 2：差是 0 和 3。', 'Example 1, 2, 3 gives −1, −1, 2.', { key: true, cap: '' }),
   ],
   draw(i, st, at) {
-    const rows = [['p, q, r', ['1', '3', '5'], ['+2', '+2'], 'hl', 0], ['3ᵖ, 3ᵠ, 3ʳ', ['3', '27', '243'], ['×9', '×9'], 'hl', 1], ['5/p, 5/q, 5/r', ['5', '5/3', '1'], ['×1/3', '×3/5'], 'r', 2], ['p − q, q − r, r − p', ['−2', '−2', '4'], ['+0', '+6'], 'r', 3]];
-    let g = '';
-    rows.forEach(([lab, vals, ops, c, k]) => {
-      if (k > i) return;
-      const y = 50 + k * 95, x0 = 250;
-      let s = tx(x0 - 20, y + 32, lab, 'm', 'end');
-      vals.forEach((v, j) => { s += rect(x0 + j * 150, y, 90, 48, k === 0 ? 'boxp' : c === 'hl' ? 'boxt' : 'boxr', 8) + tx(x0 + j * 150 + 45, y + 32, v, 'm big'); });
-      ops.forEach((o, j) => { s += tx(x0 + j * 150 + 120, y - 6, o, 'm ' + (k === 0 ? '' : c)); });
-      if (k > 0) s += tx(x0 + 470, y + 32, c === 'hl' ? '✓' : '✗', 'big ' + c, 'start');
+    const card = (x, y, w, h, cls, html) => rect(x, y, w, h, cls, 12) + foBox(x + 12, y + 10, w - 24, h - 18, html);
+    let g = card(0, 0, 720, 112, 'boxg', `<div class="q37-def"><span class="g">AS：<i>b</i> − <i>a</i> = <i>c</i> − <i>b</i></span><span class="g">GS：${FR('<i>b</i>', '<i>a</i>')} = ${FR('<i>c</i>', '<i>b</i>')}</span></div><div class="q37-giv"><i>p</i>, <i>q</i>, <i>r</i> 等差 ⇒ <b><i>q</i> − <i>p</i> = <i>r</i> − <i>q</i></b></div>`);
+    const W = 232, Y = 132, H = 345;
+    const cols = [
+      [1, 'mg', 'I. 3<sup><i>p</i></sup>, 3<sup><i>q</i></sup>, 3<sup><i>r</i></sup>', `${FR('3<sup><i>q</i></sup>', '3<sup><i>p</i></sup>')} = 3<sup><i>q</i> − <i>p</i></sup><br>${FR('3<sup><i>r</i></sup>', '3<sup><i>q</i></sup>')} = 3<sup><i>r</i> − <i>q</i></sup>`, '指數相等 ⇒ 比相等', '等比 ✓', 'ok'],
+      [2, 'rd', 'II. ' + FR('5', '<i>p</i>') + ', ' + FR('5', '<i>q</i>') + ', ' + FR('5', '<i>r</i>'), `${FR(FR('5', '<i>q</i>'), FR('5', '<i>p</i>'))} = ${FR('<i>p</i>', '<i>q</i>')}<br>${FR(FR('5', '<i>r</i>'), FR('5', '<i>q</i>'))} = ${FR('<i>q</i>', '<i>r</i>')}`, `${FR('<i>p</i>', '<i>q</i>')} ≠ ${FR('<i>q</i>', '<i>r</i>')}`, '不是等比 ✗', 'no'],
+      [3, 'pu', 'III. <i>p</i> − <i>q</i>, <i>q</i> − <i>r</i>, <i>r</i> − <i>p</i>', '(<i>q</i> − <i>r</i>) − (<i>p</i> − <i>q</i>)<br>= 2<i>q</i> − <i>r</i> − <i>p</i><br>(<i>r</i> − <i>p</i>) − (<i>q</i> − <i>r</i>)<br>= 2<i>r</i> − <i>p</i> − <i>q</i>', '兩個差不相等', '不是等差 ✗', 'no'],
+    ];
+    cols.forEach(([k, c, head, body, why, verdict, ok], j) => {
+      if (i < k) return;
+      const x = j * (W + 12);
+      const s = card(x, Y, W, H, ok === 'ok' ? 'boxt' : 'boxr', `<div class="q37-col ${c}"><div class="h">${head}</div><div class="b">${body}</div><div class="w">${why}</div><div class="v ${ok}">${ckify(verdict)}</div></div>`);
       g += k === i ? `<g class="in">${s}</g>` : s;
     });
+    if (i >= 3) g += at(3, rect(0, Y + H + 14, 720, 44, 'boxt', 10) + tx(360, Y + H + 43, '只有 I 一定正確 ⇒ A', 'big hl'));
     return g;
   },
 });
@@ -3643,22 +3719,44 @@ addQ({
   rule: '直徑所對的圓周角 = 90°；切線與弦的夾角 = 交錯弓形內的圓周角；三角形外角 = 兩內對角之和。',
   pit: '∠BEC 是 △CDE 在 E 的外角（B、E、D 共線）。',
   steps: [
-    S('直徑', 'Diameter', 'AC 是直徑 ⇒ ∠ADC = 90°', '連 AD。', 'Join AD.', { cap: '' }),
-    S('交錯弓形', 'Alternate segment', '∠CAD = ∠CDT = <b>41°</b>', '', '', { cap: '' }),
-    S('△ACD', 'In △ACD', '∠ACD = 180° − 90° − 41° = <b>49°</b>', '', '', { key: true, cap: '' }),
-    S('外角', 'Exterior angle', '∠BEC = ∠CDE + ∠ECD ⇒ 96° = ∠CDE + 49°<br>∠CDE = <b>47°</b> ⇒ A', '', '', { cap: '' }),
+    S('直徑', 'Diameter', 'AC 是直徑 ⇒ <span class="ca-t">∠ADC = 90°</span>（半圓上的圓周角）', '連 AD。', 'Join AD.', { cap: '青色＝直徑 AC 及 ∠ADC = 90°。' }),
+    S('交錯弓形', 'Alternate segment', '切線 TD 與弦 DC 的夾角 = 交錯弓形內的圓周角<br><span class="ca-o">∠CAD = ∠CDT = <b>41°</b></span>', '兩個 41° 都對着弦 DC。', 'Both 41° angles stand on the chord DC.', { cap: '橙色＝弦 DC 及兩個相等的角。' }),
+    S('△ACD', 'In △ACD', '∠ACD = 180° − <span class="ca-t">90°</span> − <span class="ca-o">41°</span> = <span class="ca-p"><b>49°</b></span>', '', '', { key: true, cap: '藍色＝△ACD。' }),
+    S('外角', 'Exterior angle', '△CDE 在 E 的外角：<span class="ca-r">∠BEC</span> = ∠CDE + <span class="ca-p">∠ECD</span><br><span class="ca-r">96°</span> = ∠CDE + <span class="ca-p">49°</span> ⇒ <span class="ca-g"><b>∠CDE = 47°</b></span> ⇒ A', 'B、E、D 共線；∠ECD 就是 ∠ACD = 49°。', 'B, E and D are collinear; ∠ECD is ∠ACD = 49°.', { cap: '紅色＝△CDE。' }),
   ],
   draw(i, st, at) {
     const O = [330, 245], R = 165, P_ = d => pol(O[0], O[1], R, d);
     const A = P_(180), D = P_(82), C = P_(0), B = P_(266);
     const inter = (p1, p2, p3, p4) => { const d1 = [p2[0] - p1[0], p2[1] - p1[1]], d2 = [p4[0] - p3[0], p4[1] - p3[1]], cr = d1[0] * d2[1] - d1[1] * d2[0], t = ((p3[0] - p1[0]) * d2[1] - (p3[1] - p1[1]) * d2[0]) / cr; return [p1[0] + t * d1[0], p1[1] + t * d1[1]]; };
     const E = inter(A, C, B, D), td = [Math.sin(rad(82)), Math.cos(rad(82))], T = [D[0] + 150 * td[0], D[1] + 150 * td[1]];
-    let g = ci(O[0], O[1], R) + ln(...A, ...C) + ln(...B, ...D) + ln(...D, ...C) + ln(...D, ...T);
-    g += angMark(D, C, T, 30, 'thin', '41°', 's', 50) + angMark(E, B, C, 28, 'thin', '96°', 's', 46);
-    if (i >= 0) g += at(0, ln(...A, ...D, 'o dash') + rightMark(D, A, C, 12, 'o'));
-    if (i >= 1) g += at(1, angMark(A, C, D, 50, 'o', '41°', 'o', 70));
-    if (i >= 2) g += at(2, angMark(C, A, D, 44, 'hl', '49°', 'hl', 64));
-    if (i >= 3) g += at(3, angMark(D, C, E, 46, 'hl', '47°', 'hl', 66));
+    // 角：[頂點, 邊1, 邊2, 半徑, 標籤半徑, 標籤, 顏色, 由第幾步開始出現]
+    const AG = {
+      a41D: [D, C, T, 30, 52, '41°', 'o', 0],
+      a96E: [E, B, C, 28, 48, '96°', 'r', 0],
+      a41A: [A, C, D, 50, 72, '41°', 'o', 1],
+      a49C: [C, A, D, 44, 66, '49°', 'p', 2],
+      a47D: [D, C, E, 50, 72, '47°', 'g', 3],
+    };
+    const HI = [['rD'], ['a41D', 'a41A'], ['rD', 'a41A', 'a49C'], ['a96E', 'a49C', 'a47D']][i];
+    const FILL = { o: 'fb2', p: 'fp', r: 'fd', g: 'hgG' }, ARC = { o: 'o', p: 'ap', r: 'r', g: 'gs' }, TXT = { o: 'o', p: 'pu', r: 'r', g: 'g' };
+    const ang = k => {
+      const [Vx, P1, P2, r, lr, lab, c] = AG[k], on = HI.includes(k);
+      let a0 = angOf(Vx, P1), a1 = angOf(Vx, P2), d = (((a1 - a0) % 360) + 360) % 360;
+      if (d > 180) { [a0, a1] = [a1, a0]; d = 360 - d; }
+      const m = pol(Vx[0], Vx[1], lr, a0 + d / 2);
+      return (on ? sector(Vx[0], Vx[1], r, a0, a0 + d, FILL[c] + ' op') + ph(arcD(Vx[0], Vx[1], r, a0, a0 + d), ARC[c]) : ph(arcD(Vx[0], Vx[1], r, a0, a0 + d), 'thin'))
+        + tx(m[0], m[1] + 6, lab, on ? 'm ' + TXT[c] : 's');
+    };
+    let g = '';
+    if (i === 2) g += at(2, pg([A, C, D], 'fc op'));
+    if (i === 3) g += at(3, pg([C, D, E], 'fd op5'));
+    g += ci(O[0], O[1], R) + ln(...A, ...C, i === 0 ? 'hl' : 'ln') + ln(...B, ...D) + ln(...D, ...C, i === 1 ? 'lo thick' : 'ln') + ln(...D, ...T);
+    g += at(0, ln(...A, ...D, i === 0 ? 'hl dash' : 'thin dash'));
+    // 直角 ∠ADC
+    const u = unit(D, A), w = unit(D, C), sq = 14, Q = [D, [D[0] + sq * u[0], D[1] + sq * u[1]], [D[0] + sq * (u[0] + w[0]), D[1] + sq * (u[1] + w[1])], [D[0] + sq * w[0], D[1] + sq * w[1]]];
+    const rOn = HI.includes('rD');
+    g += at(0, (rOn ? pg(Q, 'fa') + pl(Q.slice(1), 'hl') + tx(D[0] + 24 * (u[0] + unit(D, B)[0]), D[1] + 24 * (u[1] + unit(D, B)[1]) + 6, '90°', 'm hl') : pl(Q.slice(1), 'thin')));
+    Object.keys(AG).forEach(k => { if (i < AG[k][7]) return; g += AG[k][7] > 0 ? at(AG[k][7], ang(k)) : ang(k); });
     const L = (p, t, dx, dy) => tx(p[0] + dx, p[1] + dy, t, 'm');
     g += L(A, 'A', -14, 4) + L(B, 'B', -8, 22) + L(C, 'C', 14, 18) + L(D, 'D', 8, -10) + L(E, 'E', -4, -12) + L(T, 'T', 10, 4);
     return g;
@@ -3668,33 +3766,51 @@ addQ({
 /* ---------- 2025 Q42 ---------- */
 addQ({
   key: '2025-42', lv: '4', paper: '2025', q: 42, group: 'secb', short: '組合：最少 1 位經理', topic: 'PERMUTATIONS & COMBINATIONS',
-  en: 'At least one manager: all minus none', zh: '組合：「最少一個」= 全部 −「一個都沒有」', ans: 'B', hk: 55, trap: 'D',
+  en: 'At least one manager: list the cases', zh: '組合：分「經理」和「非經理」兩類，列出要的可能性再相加', ans: 'B', hk: 55, trap: 'D',
   opts: { A: '16 016', B: '20 384', C: '22 880', D: '31 824' },
   why: {
-    A: '16 016 = C(2, 1) × C(16, 6)：只計了「剛好 1 位經理」，漏了 2 位經理的 C(2, 2) × C(16, 5) = 4 368。',
-    B: 'C(18, 7) − C(16, 7) = 31 824 − 11 440 = 20 384。',
+    A: '16 016 = ' + CNR(2, 1) + CNR(16, 6) + '：只計了「1 位經理」，漏了「2 位經理」的 ' + CNR(2, 2) + CNR(16, 5) + ' = 4 368。',
+    B: CNR(2, 1) + CNR(16, 6) + ' + ' + CNR(2, 2) + CNR(16, 5) + ' = 16 016 + 4 368 = 20 384。',
     C: '22 880 不對應正確步驟。',
-    D: '31 824 = C(18, 7)：所有組合，沒有減去「沒有經理」的情況。',
+    D: '31 824 = ' + CNR(18, 7) + '：所有組合，包括了「沒有經理」的 ' + CNR(16, 7) + ' = 11 440 組。',
   },
-  diag: '選 D 是忘了減去「沒有經理」的組合。也可以分情況驗算：1 位經理 16 016 + 2 位經理 4 368 = 20 384。',
-  rule: '「最少一個」⇒ 全部 − 一個都沒有，或分情況相加。',
-  pit: '非經理的人數 = 4 + 12 = 16。',
+  diag: '選 D 是把「沒有經理」的組合也計了。先把 18 人分成經理 2 人、非經理 16 人，再列出 7 人中經理和非經理的人數：(0, 7)、(1, 6)、(2, 5)；「最少 1 位經理」只要 (1, 6) 和 (2, 5)。',
+  rule: '分類計算：先分兩類，列出每類人數的可能性，選要的情況，每個情況用乘法，最後相加。',
+  pit: '非經理 = 主任 4 + 文員 12 = 16 人，不用再分開計。',
+  alt: '用「全部 − 沒有經理」驗算：' + CNR(18, 7) + ' − ' + CNR(16, 7) + ' = 31 824 − 11 440 = 20 384 ✓。',
   steps: [
-    S('全部', 'All groups', 'C(18, 7) = 31 824', '18 人中選 7 人。', 'Choose 7 from 18.', { cap: '' }),
-    S('沒有經理', 'No managers', '只從 16 位非經理中選：C(16, 7) = 11 440', '', '', { cap: '' }),
-    S('相減', 'Subtract', '31 824 − 11 440 = <b>20 384</b> ⇒ B', '', '', { key: true, cap: '' }),
-    S('驗算：分情況', 'Check by cases', 'C(2, 1)C(16, 6) + C(2, 2)C(16, 5)<br>= 16 016 + 4 368 = 20 384 ✓', '', '', { cap: '' }),
+    S('分兩類', 'Two kinds of people', '經理 M = <b>2</b>；非經理 XM = 4 + 12 = <b>16</b>', '主任和文員都不是經理，合成一類。', 'Officers and clerks are both non-managers.', { cap: '橙色＝經理；青色＝非經理。' }),
+    S('列出可能性', 'List the cases', '選 7 人：M + XM = 7<br>(0, 7) ✗　(1, 6) ✓　(2, 5) ✓', '「最少 1 位經理」⇒ M = 1 或 2。', '“At least one manager” means M = 1 or 2.', { cap: '紫框＝要的可能性。' }),
+    S('計算', 'Count', CNR(2, 1) + CNR(16, 6) + ' + ' + CNR(2, 2) + CNR(16, 5) + '<br>= 2 × 8008 + 1 × 4368 = <b>20 384</b> ⇒ B', '每個情況：經理的選法 × 非經理的選法。', 'Each case: ways to choose managers × ways to choose non-managers.', { key: true, cap: '' }),
   ],
   draw(i, st, at) {
     let g = '';
-    const people = [...Array(2).fill('o'), ...Array(4).fill('hl'), ...Array(12).fill('')];
-    people.forEach((c, k) => { const x = 60 + (k % 9) * 34, y = 60 + Math.floor(k / 9) * 36; g += `<circle cx="${x}" cy="${y}" r="12" class="dot ${c}"/>`; });
-    g += tx(60, 130, '經理 2（橙）、主任 4（青）、文員 12', 's', 'start');
-    const bar = (y, v, lab, c) => rect(60, y, 540 * v / 31824, 30, c, 4) + tx(54, y + 21, lab, 's', 'end') + tx(66 + 540 * v / 31824, y + 21, v.toLocaleString('en').replace(/,/g, ' '), 'm', 'start');
-    g += bar(170, 31824, '全部', 'fc');
-    if (i >= 1) g += at(1, bar(220, 11440, '沒有經理', 'fd'));
-    if (i >= 2) g += at(2, bar(270, 20384, '最少 1 位', 'fa'));
-    if (i >= 3) g += at(3, rect(60, 330, 540 * 16016 / 31824, 26, 'fb2', 4) + rect(60 + 540 * 16016 / 31824, 330, 540 * 4368 / 31824, 26, 'fd', 4) + tx(64, 349, '1 位經理 16 016', 's', 'start') + tx(66 + 540 * 20384 / 31824, 349, '+ 2 位 4 368', 's', 'start'));
+    // 18 人
+    for (let k = 0; k < 18; k++) {
+      const x = k < 2 ? 40 + k * 34 : 132 + (k - 2) * 34, c = k < 2 ? 'o' : 'hl';
+      g += `<circle cx="${x}" cy="40" r="12" class="dot ${c}"/>`;
+    }
+    g += tx(57, 78, '2M（經理）', 'm o') + ph('M118 62 L118 70 L652 70 L652 62', 'thin') + tx(150, 92, '4O', 's') + tx(400, 92, '12C', 's') + tx(385, 112, 'XM（非經理）= 4 + 12 = 16', 'm hl');
+    // 表
+    const X0 = 70, Y0 = 150, cw = 90, rh = 56;
+    g += tx(X0 + cw / 2, Y0 + 26, 'M', 'm2 o') + tx(X0 + cw * 1.5, Y0 + 26, 'XM', 'm2 hl') + ln(X0 - 10, Y0 + 40, X0 + 2 * cw + 10, Y0 + 40, 'lo');
+    const rows = [[0, 7], [1, 6], [2, 5]];
+    if (i >= 1) {
+      let s = '';
+      rows.forEach(([m, x], k) => {
+        const y = Y0 + 40 + k * rh + 38;
+        s += tx(X0 + cw / 2, y, m, 'm2') + tx(X0 + cw * 1.5, y, x, 'm2');
+        if (k === 0) s += ln(X0 - 4, y - 8, X0 + 2 * cw + 4, y - 8, 'r') + tx(X0 + 2 * cw + 20, y, '沒有經理 ✗', 's r', 'start');
+      });
+      s += rect(X0 - 12, Y0 + 40 + rh + 4, 2 * cw + 24, 2 * rh, 'pbox', 6) +tx(X0 + cw, Y0 + 40 + 3 * rh + 32, '要的可能性', 'm pu');
+      g += at(1, s);
+    }
+    if (i >= 2) {
+      const fx = 330, w = 380;
+      const line = (k, html) => rect(fx, Y0 + 40 + k * rh + 6, w, rh - 10, 'boxp', 8) + foBox(fx + 12, Y0 + 40 + k * rh + 10, w - 24, rh - 16, `<div class="q42-row">${html}</div>`);
+      g += at(2, line(1, CNR(2, 1) + CNR(16, 6) + ' = 2 × 8008 = <b>16 016</b>') + line(2, CNR(2, 2) + CNR(16, 5) + ' = 1 × 4368 = <b>4 368</b>')
+        + rect(fx, Y0 + 40 + 3 * rh + 4, w, 50, 'boxt', 8) + tx(fx + w / 2, Y0 + 40 + 3 * rh + 37, '相加 = 20 384', 'big hl'));
+    }
     return g;
   },
 });
@@ -3702,31 +3818,39 @@ addQ({
 /* ---------- 2025 Q44 ---------- */
 addQ({
   key: '2025-44', lv: '4', paper: '2025', q: 44, group: 'secb', short: '標準分：兩個情況', topic: 'STANDARD SCORES',
-  en: 'Two scores 6 marks apart', zh: '標準分：6 分 = 3 個標準差，可以高或低', ans: 'A', hk: 43, trap: null,
+  en: 'Two scores 6 marks apart', zh: '標準分：用 x = x̄ + zσ 寫出兩人的分數，分「男生較高」和「女生較高」兩個情況', ans: 'A', hk: 43, trap: null,
   opts: { A: '−5 or 1', B: '−5 or 3', C: '−3 or 1', D: '−3 or 3' },
   why: {
-    A: '相差 6 分 = 相差 6 ÷ 2 = 3 個標準差：z = −2 + 3 = 1 或 z = −2 − 3 = −5。',
-    B: '3 不對：女生比男生高 6 分 ⇒ z = −2 + 3 = 1。',
-    C: '−3 不對：女生比男生低 6 分 ⇒ z = −2 − 3 = −5。',
-    D: '±3 只是標準分的差，還要加上男生的 −2。',
+    A: '男生 x = x̄ − 4；女生 = x − 6 ⇒ z = −5，或女生 = x + 6 ⇒ z = 1。',
+    B: '3 不對：女生比男生高 6 分時，x + 6 = x̄ + 2z，減去 x = x̄ − 4 得 6 = 2z + 4，z = 1。',
+    C: '−3 不對：女生比男生低 6 分時，−6 = 2z + 4，z = −5。',
+    D: '±3 只是兩人標準分的差，還要加上男生的 −2。',
   },
-  diag: '關鍵是把「6 分」換成標準分：6 ÷ σ = 6 ÷ 2 = 3 個標準差。題目沒有說誰較高，所以女生可以比男生高或低，有兩個答案。',
-  rule: 'z = (x − μ)/σ；兩個分數相差 d 分 ⇔ 標準分相差 d/σ。',
-  pit: '「相差」沒有說方向，兩個情況都要考慮。',
+  diag: '關鍵是用 x = x̄ + zσ 把兩人的分數寫出來：男生 x = x̄ + (−2)(2) = x̄ − 4。題目沒有說誰較高，所以要分兩個情況：女生 = x − 6 或 x + 6，兩式相減消去 x̄。',
+  rule: 'x = x̄ + zσ（分數 = 平均分 + 標準分 × 標準差）；同一個測驗的 x̄、σ 相同，兩式相減可以消去 x̄。',
+  pit: '「相差 6 分」沒有說方向，兩個情況都要考慮。',
+  alt: '另一個方法：6 分 = 6 ÷ 2 = 3 個標準差，z = −2 + 3 = 1 或 −2 − 3 = −5 ✓。',
   steps: [
-    S('分數差 → 標準分差', 'Marks to standard scores', FR('6', '2') + ' = <b>3</b> 個標準差', '標準差 = 2 分。', 'One standard deviation is 2 marks.', { key: true, cap: '' }),
-    S('女生較高', 'Girl scores higher', '<i>z</i> = −2 + 3 = <b>1</b>', '', '', { cap: '' }),
-    S('女生較低', 'Girl scores lower', '<i>z</i> = −2 − 3 = <b>−5</b> ⇒ A', '', '', { cap: '' }),
+    S('公式', 'Formula', '<i>x</i> = <span class="xbar">x</span> + <i>z</i>σ<br>分數 = 平均分 + 標準分 × 標準差', '兩人考同一個測驗：平均分和標準差 σ = 2 都一樣。', 'Same test: the same mean and the same σ = 2.', { key: true, cap: '' }),
+    S('情況 1：男生較高', 'Case 1: the boy scores higher', '男 = <i>x</i>，女 = <i>x</i> − 6<br><i>x</i> = <span class="xbar">x</span> + (−2)(2) ⇒ <i>x</i> = <span class="xbar">x</span> − 4　①<br><i>x</i> − 6 = <span class="xbar">x</span> + 2<i>z</i>　②<br>② − ①：−6 = 2<i>z</i> + 4 ⇒ <b><i>z</i> = −5</b>', '', '', { cap: '' }),
+    S('情況 2：女生較高', 'Case 2: the girl scores higher', '男 = <i>x</i>，女 = <i>x</i> + 6<br><i>x</i> = <span class="xbar">x</span> − 4　①<br><i>x</i> + 6 = <span class="xbar">x</span> + 2<i>z</i>　②<br>② − ①：6 = 2<i>z</i> + 4 ⇒ <b><i>z</i> = 1</b>', '', '', { cap: '' }),
+    S('答案', 'Answer', '<i>z</i> = −5 或 1 ⇒ <b>A</b>', '題目只說相差 6 分，不知道男生定女生高，所以兩個情況都要考慮。', 'We do not know who scored higher, so both cases count.', { cap: '' }),
   ],
   draw(i, st, at) {
-    const Xz = z => 360 + 60 * z, y0 = 240;
-    let g = ln(Xz(-6), y0, Xz(3), y0, 'axis') + tx(Xz(3) + 10, y0 + 5, 'z', 'm s', 'start');
-    for (let z = -6; z <= 3; z++) g += ln(Xz(z), y0 - 5, Xz(z), y0 + 5, 'thin') + tx(Xz(z), y0 + 24, z, 's') + tx(Xz(z), y0 + 46, z === 0 ? 'μ' : `μ ${z > 0 ? '+' : '−'} ${Math.abs(2 * z)}`, 's');
-    g += tx(Xz(-6) - 10, y0 + 24, '標準分', 's', 'end') + tx(Xz(-6) - 10, y0 + 46, '分數', 's', 'end');
-    g += dt(Xz(-2), y0, 'o') + tx(Xz(-2), y0 - 16, '男生 −2', 'm o');
-    if (i >= 0) g += ph(`M${Xz(-2)} ${y0 - 60} L${Xz(-2)} ${y0 - 68} L${Xz(1)} ${y0 - 68} L${Xz(1)} ${y0 - 60}`, 'thin') + tx(Xz(-0.5), y0 - 76, '6 分 = 3 個標準差', 's');
-    if (i >= 1) g += at(1, arrow(Xz(-2), y0 - 40, Xz(1), y0 - 40, 'hl') + dt(Xz(1), y0, 'hl') + tx(Xz(1), y0 - 16, 'z = 1', 'm hl'));
-    if (i >= 2) g += at(2, arrow(Xz(-2), y0 + 70, Xz(-5), y0 + 70, 'hl') + dt(Xz(-5), y0, 'hl') + tx(Xz(-5), y0 - 16, 'z = −5', 'm hl'));
+    const card = (x, y, w, h, cls, html) => rect(x, y, w, h, cls, 12) + foBox(x + 14, y + 10, w - 28, h - 18, html);
+    let g = card(130, 0, 460, 96, 'boxg', '<div class="q44-f"><div class="big"><i>x</i> = <span class="xbar">x</span> + <i>z</i>σ</div><div class="lab">分數 = 平均分 + 標準分 × 標準差　·　<span class="g"><span class="xbar">x</span>、σ = 2 兩人相同</span></div></div>');
+    const eqs = (sign, z, n) => `<div class="q44-c"><div class="h">情況 ${n}：${sign > 0 ? '女生較高' : '男生較高'}</div><div class="who">男 = <i>x</i>　女 = <i>x</i> ${sign > 0 ? '+' : '−'} 6</div><div class="e"><i>x</i> = <span class="xbar">x</span> + (−2)(2)<br><i>x</i> = <span class="xbar">x</span> − 4　<span class="n">①</span></div><div class="e"><i>x</i> ${sign > 0 ? '+' : '−'} 6 = <span class="xbar">x</span> + 2<i>z</i>　<span class="n">②</span></div><div class="e">② − ①：${sign > 0 ? '6' : '−6'} = 2<i>z</i> + 4</div><div class="z">z = ${z}</div></div>`;
+    if (i >= 1) g += at(1, card(0, 114, 350, 290, 'boxo', eqs(-1, '−5', 1)));
+    if (i >= 2) g += at(2, card(370, 114, 350, 290, 'boxt', eqs(1, '1', 2)));
+    // 數線
+    const Xz = z => 360 + 58 * z, y0 = 470;
+    let s = ln(Xz(-6.4), y0, Xz(3.4), y0, 'axis') + tx(Xz(3.4) + 10, y0 + 5, 'z', 'm s', 'start');
+    for (let z = -6; z <= 3; z++) s += ln(Xz(z), y0 - 5, Xz(z), y0 + 5, 'thin') + tx(Xz(z), y0 + 24, z, 's');
+    s += dt(Xz(-2), y0, 'o') + tx(Xz(-2), y0 - 14, '男 −2', 's o');
+    if (i >= 1) s += at(1, arrow(Xz(-2), y0 - 34, Xz(-5), y0 - 34, 'o') + tx(Xz(-3.5), y0 - 42, '低 6 分', 's o') + dt(Xz(-5), y0, 'o') + tx(Xz(-5), y0 + 46, '−5', 'm o'));
+    if (i >= 2) s += at(2, arrow(Xz(-2), y0 - 34, Xz(1), y0 - 34, 'hl') + tx(Xz(-0.5), y0 - 42, '高 6 分', 's hl') + dt(Xz(1), y0, 'hl') + tx(Xz(1), y0 + 46, '1', 'm hl'));
+    if (i >= 3) s += at(3, rect(Xz(-2) - 130, y0 + 62, 260, 40, 'boxt', 8) + tx(Xz(-2), y0 + 89, 'z = −5 或 1 ⇒ A', 'big hl'));
+    g += s;
     return g;
   },
 });
@@ -13122,8 +13246,8 @@ const ico = k => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg>`;
 const ERASE_CUR = `url("data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><circle cx="12" cy="12" r="10" fill="#ffffffaa" stroke="#143341" stroke-width="1.5"/></svg>')}") 12 12, cell`;
 
 function inkMount(o) {
-  // o = { zone: 進入「放大」時填滿畫面的容器, img, btn: 「畫畫」按鈕, keyFn: () => 題目 key, name }
-  const I = { key: '', on: false, focus: false, cur: null, raf: 0, W: 0, H: 0, imgH: 0, input: null };
+  // o = { zone: 進入「放大」時填滿畫面的容器, img（圖片或 SVG 圖解）, btn: 「畫畫」按鈕, name, svg: 是 SVG, barBefore: 工具列放在哪個元素之前, noSave: 不顯示「存圖」, scr: 草稿位高度比例 }
+  const I = { key: '', on: false, focus: false, cur: null, raf: 0, W: 0, H: 0, CW: 0, ox: 0, oy: 0, imgH: 0, input: null };
   const img = o.img;
   const wrap = document.createElement('div'); wrap.className = 'ink-wrap';
   img.parentNode.insertBefore(wrap, img); wrap.appendChild(img);
@@ -13134,7 +13258,7 @@ function inkMount(o) {
   wrap.append(scr, cH, cP);
   const bar = document.createElement('div'); bar.className = 'ink-bar'; bar.hidden = true;
   bar.setAttribute('role', 'toolbar'); bar.setAttribute('aria-label', '畫畫工具');
-  wrap.parentNode.insertBefore(bar, wrap);
+  (o.barBefore || wrap).parentNode.insertBefore(bar, o.barBefore || wrap);
   const rec = () => inkRec(I.key);
 
   /* ---------- 工具列 ---------- */
@@ -13147,7 +13271,7 @@ function inkMount(o) {
       h += '<div class="ink-grp">' + ['幼', '中', '粗'].map((s, k) => `<button type="button" class="ink-sz" data-si="${k}" aria-pressed="${INK.si[t] === k}" aria-label="${s}" title="${s}"><i style="width:${[6, 10, 15][k]}px;height:${[6, 10, 15][k]}px;background:${T.colors[INK.ci[t]][0]}"></i></button>`).join('') + '</div>';
     }
     h += `<div class="ink-grp"><button type="button" data-act="undo" title="復原上一步（Ctrl + Z）">${ico('undo')}<span>復原</span></button><button type="button" data-act="clear" title="清除這一題的所有筆跡（可按「復原」救回）">${ico('clear')}<span>清除</span></button></div>`;
-    h += `<div class="ink-grp"><button type="button" data-act="scratch" aria-pressed="${!!(I.key && rec().scratch)}" title="在題目下面加一格空白位寫算式">${ico('scratch')}<span>草稿位</span></button><button type="button" data-act="focus" aria-pressed="${I.focus}" title="放大到全螢幕（Esc 返回）">${ico('focus')}<span>${I.focus ? '還原' : '放大'}</span></button><button type="button" data-act="save" title="把題目連筆跡存成圖片">${ico('save')}<span>存圖</span></button></div>`;
+    h += `<div class="ink-grp"><button type="button" data-act="scratch" aria-pressed="${!!(I.key && rec().scratch)}" title="在題目下面加一格空白位寫算式">${ico('scratch')}<span>草稿位</span></button><button type="button" data-act="focus" aria-pressed="${I.focus}" title="放大到全螢幕（Esc 返回）">${ico('focus')}<span>${I.focus ? '還原' : '放大'}</span></button>${o.noSave ? '' : `<button type="button" data-act="save" title="把題目連筆跡存成圖片">${ico('save')}<span>存圖</span></button>`}</div>`;
     h += `<button type="button" class="ink-done" data-act="done">${ico('done')}<span>完成</span></button>`;
     bar.innerHTML = h;
     cP.style.cursor = INK.tool === 'eraser' ? ERASE_CUR : INK.tool === 'text' ? 'text' : 'crosshair';
@@ -13179,25 +13303,33 @@ function inkMount(o) {
     commitText();
     I.focus = v; o.zone.classList.toggle('ink-focus', v);
     document.documentElement.classList.toggle('ink-lock', INK.insts.some(x => x.focus));
-    if (v) {
+    if (v && !o.svg) {
       const nw = img.naturalWidth || 1000, nh = img.naturalHeight || 600, sc = rec().scratch ? INK.SCR : 0;
       const maxW = Math.min(innerWidth - 44, 1500), fitH = (innerHeight - 150) / (nh / nw + sc);
       img.style.width = Math.round(Math.max(Math.min(maxW, fitH), Math.min(maxW, 560))) + 'px';
       o.zone.scrollTop = 0;
-    } else img.style.width = '';
+    } else if (!o.svg) img.style.width = '';
     if (I.on) renderBar();
     requestAnimationFrame(layout);
   }
   o.btn.addEventListener('click', () => setOn(!I.on));
 
   /* ---------- 尺寸及重畫 ---------- */
+  // 坐標：筆跡以「內容闊度」為單位；圖片＝圖片闊度，SVG＝viewBox 縮放後的闊度（連置中留白的位移 ox、oy）
+  function geom() {
+    if (!o.svg) { const W = img.clientWidth; return { cw: W, ch: img.clientHeight, W, ox: 0, oy: 0 }; }
+    const r = img.getBoundingClientRect(), vb = img.viewBox && img.viewBox.baseVal;
+    if (!r.width || !r.height || !vb || !vb.width || !vb.height) return { cw: 0, ch: 0 };
+    const k = Math.min(r.width / vb.width, r.height / vb.height);
+    return { cw: r.width, ch: r.height, W: vb.width * k, ox: (r.width - vb.width * k) / 2, oy: (r.height - vb.height * k) / 2 };
+  }
   function layout() {
-    const W = img.clientWidth, Hi = img.clientHeight;
+    const G = geom(), W = G.cw, Hi = G.ch;
     if (!W || !Hi) return;
-    const sc = I.key && rec().scratch ? Math.round(W * INK.SCR) : 0;
+    const sc = I.key && rec().scratch ? Math.round(W * (o.scr || INK.SCR)) : 0;
     wrap.classList.toggle('scratch', !!sc); scr.style.height = sc + 'px';
     const H = Hi + sc, dpr = Math.min(window.devicePixelRatio || 1, 2.5);
-    I.W = W; I.H = H; I.imgH = Hi;
+    I.W = G.W; I.CW = W; I.ox = G.ox; I.oy = G.oy; I.H = H; I.imgH = Hi;
     [cH, cP].forEach(c => { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); c.style.width = W + 'px'; c.style.height = H + 'px'; c.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0); });
     redraw();
   }
@@ -13223,10 +13355,12 @@ function inkMount(o) {
   function redraw() {
     I.raf = 0;
     const ctxH = cH.getContext('2d'), ctxP = cP.getContext('2d'), W = I.W;
-    ctxH.clearRect(0, 0, I.W, I.H); ctxP.clearRect(0, 0, I.W, I.H);
+    ctxH.clearRect(0, 0, I.CW, I.H); ctxP.clearRect(0, 0, I.CW, I.H);
     if (!I.key || !W) return;
+    ctxH.save(); ctxP.save(); ctxH.translate(I.ox, I.oy); ctxP.translate(I.ox, I.oy);
     rec().items.forEach(it => drawItem(it, ctxH, ctxP, W));
     if (I.cur) drawItem(I.cur, ctxH, ctxP, W);
+    ctxH.restore(); ctxP.restore();
     o.btn.classList.toggle('has-ink', rec().items.length > 0);
   }
   const later = () => { if (!I.raf) I.raf = requestAnimationFrame(redraw); };
@@ -13235,7 +13369,7 @@ function inkMount(o) {
   function undo() { const r = rec(); if (!r.undo.length) return; r.items = r.undo.pop(); changed(); }
 
   /* ---------- 畫 ---------- */
-  const ptOf = e => { const b = cP.getBoundingClientRect(); return [(e.clientX - b.left) / b.width, (e.clientY - b.top) / b.width]; };
+  const ptOf = e => { const b = cP.getBoundingClientRect(), k = b.width / (I.CW || b.width); return [((e.clientX - b.left) / k - I.ox) / I.W, ((e.clientY - b.top) / k - I.oy) / I.W]; };
   const q4 = v => Math.round(v * 10000) / 10000;
   function hitTest(x, y) {
     const r = 12 / I.W, items = rec().items, hit = [];
@@ -13296,7 +13430,7 @@ function inkMount(o) {
     const T = INK.tools.text, px = T.sizes[INK.si.text], col = T.colors[INK.ci.text][0];
     const inp = document.createElement('input'); inp.type = 'text'; inp.className = 'ink-input'; inp.placeholder = '打字，按 Enter';
     inp.setAttribute('aria-label', '在題目上加文字');
-    inp.style.cssText = `left:${x * I.W - 3}px;top:${y * I.W - px * 0.8}px;font-size:${px}px;height:${px * 1.6}px;color:${col}`;
+    inp.style.cssText = `left:${x * I.W + I.ox - 3}px;top:${y * I.W + I.oy - px * 0.8}px;font-size:${px}px;height:${px * 1.6}px;color:${col}`;
     inp.dataset.x = x; inp.dataset.y = y;
     wrap.appendChild(inp); I.input = inp;
     setTimeout(() => inp.focus(), 0);
@@ -13356,7 +13490,7 @@ function inkMount(o) {
     I.key = key; inkRec(key);
     if (I.on) renderBar();
     o.btn.classList.toggle('has-ink', rec().items.length > 0);
-    if (img.complete && img.naturalWidth) layout();
+    if (o.svg || (img.complete && img.naturalWidth)) layout();
     else { cH.getContext('2d').clearRect(0, 0, cH.width, cH.height); cP.getContext('2d').clearRect(0, 0, cP.width, cP.height); }
   }
   img.addEventListener('load', () => { if (I.focus) setFocus(true); else layout(); });
@@ -13372,12 +13506,14 @@ document.addEventListener('keydown', e => {
   if (e.target.classList && e.target.classList.contains('ink-input')) return;
   if (e.key === 'Escape') { const f = INK.insts.find(x => x.focus); if (f) { e.stopImmediatePropagation(); f.setFocus(false); } return; }
   if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 'z' || e.key === 'Z') && tag !== 'input' && tag !== 'textarea') {
-    const a = INK.insts.find(x => x.on && x.focus) || INK.insts.find(x => x.on && x.name === 'try' && !$('tryModal').hidden) || INK.insts.find(x => x.on && x.name === 'lesson');
+    const a = INK.insts.find(x => x.on && x.focus) || INK.insts.find(x => x.on && x.name === 'try' && !$('tryModal').hidden) || INK.insts.find(x => x.on && x.name === 'visual') || INK.insts.find(x => x.on && x.name === 'lesson');
     if (a) { e.preventDefault(); a.undo(); }
   }
 }, true);
 INK.lesson = inkMount({ zone: document.querySelector('#lessonView .qimg'), img: $('qimg'), btn: $('inkBtn'), name: 'lesson' });
 INK.trial = inkMount({ zone: $('tryZone'), img: $('tryImg'), btn: $('tryInkBtn'), name: 'try' });
+// 「2D 互動圖解」：在 SVG 圖解上畫畫；筆跡每題分開保存，切換步驟時保留；「放大」把整張圖解卡（連步驟按鈕）放大
+INK.visual = inkMount({ zone: $('modelCard'), img: $('svg'), btn: $('vinkBtn'), name: 'visual', svg: true, barBefore: document.querySelector('#modelCard .stage-body'), noSave: true, scr: 0.42 });
 
 /* ================= init ================= */
 QS.sort((a, b) => tRank(a.tzh) - tRank(b.tzh) || a.q - b.q || a.paper - b.paper);
