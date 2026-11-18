@@ -448,6 +448,26 @@ function mcAgg_(recs) {
   });
   return { students: students, q: q };
 }
+/* 只保留某一年試卷的題目（例如「全部年份」挑戰中屬於 DSE 2025 的題目），重新計算得分 */
+function mcOnlyYear_(recs, y) {
+  return recs.map(function (r) {
+    var all = r.items || [];
+    var items = all.filter(function (x) { return String(x.q).slice(0, 4) === String(y); });
+    if (!items.length) return null;
+    var o = {};
+    for (var k in r) o[k] = r[k];
+    o.items = items;
+    o.n = items.length;
+    o.score = items.filter(function (x) { return x.a && x.a === x.k; }).length;
+    o.part = items.length < all.length;
+    return o;
+  }).filter(function (r) { return r; });
+}
+function mcYears_(recs) {
+  var ys = {};
+  recs.forEach(function (r) { (r.items || []).forEach(function (x) { ys[String(x.q).slice(0, 4)] = 1; }); });
+  return Object.keys(ys).sort();
+}
 
 
   // 學生的分組統計：每題以最近一次作答計
@@ -479,6 +499,10 @@ function mcAgg_(recs) {
     });
     return C;
   }
+
+  const yrName = y => y === "all" ? "全部年份" : "DSE " + y;
+  const qOfYear = (q, y) => { const o = {}; Object.keys(q).forEach(id => { if (y === "all" || id.slice(0, 4) === y) o[id] = q[id]; }); return o; };
+  const tally = rr => { let n = 0, ok = 0; rr.forEach(r => r.items.forEach(x => { n++; if (x.a && x.a === x.k) ok++; })); return { n, ok }; };
 
   /* ---------- small parts ---------- */
   function lvChip(level, long) {
@@ -638,8 +662,7 @@ function mcAgg_(recs) {
           const j = await api({ action: "mine", cls: k, name });
           if (!j.found) throw new Error("notfound");
           try { localStorage.setItem("mc-results-cls", k); } catch (e2) {}
-          const s = mcAgg_(j.records).students[0];
-          armIdle(); renderStudentPage(s, classOf(j.cls.pcts, j.cls.q, j.cls.attempts), j.rank || {});
+          armIdle(); renderStudentPage({ recs: j.records, cls: j.cls, rank: j.rank || {} }, "all");
         } catch (ex) {
           busy(false);
           const m = ex && ex.message;
@@ -671,7 +694,8 @@ function mcAgg_(recs) {
 
   /* ---------- student report (also used for teacher preview) ---------- */
   // s: mcAgg_ student; C: classOf(...); R: {dense, std, tie}
-  function studentReport(s, C, R, scope) {
+  function studentReport(s, C, R, scope, yr) {
+    yr = yr || "all";
     const box = el("div"); box.style.display = "grid"; box.style.gap = "16px";
     const d = derive(s);
     const recs = s.recs.slice().sort((a, b) => String(b.doneAt).localeCompare(String(a.doneAt)));
@@ -684,8 +708,9 @@ function mcAgg_(recs) {
     hero.append(
       metric("挑戰次數", s.recs.length, " 次", "共做 " + s.n + " 題 · 不同題目 " + uniq + " 題"),
       metric("總正確率", fmt1(s.pct), "%", "答對 " + s.ok + " · 答錯 " + s.bad + " · 未答 " + s.blank),
-      metric(scope + "排名", "第 " + (R.dense || "—") + " 名", "", "共 " + C.n + " 位同學有挑戰紀錄 · 按總正確率" + (R.tie ? " · 與同學並列" : "")),
-      metric(scope + "平均正確率", fmt1(C.avg), "%", "最高 " + fmt1(C.max) + "% · 最低 " + fmt1(C.min) + "%"));
+      R.dense ? metric(scope + "排名", "第 " + R.dense + " 名", "", "共 " + C.n + " 位同學" + (yr === "all" ? "有挑戰紀錄" : "做過 " + yrName(yr) + " 題目") + " · 按總正確率" + (R.tie ? " · 與同學並列" : ""))
+        : metric(scope + "排名", "—", "", "未有" + scope + "數據"),
+      C.n ? metric(scope + "平均正確率", fmt1(C.avg), "%", "最高 " + fmt1(C.max) + "% · 最低 " + fmt1(C.min) + "%") : metric(scope + "平均正確率", "—", "", "未有" + scope + "數據"));
     box.append(hero);
 
     // levels
@@ -724,16 +749,18 @@ function mcAgg_(recs) {
 
     // attempts
     const sh = el("section", "panel sheet"); sh.id = "attempts";
-    sh.append(el("h2", null, "挑戰紀錄（" + recs.length + " 次）"), el("p", "defs", "按一行可展開該次挑戰的逐題作答。"));
+    sh.append(el("h2", null, "挑戰紀錄（" + recs.length + " 次）"), el("p", "defs", (yr === "all" ? "" : "只計 " + yrName(yr) + " 的題目；「全部年份」挑戰中屬於 " + yrName(yr) + " 的題目亦計算在內。") + "按一行可展開該次挑戰的逐題作答。"));
     const wrap = el("div", "scroll-x");
     const tb = el("table", "misstable rectable");
     tb.innerHTML = "<thead><tr><th>日期時間</th><th>挑戰</th><th>得分</th><th>正確率</th><th>用時／限時</th><th>全港平均</th></tr></thead>";
     const body = el("tbody");
     recs.forEach(r => {
       const tr = el("tr", "rrow"); tr.tabIndex = 0;
-      tr.append(el("td", "mono", hkTime(r.doneAt)), el("td", null, recMode(r)), el("td", "num", r.score + " / " + r.n));
+      const md = el("td", null, recMode(r)); if (r.part) md.append(el("span", "breakdown", "只計 " + yrName(yr) + " 題目"));
+      tr.append(el("td", "mono", hkTime(r.doneAt)), md, el("td", "num", r.score + " / " + r.n));
       const pc = el("td"); pc.append(pctCell(pct(r.score, r.n))); tr.append(pc);
-      tr.append(el("td", null, mmss(r.used) + "／" + lim(r.limit) + (r.timeUp ? "（時間到）" : "")), el("td", "num", r.hkAvg == null ? "—" : r.hkAvg + " 題"));
+      const hk = r.items.every(x => rateOf(x.q, x.r) != null) ? fmt1(r.items.reduce((a, x) => a + rateOf(x.q, x.r) / 100, 0)) + " 題" : "—";
+      tr.append(el("td", null, mmss(r.used) + "／" + lim(r.limit) + (r.timeUp ? "（時間到）" : "") + (r.part ? "（整個挑戰）" : "")), el("td", "num", hk));
       const det = el("tr", "rdet"); det.hidden = true;
       const td = el("td"); td.colSpan = 6; td.append(stripLegend(), recStrip(r)); td.lastChild.style.marginTop = "8px"; det.append(td);
       const toggle = () => { det.hidden = !det.hidden; tr.classList.toggle("open", !det.hidden); };
@@ -773,25 +800,37 @@ function mcAgg_(recs) {
     return box;
   }
 
-  function renderStudentPage(s, C, R) {
+  // D = { recs: 學生自己的全部紀錄, cls: Apps Script 的全班統計（cls.years＝各年份）, rank }
+  function renderStudentPage(D, yr) {
+    yr = yr || "all";
+    const recs = yr === "all" ? D.recs : mcOnlyYear_(D.recs, yr);
+    const s = mcAgg_(recs).students[0];
+    let C, R;
+    if (yr === "all") { C = classOf(D.cls.pcts, D.cls.q, D.cls.attempts); R = D.rank; }
+    else { const Y = (D.cls.years || {})[yr]; C = classOf(Y ? Y.pcts : [], qOfYear(D.cls.q, yr), Y ? Y.attempts : 0); R = Y ? Y.rank : {}; }
     app.textContent = "";
     const w = el("div", "wrap narrow");
     const last = s.recs.length ? s.recs[s.recs.length - 1].doneAt : "";
-    w.append(topbar(s.cls + " Maths DSE MC 成績", s.cls + pad(s.no) + " " + s.name, "學生", "卷二 MC 實戰 · 共 " + s.recs.length + " 次挑戰 · 最近一次 " + hkTime(last)));
-    w.append(studentReport(s, C, R));
-    w.append(el("footer", "foot", "成績只供個人參考。總正確率＝所有挑戰答對題數 ÷ 作答題數；Set A／B／C 按題目的全港答對率分組，每題以最近一次作答計。閒置 15 分鐘會自動登出。"));
+    w.append(topbar(s.cls + " Maths DSE MC 成績", s.cls + pad(s.no) + " " + s.name, "學生", "卷二 MC 實戰 · " + yrName(yr) + " · 共 " + s.recs.length + " 次挑戰 · 最近一次 " + hkTime(last)));
+    w.append(switchRow("試卷", "yearSwitch", ["all"].concat(mcYears_(D.recs)).map(y => {
+      const t = tally(y === "all" ? D.recs : mcOnlyYear_(D.recs, y));
+      return { id: y, title: yrName(y), note: t.n + " 題 · " + Math.round(pct(t.ok, t.n)) + "%" };
+    }), yr, y => renderStudentPage(D, y)));
+    w.append(studentReport(s, C, R, "全班", yr));
+    w.append(el("footer", "foot", "成績只供個人參考。揀某一年試卷時只計該年的題目。總正確率＝答對題數 ÷ 作答題數；Set A／B／C 按題目的全港答對率分組，每題以最近一次作答計。閒置 15 分鐘會自動登出。"));
     app.append(w);
     window.scrollTo(0, 0);
   }
 
   /* ---------- teacher ---------- */
-  function renderTeacherPage(T, kId, per) {
-    kId = kId || "all"; per = per || "all";
+  function renderTeacherPage(T, kId, per, yr) {
+    kId = kId || "all"; per = per || "all"; yr = yr || "all";
     app.textContent = "";
     const now = Date.now();
     const inPer = (r, p) => p === "all" || (okDate(r.doneAt) && now - new Date(r.doneAt).getTime() <= +p * 864e5);
     const inCls = (r, k) => k === "all" || r.cls === k;
-    const recs = T.recs.filter(r => inCls(r, kId) && inPer(r, per));
+    const base = (k, p, y) => { const rr = T.recs.filter(r => inCls(r, k) && inPer(r, p)); return y === "all" ? rr : mcOnlyYear_(rr, y); };
+    const recs = base(kId, per, yr);
     const agg = mcAgg_(recs);
     const students = agg.students.map(s => Object.assign(s, { d: derive(s) }));
     const n = students.length;
@@ -802,22 +841,23 @@ function mcAgg_(recs) {
     const reload = el("button", "btn", "重新讀取"); reload.type = "button"; reload.id = "btnReload";
     reload.addEventListener("click", async () => {
       reload.disabled = true; reload.textContent = "讀取中…";
-      try { const j = await api({ action: "list", key: T.key }); Object.assign(T, { recs: j.records || [], at: new Date() }); renderTeacherPage(T, kId, per); }
+      try { const j = await api({ action: "list", key: T.key }); Object.assign(T, { recs: j.records || [], at: new Date() }); renderTeacherPage(T, kId, per, yr); }
       catch (e) { reload.disabled = false; reload.textContent = "讀取失敗，按此再試"; reload.title = e.message; }
     });
     const extra = [reload];
     if (T.sheetUrl) { const gs = el("a", "btn", "打開 Google Sheet"); gs.href = T.sheetUrl; gs.target = "_blank"; gs.rel = "noopener"; extra.push(gs); }
-    w.append(topbar(K + " Maths DSE MC 成績", "數學科老師", "教師", "資料來源：Google Sheet「" + (T.sheetName || "挑戰紀錄") + "」· 共 " + T.recs.length + " 次挑戰 · 讀取時間 " + hkTime(T.at), extra));
-    const cnt = (k, p) => { const rr = T.recs.filter(r => inCls(r, k) && inPer(r, p)); return { a: rr.length, s: new Set(rr.map(r => r.cls + "|" + normName(r.name))).size }; };
-    w.append(switchRow("班別", "classSwitch", [{ id: "all", title: "全部班別" }].concat(CLASSES.map(k => ({ id: k, title: k }))).map(it => { const c = cnt(it.id, per); return Object.assign(it, { note: c.s + " 位學生 · " + c.a + " 次", disabled: !c.a && it.id !== kId }); }), kId, id => renderTeacherPage(T, id, per)));
-    w.append(switchRow("期間", "perSwitch", [["all", "全部時間"], ["30", "最近 30 日"], ["7", "最近 7 日"]].map(([id, title]) => { const c = cnt(kId, id); return { id, title, note: c.a + " 次挑戰", disabled: !c.a && id !== per }; }), per, id => renderTeacherPage(T, kId, id)));
+    w.append(topbar(K + " Maths DSE MC 成績", "數學科老師", "教師", yrName(yr) + " · 資料來源：Google Sheet「" + (T.sheetName || "挑戰紀錄") + "」· 共 " + T.recs.length + " 次挑戰 · 讀取時間 " + hkTime(T.at), extra));
+    const cnt = (k, p, y) => { const rr = base(k, p, y); return { a: rr.length, s: new Set(rr.map(r => r.cls + "|" + normName(r.name))).size, q: tally(rr).n }; };
+    w.append(switchRow("班別", "classSwitch", [{ id: "all", title: "全部班別" }].concat(CLASSES.map(k => ({ id: k, title: k }))).map(it => { const c = cnt(it.id, per, yr); return Object.assign(it, { note: c.s + " 位學生 · " + c.a + " 次", disabled: !c.a && it.id !== kId }); }), kId, id => renderTeacherPage(T, id, per, yr)));
+    w.append(switchRow("期間", "perSwitch", [["all", "全部時間"], ["30", "最近 30 日"], ["7", "最近 7 日"]].map(([id, title]) => { const c = cnt(kId, id, yr); return { id, title, note: c.a + " 次挑戰", disabled: !c.a && id !== per }; }), per, id => renderTeacherPage(T, kId, id, yr)));
+    w.append(switchRow("試卷", "yearSwitch", ["all"].concat(mcYears_(base(kId, per, "all"))).map(y => { const c = cnt(kId, per, y); return { id: y, title: yrName(y), note: c.s + " 位學生 · " + c.q + " 題", disabled: !c.a && y !== yr }; }), yr, y => renderTeacherPage(T, kId, per, y)));
 
     const sets = el("div", "sets");
     SETS.forEach(S => { const dd = el("div", "setdef " + S.k); dd.append(el("b", null, S.name), el("span", null, S.rule + "（題目按 DSE 全港答對率分組；每位學生每題以最近一次作答計）")); sets.append(dd); });
     w.append(sets);
 
     if (!recs.length) {
-      const p = el("section", "panel notice"); p.append(el("h2", null, "未有挑戰紀錄"), el("p", null, "所選班別及期間未有學生交卷。學生在「MC 實戰」交卷後，成績會寫入 Google Sheet，按「重新讀取」即可更新。"));
+      const p = el("section", "panel notice"); p.append(el("h2", null, "未有挑戰紀錄"), el("p", null, "所選班別、期間及試卷未有學生作答。學生在「MC 實戰」交卷後，成績會寫入 Google Sheet，按「重新讀取」即可更新。"));
       w.append(p); app.append(w); return;
     }
 
@@ -893,7 +933,7 @@ function mcAgg_(recs) {
     w.append(sec);
     const qa = el("section", "qa"); qa.id = "qa";
     w.append(qa);
-    w.append(el("footer", "foot", "總正確率＝所有挑戰答對題數 ÷ 作答題數；排名按總正確率。Set A／B／C 按題目的 DSE 全港答對率分組，每位學生每題以最近一次作答計。學生以「班別＋中文全名」識別，同一學生如填寫了不同寫法的名字，會當作不同學生。"));
+    w.append(el("footer", "foot", "揀某一年試卷時只計該年的題目（「全部年份」挑戰中屬於該年的題目亦計算在內），全班平均、排名及各題正確率都按該年重新計算。總正確率＝所有挑戰答對題數 ÷ 作答題數；排名按總正確率。Set A／B／C 按題目的 DSE 全港答對率分組，每位學生每題以最近一次作答計。學生以「班別＋中文全名」識別，同一學生如填寫了不同寫法的名字，會當作不同學生。"));
     app.append(w);
 
     const $ = id => document.getElementById(id);
@@ -1018,11 +1058,11 @@ function mcAgg_(recs) {
       const s = students.find(x => x.key === key);
       const ov = el("div", "overlay"); ov.id = "previewOverlay"; ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true");
       const sw = el("div", "sheetwrap");
-      const bar = el("div", "ovbar"); bar.append(el("span", null, "學生畫面預覽：" + idOf(s) + " " + s.name + " 登入後看到的內容" + (kId === "all" ? "（排名及平均以全級計；學生登入後以全班計）" : "")));
+      const bar = el("div", "ovbar"); bar.append(el("span", null, "學生畫面預覽：" + idOf(s) + " " + s.name + " 登入後看到的內容（" + yrName(yr) + "）" + (kId === "all" ? "（排名及平均以全級計；學生登入後以全班計）" : "")));
       const close = el("button", "btn primary", "關閉預覽"); close.type = "button"; close.id = "btnClosePreview";
       bar.append(close);
       const inner = el("div", "wrap narrow");
-      inner.append(studentReport(s, CLS, { dense: s.rank, std: s.rankStd, tie: s.tie }, scope));
+      inner.append(studentReport(s, CLS, { dense: s.rank, std: s.rankStd, tie: s.tie }, scope, yr));
       sw.append(bar, inner); ov.append(sw);
       const shut = () => { ov.remove(); document.removeEventListener("keydown", onKey); };
       const onKey = e => { if (e.key === "Escape") shut(); };
