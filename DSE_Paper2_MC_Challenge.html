@@ -402,6 +402,84 @@ dialog.wide{max-width:min(1140px,calc(100vw - 16px))}
   .qrate .qr-bar{display:none}
 }
 @media print{.inkbar{display:none}}
+/* ===== v7：手機／iPad 書寫：鉛筆、更多選項、紙本模式 ===== */
+.ink-sw button b{display:block;font:700 9px/26px var(--sans);color:#fff;letter-spacing:0;text-align:center}
+.ink-paper{margin-left:2px}
+.ink-b.paper-b{color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink-line)}
+.ink-b.paper-b:hover{background:var(--ink-tint);color:var(--ink)}
+.ink-b.paper-b[aria-pressed="true"]{background:var(--graphite);color:var(--paper);box-shadow:none}
+.ink-b[data-act="menu"][aria-expanded="true"]{background:var(--soft);color:var(--text)}
+.ink-menu{position:absolute;right:6px;top:calc(100% + 6px);z-index:6;width:min(300px,calc(100vw - 24px));display:grid;gap:2px;padding:8px;background:var(--paper);color:var(--text);border:1px solid var(--rule);border-radius:12px;box-shadow:0 12px 32px -12px rgba(0,0,0,.35)}
+.im-b{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;border-radius:8px;padding:9px 10px;font-size:15px;text-align:left;min-height:42px}
+.im-b svg{width:19px;height:19px;flex:0 0 auto;color:var(--muted)}
+.im-b:hover{background:var(--soft)}
+.im-b:disabled{opacity:.4;cursor:not-allowed;background:none}
+.im-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;flex-wrap:wrap}
+.im-lbl{font-size:13px;color:var(--muted)}
+.im-seg{display:inline-flex;border:1.5px solid var(--rule);border-radius:999px;padding:2px}
+.im-seg button{background:none;border:0;border-radius:999px;padding:5px 10px;font-size:14px;color:var(--muted);min-height:34px}
+.im-seg button[aria-pressed="true"]{background:var(--graphite);color:var(--paper)}
+.ph-only{display:none}
+.ink-toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translate(-50%,8px);z-index:60;max-width:calc(100vw - 32px);width:max-content;padding:10px 16px;border-radius:14px;background:var(--graphite);color:var(--paper);font-size:14px;line-height:1.5;box-shadow:0 10px 30px -10px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+.ink-toast.show{opacity:1;transform:translate(-50%,0)}
+/* 草稿紙：白紙／橫線／方格／點陣 */
+body[data-pbg="blank"] .scratch{background-image:none}
+body[data-pbg="line"] .scratch{background-image:repeating-linear-gradient(to bottom,transparent 0 31px,#cfd9e6 31px 32px);background-size:auto;background-position:0 0}
+body[data-pbg="grid"] .scratch{background-image:linear-gradient(#dfe6ef 1px,transparent 1px),linear-gradient(90deg,#dfe6ef 1px,transparent 1px);background-size:24px 24px;background-position:-1px -1px}
+
+/* 紙本模式：題目印喺試卷上，下面大片空白；答案泡泡固定喺底部 */
+body.paper{--pp:clamp(14px,3.6vw,44px)}
+body.paper header.top,body.paper .timing{display:none}
+body.paper #quiz .wrap{max-width:1500px}
+body.paper .quiz{margin:12px auto 28px;gap:16px}
+body.paper .qcard{
+  --paper:#FFFEF9; --text:#1E2126; --muted:#5B626C; --rule:#E2DED3; --soft:#F3F1EA; --graphite:#24272C;
+  --ink:#C4245A; --ink-tint:#FBE4EC; --ink-line:#E7A3BA; --on-ink:#fff; --flag:#B26B00; --ok:#0D7A58; --bad:#D2301F;
+  color-scheme:light; color:var(--text); border:0; border-radius:3px; padding:20px var(--pp) 0;
+  background-color:var(--paper);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .38 0 0 0 0 .3 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  box-shadow:0 1px 1px rgba(30,25,15,.06),0 3px 8px rgba(30,25,15,.06),0 22px 44px -22px rgba(30,25,15,.38);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body.paper .qcard{--paper:#ECE9E0; --soft:#E2DED4; --rule:#D3CFC4}}
+:root[data-theme="dark"] body.paper .qcard{--paper:#ECE9E0; --soft:#E2DED4; --rule:#D3CFC4}
+body.paper .qcard.turn{animation:pturn .24s ease-out}
+@keyframes pturn{from{opacity:.35;transform:translateX(14px)}to{opacity:1;transform:none}}
+body.paper .qno{font-family:"Times New Roman",Times,serif;font-weight:700;font-size:26px}
+body.paper .inkbar{margin:0 calc(-1*var(--pp)) 12px;padding:6px var(--pp);background-color:var(--paper);background-image:inherit;border-bottom:1px solid var(--rule)}
+body.paper .inkbar .ink-tools .ink-b:not([aria-pressed="true"]) span{display:none}
+body.paper .inkbar .ink-tools .ink-b:not([aria-pressed="true"]){padding:5px 9px}
+body.paper .qimg{background-color:var(--paper);background-image:inherit;padding:0;border-radius:0}
+body.paper .qimg img{mix-blend-mode:multiply;max-width:100%}
+body.paper .qimg.pz img{max-width:none;height:auto}
+body.paper .qimg .scratch{margin-top:18px;border-top:1px dashed #DDD8CB}
+body.paper .qimg .scratch span{display:none}
+body.paper .pinch{display:none}
+body.paper .qdock{position:sticky;bottom:0;z-index:4;display:flex;align-items:center;gap:10px;margin:0 calc(-1*var(--pp));padding:10px var(--pp) calc(10px + env(safe-area-inset-bottom,0px));background-color:var(--paper);background-image:inherit;border-top:1px solid var(--rule);box-shadow:0 -8px 18px -12px rgba(30,25,15,.35)}
+body.paper .qdock .navrow{display:contents}
+body.paper .qdock #prevBtn{order:0}
+body.paper .qdock .answer-row{order:1;flex:1;justify-content:center;margin:0;padding:0;border:0;gap:10px}
+body.paper .qdock #nextBtn{order:2}
+body.paper .mobile-submit{margin-top:0!important}
+@media (min-width:821px){
+  body.paper .quiz{grid-template-columns:minmax(0,1fr) 236px}
+  body.paper .side{top:calc(var(--qbar-h,74px) + 12px)}
+}
+@media (max-width:560px){
+  .ph-only{display:flex}
+  .ink-b.wide-only{display:none}
+  .ink-b.paper-b span{display:inline}
+  .ink-b.paper-b{padding:6px 10px}
+  body.paper #quiz .wrap{padding-left:6px;padding-right:6px}
+  body.paper .chips{padding-left:6px;padding-right:6px}
+  body.paper .qcard{padding-top:14px}
+  body.paper .qno{font-size:22px}
+  body.paper .qdock{gap:6px}
+  body.paper .qdock .answer-row{gap:6px}
+  body.paper .qdock .answer-row .lbl{display:none}
+  body.paper .qdock .ab{width:46px;height:36px;font-size:19px}
+  body.paper .qdock .btn.small{padding:8px 10px;font-size:14px;min-width:0}
+}
+@media print{body.paper .qdock{position:static;box-shadow:none}}
 </style>
 </head>
 <body>
@@ -422,7 +500,7 @@ dialog.wide{max-width:min(1140px,calc(100vw - 16px))}
 <section id="home" class="wrap">
   <div class="sheet hero">
     <h1>揀級別、年份同題數，開始挑戰。</h1>
-    <p class="lead">DSE 2020–2026 題目按全港考生答對率分級（Level 5* 及 Level 5** 另加 DSE 2020、2022、2023、2026 答案表標示的 Advance Level 題目）。可以揀某一年或全部試卷，做 10、15 或 20 題；答題時間預設每題 1.5 分鐘，亦可以自訂總時間。作答時會顯示每題的答對率，亦可以直接在題目上用畫筆計數、用螢光筆劃重點。題目按題型排列，相類近的題目放在一起。交卷後即時計分，逐題對答案同睇講解，成績會記錄俾老師。</p>
+    <p class="lead">DSE 2020–2026 題目按全港考生答對率分級（Level 5* 及 Level 5** 另加 DSE 2020、2022、2023、2026 答案表標示的 Advance Level 題目）。可以揀某一年或全部試卷，做 10、15 或 20 題；答題時間預設每題 1.5 分鐘，亦可以自訂總時間。作答時會顯示每題的答對率，亦可以直接在題目上用畫筆或鉛筆計數、用螢光筆劃重點；用手機或 iPad 可以開「紙本模式」，好似喺試卷上作答。題目按題型排列，相類近的題目放在一起。交卷後即時計分，逐題對答案同睇講解，成績會記錄俾老師。</p>
 
     <div class="omr-label">學生資料</div>
     <div id="stuBox"></div>
@@ -510,7 +588,8 @@ dialog.wide{max-width:min(1140px,calc(100vw - 16px))}
         </div>
         <div class="inkbar" id="inkBarQuiz" data-pad="quiz" role="toolbar" aria-label="畫筆工具"></div>
         <div class="qimg" id="qBody"></div>
-        <p class="pinch">題目已放大，可左右拖動；點一下圖片切換顯示全圖（用畫筆時請先揀「瀏覽」）。</p>
+        <p class="pinch">題目已放大，可左右拖動；點一下圖片切換顯示全圖（用畫筆時用兩隻手指拖動）。</p>
+        <div class="qdock">
         <div class="answer-row" role="group" aria-label="揀答案">
           <span class="lbl">你的答案</span>
           <button class="ab" type="button" data-opt="A" aria-pressed="false">A</button>
@@ -521,6 +600,7 @@ dialog.wide{max-width:min(1140px,calc(100vw - 16px))}
         <div class="navrow">
           <button class="btn ghost small" id="prevBtn" type="button">上一題</button>
           <button class="btn small" id="nextBtn" type="button">下一題</button>
+        </div>
         </div>
       </div>
       <aside class="sheet side" aria-label="答題紙">
@@ -992,6 +1072,7 @@ function startQuiz(c=cfg){
   Q.end = Q.start + Q.limit*1000;
   $('#qLv').innerHTML = key==='2026' ? '2026' : levelOf(key).html;
   show('quiz');
+  if (PAPER.want) setPaper(true, {keep:true, scroll:false}); else paperHint();
   renderSheet(); goto(0);
   clearInterval(Q.timerId); tick(); Q.timerId = setInterval(tick, 500);
 }
@@ -1014,6 +1095,7 @@ function goto(i){
   const [rc, rh] = rateBadge(byId[id]);
   $('#qRate').className = 'qrate ' + rc; $('#qRate').innerHTML = rh;
   PADS.quiz.attach(Q.ink[Q.cur]); refreshInk();
+  if (PAPER.on){ paperTop(); const qc = document.querySelector('#quiz .qcard'); qc.classList.remove('turn'); void qc.offsetWidth; qc.classList.add('turn'); }
   document.querySelectorAll('.ab').forEach(b=>b.setAttribute('aria-pressed', Q.ans[Q.cur]===b.dataset.opt));
   $('#flagBtn').setAttribute('aria-pressed', Q.flag[Q.cur]);
   $('#prevBtn').disabled = Q.cur===0;
@@ -1062,6 +1144,8 @@ window.addEventListener('beforeunload', e=>{ if(Q && !Q.done && !$('#quiz').clas
 function finish(timeUp){
   if (Q.done) return;
   Q.done = true; clearInterval(Q.timerId);
+  if (PAPER.on) setPaper(false, {keep:true, scroll:false});
+  PADS.quiz.release();
   if (Q.seen) { Q.tq[Q.cur] += Date.now() - Q.seen; Q.seen = 0; }
   const tsec = Q.tq.map(ms=>Math.round(ms/1000));
   const used = Math.min(Q.limit, Math.round((Date.now()-Q.start)/1000));
@@ -1359,37 +1443,134 @@ function rateBadge(x){
    每題一個畫布疊在題目上，下面附草稿區。筆跡以「題目原尺寸」座標儲存，
    視窗大小改變、手機放大／全圖切換時會自動按比例重畫；交卷後在逐題講解顯示。 */
 const INK = {
-  sw:{pen:['#1d1f23','#d2301f','#1f5fd1','#0d7a58'], hl:['#ffe14d','#86efac','#f9a8d4','#93c5fd']},
-  swName:{pen:['黑','紅','藍','綠'], hl:['黃','綠','粉紅','藍']},
-  size:{pen:[1.6,2.8,4.6], hl:[12,20,30], er:[10,22,40]},
+  sw:{pen:['#1d1f23','#d2301f','#1f5fd1','#0d7a58'], pc:['#4b4f56','#232528','#c0392b','#2b62c4'], hl:['#ffe14d','#86efac','#f9a8d4','#93c5fd']},
+  swName:{pen:['黑','紅','藍','綠'], pc:['HB','2B','紅','藍'], hl:['黃','綠','粉紅','藍']},
+  size:{pen:[1.6,2.8,4.6], pc:[1.5,2.6,4.2], hl:[12,20,30], er:[10,22,40]},
   sizeName:['幼','中','粗'],
-  pad:220, padMax:1320,
+  pad:220, padMax:3600,
 };
-const ink = {tool:'none', pen:0, hl:0, sz:{pen:1, hl:1, er:1}, penSeen:false};
+const ink = {tool:'none', pen:0, pc:0, hl:0, sz:{pen:1, pc:1, hl:1, er:1}, penSeen:false, menu:false};
 (function(){
   const s = store.get('mc-ink', null);
   if (!s || typeof s!=='object') return;
-  if (INK.sw.pen[s.pen]) ink.pen = s.pen;
-  if (INK.sw.hl[s.hl]) ink.hl = s.hl;
-  if (s.sz) for (const k of ['pen','hl','er']) if (INK.size[k][s.sz[k]]!=null) ink.sz[k] = s.sz[k];
+  for (const k of ['pen','pc','hl']) if (INK.sw[k][s[k]]) ink[k] = s[k];
+  if (s.sz) for (const k of ['pen','pc','hl','er']) if (INK.size[k][s.sz[k]]!=null) ink.sz[k] = s.sz[k];
 })();
-const saveInkPref = ()=>store.set('mc-ink', {pen:ink.pen, hl:ink.hl, sz:ink.sz});
-const inkData = ()=>({s:[], h:[], pad:INK.pad});   // s＝筆劃；h＝還原紀錄；pad＝草稿區高度
+const saveInkPref = ()=>store.set('mc-ink', {pen:ink.pen, pc:ink.pc, hl:ink.hl, sz:ink.sz});
+const inkData = ()=>({s:[], h:[], pad:INK.pad});   // s＝筆劃；h＝還原紀錄；pad＝草稿區高度（題目原尺寸單位）
 const hexA = (h,a)=>`rgba(${parseInt(h.slice(1,3),16)},${parseInt(h.slice(3,5),16)},${parseInt(h.slice(5,7),16)},${a})`;
 const r1 = v => Math.round(v*10)/10;
 const PADS = {};
 let reviewPads = [];
+
+/* ===== 紙本模式：題目印喺「試卷」上，下面有大片空白作答；記住學生上次的選擇 ===== */
+var PAPER = {on:false, want:false, bg:null, zoom:false};
+(function(){
+  const s = store.get('mc-paper', null);
+  if (s && typeof s==='object'){ PAPER.want = !!s.want; if (['blank','line','grid','dot'].includes(s.bg)) PAPER.bg = s.bg; }
+})();
+const savePaper = ()=>store.set('mc-paper', {want:PAPER.want, bg:PAPER.bg});
+const PBG = [['blank','白紙'],['line','橫線'],['grid','方格'],['dot','點陣']];
+const paperBg = ()=>PAPER.bg || (PAPER.on ? 'blank' : 'dot');
+const FS = {
+  ok: !!(document.fullscreenEnabled || document.webkitFullscreenEnabled) && !/; wv\)/.test(navigator.userAgent),
+  on: ()=>!!(document.fullscreenElement || document.webkitFullscreenElement),
+  enter(){ const el = document.documentElement, f = el.requestFullscreen || el.webkitRequestFullscreen; if (f) try { const r = f.call(el); if (r && r.catch) r.catch(()=>{}); } catch(e){} },
+  exit(){ const f = document.exitFullscreen || document.webkitExitFullscreen; if (f && FS.on()) try { const r = f.call(document); if (r && r.catch) r.catch(()=>{}); } catch(e){} },
+};
+function inkToast(msg){
+  let t = document.getElementById('inkToast');
+  if (!t){ t = document.createElement('div'); t.id = 'inkToast'; t.className = 'ink-toast'; t.setAttribute('role', 'status'); t.setAttribute('aria-live', 'polite'); document.body.appendChild(t); }
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 4500);
+}
+
+/* ===== 筆跡外形：筆壓（Apple Pencil 等觸控筆）或書寫速度令粗幼自然變化 =====
+   每點一個圓，相鄰兩點之間一個四邊形，同一方向合併填色（nonzero），半透明亦唔會重疊變深。 */
+function densify(p, q, w){
+  const n = p.length/2, X = [], Y = [], R = [];
+  const ci = i => Math.max(0, Math.min(n-1, i));
+  const px = i => p[2*ci(i)], py = i => p[2*ci(i)+1];
+  const rr = i => w * (q[Math.max(0, Math.min(q.length-1, i))] || 1) / 2;
+  for (let i=0;i<n;i++){
+    X.push(px(i)); Y.push(py(i)); R.push(rr(i));
+    if (i===n-1) break;
+    const L = Math.hypot(px(i+1)-px(i), py(i+1)-py(i)), m = Math.min(10, Math.floor(L/2.2));
+    for (let j=1;j<=m;j++){
+      const t = j/(m+1), t2 = t*t, t3 = t2*t;
+      const cr = (a,b,c,d)=>0.5*((2*b) + (c-a)*t + (2*a-5*b+4*c-d)*t2 + (3*b-a-3*c+d)*t3);
+      X.push(cr(px(i-1),px(i),px(i+1),px(i+2))); Y.push(cr(py(i-1),py(i),py(i+1),py(i+2))); R.push(rr(i)*(1-t) + rr(i+1)*t);
+    }
+  }
+  return [X, Y, R];
+}
+function strokeOutline(p, q, w){
+  const [X, Y, R] = densify(p, q, w), path = new Path2D(), n = X.length;
+  for (let i=0;i<n;i++){ path.moveTo(X[i]+R[i], Y[i]); path.arc(X[i], Y[i], R[i], 0, Math.PI*2); path.closePath(); }
+  for (let i=0;i<n-1;i++){
+    const dx = X[i+1]-X[i], dy = Y[i+1]-Y[i], L = Math.hypot(dx, dy);
+    if (L < 1e-3) continue;
+    const nx = -dy/L, ny = dx/L, a = R[i], b = R[i+1];
+    const v = [[X[i]+nx*a, Y[i]+ny*a], [X[i+1]+nx*b, Y[i+1]+ny*b], [X[i+1]-nx*b, Y[i+1]-ny*b], [X[i]-nx*a, Y[i]-ny*a]];
+    let area = 0; for (let k=0;k<4;k++){ const [x0,y0] = v[k], [x1,y1] = v[(k+1)%4]; area += x0*y1 - x1*y0; }
+    if (area < 0) v.reverse();
+    path.moveTo(v[0][0], v[0][1]); path.lineTo(v[1][0], v[1][1]); path.lineTo(v[2][0], v[2][1]); path.lineTo(v[3][0], v[3][1]); path.closePath();
+  }
+  return path;
+}
+// 鉛筆：用細顆粒紋理填色，好似石墨喺紙上
+const PENCIL = {};
+function pencilFill(c, col, m){
+  let src = PENCIL[col];
+  if (src===undefined){
+    src = null;
+    try {
+      const N = 48, t = document.createElement('canvas'); t.width = t.height = N;
+      const g = t.getContext('2d'), im = g.createImageData(N, N);
+      const r = parseInt(col.slice(1,3),16), gg = parseInt(col.slice(3,5),16), b = parseInt(col.slice(5,7),16);
+      let seed = 20261118;
+      const rnd = ()=>(seed = (seed*16807) % 2147483647) / 2147483647;
+      for (let i=0;i<im.data.length;i+=4){ im.data[i] = r; im.data[i+1] = gg; im.data[i+2] = b; im.data[i+3] = Math.round(255*(0.38 + 0.62*Math.pow(rnd(), 0.55))); }
+      g.putImageData(im, 0, 0); src = t;
+    } catch(e){}
+    PENCIL[col] = src;
+  }
+  if (!src) return col;
+  const pat = c.createPattern(src, 'repeat');
+  if (!pat) return col;
+  try { if (pat.setTransform && window.DOMMatrix) pat.setTransform(new DOMMatrix([1/m, 0, 0, 1/m, 0, 0])); } catch(e){}
+  return pat;
+}
+const fP = p => Math.max(0.4, Math.min(1.55, 0.45 + 1.1*(p || 0.5)));   // 筆壓 → 粗幼倍數（0.5 = 正常）
+// 揾出可以捲動的上層（對話框入面就捲對話框，否則捲成個網頁）
+function scrollerOf(el){
+  for (let n = el.parentElement; n && n!==document.body && n!==document.documentElement; n = n.parentElement){
+    const o = getComputedStyle(n).overflowY;
+    if ((o==='auto' || o==='scroll') && n.scrollHeight > n.clientHeight + 1) return n;
+  }
+  return window;
+}
 
 function makePad(host, editable){
   const cv = document.createElement('canvas'), sc = document.createElement('div');
   cv.className = 'ink-cv'; cv.setAttribute('aria-hidden', 'true');
   sc.className = 'scratch off'; sc.setAttribute('aria-hidden', 'true'); sc.innerHTML = '<span>草稿區</span>';
   const ctx = cv.getContext('2d');
-  const P = {host, cv, d:null, s:1, k:1, live:null, pid:null, ptype:'', raf:0, draft:0};
+  // 可寫的畫布：已完成的筆劃畫喺後備畫布，寫字時只需重畫正在寫的一筆，長篇計算都順暢
+  const buf = editable ? document.createElement('canvas') : null, bctx = buf ? buf.getContext('2d') : null;
+  const P = {host, cv, d:null, s:1, k:1, qh:0, live:null, pid:null, ptype:'', raf:0, draft:0, pan:null, f:1, lt:0, vis:true, paper: host.id==='qBody'};
+  const touches = new Map();
   const ro = window.ResizeObserver ? new ResizeObserver(()=>queue()) : null;
   if (!ro) window.addEventListener('resize', ()=>queue());
+  // 交卷後的逐題講解：畫布只在接近畫面時才佔記憶體（iPad 記憶體有限）
+  const io = (!editable && window.IntersectionObserver) ? new IntersectionObserver(es=>{
+    for (const en of es){ P.vis = en.isIntersecting; if (P.vis) queue(); else release(); }
+  }, {rootMargin:'900px 0px'}) : null;
+  if (io) P.vis = false;
   function queue(){ if (!P.raf) P.raf = requestAnimationFrame(()=>{ P.raf = 0; layout(); }); }
   function queueDraw(){ if (!P.draft) P.draft = requestAnimationFrame(()=>{ P.draft = 0; draw(); }); }
+  const isPaper = ()=>P.paper && document.body.classList.contains('paper');
+  const fillU = ()=>isPaper() ? Math.round(window.innerHeight*0.85)/P.s : 0;   // 紙本模式：作答空間最少有大半個畫面
   // 題目圖片的顯示比例（圖片按 width 屬性為原尺寸）；文字題目為 1
   function scale(){
     const img = host.querySelector('img');
@@ -1397,107 +1578,202 @@ function makePad(host, editable){
     const w = +img.getAttribute('width'), rw = img.getBoundingClientRect().width;
     return w && rw ? rw/w : 1;
   }
-  function maxY(d){ let m = 0; for (const st of d.s){ if (st.t==='er') continue; for (let i=1;i<st.p.length;i+=2) m = Math.max(m, st.p[i] + st.w/2); } return m; }
+  function maxY(d){ let m = 0; for (const st of d.s){ if (st.t==='er') continue; for (let i=1;i<st.p.length;i+=2) m = Math.max(m, st.p[i] + st.w*0.8); } return m; }
+  function release(){ if (cv.width){ cv.width = 0; cv.height = 0; } if (buf && buf.width){ buf.width = 0; buf.height = 0; } }
   function layout(){
     const d = P.d;
     if (!d || !host.isConnected || !host.offsetWidth) return;
     const s = P.s = scale();
     let sh = 0;
-    if (editable) sh = (ink.tool!=='none' || d.s.length) ? d.pad*s : 0;
-    else if (d.s.length){
+    if (editable){
+      if (ink.tool!=='none' || d.s.length || isPaper()) sh = Math.max(d.pad, fillU()) * s;
+    } else if (d.s.length){
       sc.classList.add('off'); cv.style.display = 'none';
       sh = Math.min(d.pad*s, Math.max(0, maxY(d)*s - host.scrollHeight + 16));
       if (sh < 24) sh = 0;
     }
+    sh = Math.round(sh);
     sc.classList.toggle('off', sh<=0);
-    sc.style.height = Math.round(sh) + 'px';
+    sc.style.height = sh + 'px';
+    const img = host.querySelector('img');
+    sc.style.minWidth = img ? img.offsetWidth + 'px' : '';
     cv.style.display = 'none';
     const W = host.scrollWidth, H = host.scrollHeight;
     cv.style.display = '';
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
-    const k = Math.min(window.devicePixelRatio || 1, 2.5, Math.sqrt(8e6 / Math.max(1, W*H)));
+    P.qh = (H - sh) / s;
+    if (!P.vis){ release(); return; }
+    const budget = editable ? 9e6 : 2.5e6;
+    const k = Math.min(window.devicePixelRatio || 1, 2.5, Math.sqrt(budget / Math.max(1, W*H)));
     const pw = Math.max(1, Math.round(W*k)), ph = Math.max(1, Math.round(H*k));
     if (cv.width!==pw || cv.height!==ph){ cv.width = pw; cv.height = ph; }
+    if (buf && (buf.width!==pw || buf.height!==ph)){ buf.width = pw; buf.height = ph; }
     P.k = pw / Math.max(1, W);
-    draw();
+    rebuild();
   }
-  function path(p){
+  function path(c, p){
     const n = p.length/2;
-    ctx.beginPath(); ctx.moveTo(p[0], p[1]);
-    if (n===1){ ctx.lineTo(p[0]+0.01, p[1]); return; }
-    for (let i=1;i<n-1;i++){ const x = p[2*i], y = p[2*i+1]; ctx.quadraticCurveTo(x, y, (x+p[2*i+2])/2, (y+p[2*i+3])/2); }
-    ctx.lineTo(p[2*n-2], p[2*n-1]);
+    c.beginPath(); c.moveTo(p[0], p[1]);
+    if (n===1){ c.lineTo(p[0]+0.01, p[1]); return; }
+    for (let i=1;i<n-1;i++){ const x = p[2*i], y = p[2*i+1]; c.quadraticCurveTo(x, y, (x+p[2*i+2])/2, (y+p[2*i+3])/2); }
+    c.lineTo(p[2*n-2], p[2*n-1]);
   }
-  function paint(st){
-    ctx.globalCompositeOperation = st.t==='er' ? 'destination-out' : 'source-over';
-    ctx.strokeStyle = st.t==='hl' ? hexA(st.c, .45) : st.t==='er' ? '#000' : st.c;
-    ctx.lineWidth = st.w;
-    path(st.p); ctx.stroke();
+  function prep(c){ const m = P.k*P.s; c.setTransform(m,0,0,m,0,0); c.lineJoin = 'round'; c.lineCap = 'round'; }
+  function paint(c, st){
+    c.globalCompositeOperation = st.t==='er' ? 'destination-out' : 'source-over';
+    c.globalAlpha = st.t==='pc' ? .9 : 1;
+    const col = st.t==='pc' ? pencilFill(c, st.c, P.k*P.s) : st.t==='hl' ? hexA(st.c, .45) : st.t==='er' ? '#000' : st.c;
+    if (st.q){ c.fillStyle = col; c.fill(strokeOutline(st.p, st.q, st.w)); }
+    else { c.strokeStyle = col; c.lineWidth = st.w; path(c, st.p); c.stroke(); }
+    c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1;
+  }
+  function rebuild(){
+    const c = bctx || ctx, cvs = buf || cv;
+    c.setTransform(1,0,0,1,0,0); c.clearRect(0, 0, cvs.width, cvs.height);
+    if (P.d && cvs.width){ prep(c); for (const st of P.d.s) paint(c, st); }
+    if (buf) draw();
   }
   function draw(){
+    if (!buf){ rebuild(); return; }
     ctx.setTransform(1,0,0,1,0,0);
     ctx.clearRect(0, 0, cv.width, cv.height);
-    if (!P.d) return;
-    const m = P.k * P.s;
-    ctx.setTransform(m,0,0,m,0,0);
-    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-    for (const st of P.d.s) paint(st);
-    if (P.live) paint(P.live);
-    ctx.globalCompositeOperation = 'source-over';
+    if (!P.d || !cv.width) return;
+    ctx.drawImage(buf, 0, 0);
+    if (P.live){ prep(ctx); paint(ctx, P.live); }
   }
   function pt(e){ const r = cv.getBoundingClientRect(); return [(e.clientX - r.left)/P.s, (e.clientY - r.top)/P.s]; }
   function changed(){ queue(); renderInkBars(); }
+  function commit(st){
+    const d = P.d;
+    d.s.push(st); d.h.push(0);
+    if (buf && buf.width){ prep(bctx); paint(bctx, st); }
+    draw();
+    let grow = false;
+    if (st.t!=='er'){
+      // 寫到草稿區底部附近就自動加長（紙本模式每次加長半個畫面）
+      const y = maxY({s:[st]});
+      let pad = Math.max(d.pad, y - P.qh + 24);
+      if (isPaper()){ const eff = Math.max(pad, fillU()); if (y > P.qh + eff - window.innerHeight*0.3/P.s) pad = eff + window.innerHeight*0.6/P.s; }
+      pad = Math.min(INK.padMax, Math.ceil(pad));
+      if (pad > d.pad){ d.pad = pad; grow = true; }
+    }
+    if (grow) queue();
+    renderInkBars();
+  }
+  // 手指捲動（用咗觸控筆之後、或者兩隻手指）：放手後有慣性
+  let flingRaf = 0;
+  function stopFling(){ if (flingRaf) cancelAnimationFrame(flingRaf); flingRaf = 0; }
+  function scrollBy2(dx, dy, tgt){
+    if (dx && host.scrollWidth > host.clientWidth + 1) host.scrollLeft -= dx;
+    if (dy){ if (tgt===window) window.scrollBy(0, -dy); else tgt.scrollTop -= dy; }
+  }
+  function panBy(dx, dy, dt){
+    const pn = P.pan;
+    scrollBy2(dx, dy, pn.sx);
+    pn.vx = 0.6*pn.vx + 0.4*(dx/dt); pn.vy = 0.6*pn.vy + 0.4*(dy/dt); pn.t = performance.now();
+  }
+  function fling(pn){
+    if (performance.now() - pn.t > 90 || Math.hypot(pn.vx, pn.vy) < 0.12) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let vx = pn.vx, vy = pn.vy, last = performance.now();
+    const step = now=>{
+      const dt = Math.max(1, Math.min(32, now - last)); last = now;
+      const f = Math.pow(0.996, dt); vx *= f; vy *= f;
+      scrollBy2(vx*dt, vy*dt, pn.sx);
+      flingRaf = Math.hypot(vx, vy) > 0.02 ? requestAnimationFrame(step) : 0;
+    };
+    flingRaf = requestAnimationFrame(step);
+  }
   if (editable){
+    // iPad Safari：畫筆模式下唔俾瀏覽器自己捲動／縮放，捲動交由下面的手指處理
+    const stopTouch = e=>{ if (cv.classList.contains('on') && e.cancelable) e.preventDefault(); };
+    cv.addEventListener('touchstart', stopTouch, {passive:false});
+    cv.addEventListener('touchmove', stopTouch, {passive:false});
     cv.addEventListener('pointerdown', e=>{
       if (ink.tool==='none' || !P.d) return;
       if (e.pointerType==='mouse' && e.button!==0) return;
+      const isTouch = e.pointerType==='touch';
       if (e.pointerType==='pen'){
-        ink.penSeen = true;
-        if (P.live && P.ptype==='touch') { P.live = null; P.pid = null; }   // 手掌先碰到：改用觸控筆
+        if (!ink.penSeen){ ink.penSeen = true; inkToast('已偵測觸控筆：用筆書寫，手指用嚟捲動頁面（手掌放喺屏幕上都唔會畫到）'); }
+        if (P.live && P.ptype==='touch'){ P.live = null; P.pid = null; queueDraw(); }   // 手掌先碰到：改用觸控筆
+        P.pan = null; stopFling();                                                      // 筆一落紙，手掌唔會捲動頁面
       }
-      if (P.live) return;
-      if (e.pointerType==='touch' && ink.penSeen) return;                    // 用過觸控筆後，手指／手掌不會畫
       e.preventDefault();
       try { cv.setPointerCapture(e.pointerId); } catch(_){}
+      if (isTouch){
+        touches.set(e.pointerId, {x:e.clientX, y:e.clientY, t:e.timeStamp});
+        if (P.live && P.ptype==='pen') return;                                          // 寫緊字時手掌碰到屏幕：唔理
+        stopFling();
+        if (ink.penSeen || touches.size>=2 || P.pan){
+          if (P.live && P.ptype==='touch'){ P.live = null; P.pid = null; queueDraw(); }
+          if (!P.pan) P.pan = {vx:0, vy:0, t:performance.now(), sx:scrollerOf(host)};
+          return;
+        }
+      }
+      if (P.live) return;
       P.pid = e.pointerId; P.ptype = e.pointerType;
-      const t = ink.tool, [x, y] = pt(e);
-      P.live = {t, c: t==='er' ? '' : INK.sw[t][ink[t]], w: INK.size[t][ink.sz[t]], p:[r1(x), r1(y)]};
+      const t = (e.pointerType==='pen' && (e.buttons & 32)) ? 'er' : ink.tool;   // 觸控筆尾的橡皮擦
+      const [x, y] = pt(e);
+      const st = {t, c: t==='er' ? '' : INK.sw[t][ink[t]], w: INK.size[t][ink.sz[t]], p:[r1(x), r1(y)]};
+      if (t==='pen' || t==='pc'){ P.f = e.pointerType==='pen' && e.pressure>0 ? fP(e.pressure) : 0.88; st.q = [Math.round(P.f*100)/100]; }
+      P.lt = e.timeStamp; P.live = st;
       queueDraw();
     });
     cv.addEventListener('pointermove', e=>{
+      const tc = touches.get(e.pointerId);
+      if (tc){
+        const dx = e.clientX - tc.x, dy = e.clientY - tc.y, dt = Math.max(1, e.timeStamp - tc.t);
+        tc.x = e.clientX; tc.y = e.clientY; tc.t = e.timeStamp;
+        if (P.pan && !(P.live && P.ptype==='pen')){ e.preventDefault(); panBy(dx/touches.size, dy/touches.size, dt); return; }
+      }
       if (!P.live || e.pointerId!==P.pid) return;
       e.preventDefault();
       const evs = (e.getCoalescedEvents && e.getCoalescedEvents()) || [];
-      const p = P.live.p;
+      const st = P.live, p = st.p;
       for (const ev of (evs.length ? evs : [e])){
         const [x, y] = pt(ev);
-        if (Math.hypot(x - p[p.length-2], y - p[p.length-1]) >= 0.7) p.push(r1(x), r1(y));
+        const L = Math.hypot(x - p[p.length-2], y - p[p.length-1]);
+        if (L < 0.7) continue;
+        if (st.q){
+          if (ev.pointerType==='pen' && ev.pressure>0) P.f = P.f*0.45 + fP(ev.pressure)*0.55;
+          else { const v = L / Math.max(1, ev.timeStamp - P.lt); P.f = P.f*0.75 + Math.max(0.72, Math.min(1.12, 1.14 - 0.16*v))*0.25; }
+          st.q.push(Math.round(P.f*100)/100);
+        }
+        P.lt = ev.timeStamp;
+        p.push(r1(x), r1(y));
       }
       queueDraw();
     });
     const end = e=>{
+      if (touches.has(e.pointerId)){
+        touches.delete(e.pointerId);
+        if (P.pan && !touches.size){ const pn = P.pan; P.pan = null; fling(pn); }
+      }
       if (!P.live || e.pointerId!==P.pid) return;
       const st = P.live; P.live = null; P.pid = null;
-      if (e.type!=='pointercancel' || st.p.length>4){ P.d.s.push(st); P.d.h.push(0); }
-      draw(); changed();
+      if (e.type==='pointercancel' && st.p.length<=4){ draw(); return; }
+      commit(st);
     };
     cv.addEventListener('pointerup', end);
     cv.addEventListener('pointercancel', end);
     cv.addEventListener('contextmenu', e=>{ if (cv.classList.contains('on')) e.preventDefault(); });
   }
   P.attach = d=>{
-    P.d = d; P.live = null; P.pid = null;
+    P.d = d; P.live = null; P.pid = null; P.pan = null; touches.clear(); stopFling();
     host.classList.add('inkhost');
     host.appendChild(sc); host.appendChild(cv);
     if (ro){ ro.disconnect(); ro.observe(host); const img = host.querySelector('img'); if (img) ro.observe(img); }
+    if (io){ io.disconnect(); io.observe(host); }
     P.mode(); layout();
   };
   P.mode = ()=>{ cv.classList.toggle('on', editable && ink.tool!=='none'); cv.classList.toggle('er', ink.tool==='er'); };
-  P.undo = ()=>{ const d = P.d; if (!d || !d.h.length) return false; const u = d.h.pop(); if (Array.isArray(u)) d.s = u; else d.s.pop(); draw(); changed(); return true; };
-  P.clear = ()=>{ const d = P.d; if (!d || !d.s.length) return; d.h.push(d.s); d.s = []; draw(); changed(); };
-  P.grow = ()=>{ const d = P.d; if (!d) return; d.pad = Math.min(INK.padMax, d.pad + INK.pad); changed(); };
+  P.undo = ()=>{ const d = P.d; if (!d || !d.h.length) return false; const u = d.h.pop(); if (Array.isArray(u)) d.s = u; else d.s.pop(); rebuild(); changed(); return true; };
+  P.clear = ()=>{ const d = P.d; if (!d || !d.s.length) return; d.h.push(d.s); d.s = []; rebuild(); changed(); };
+  P.grow = ()=>{ const d = P.d; if (!d) return; const eff = Math.max(d.pad, fillU()); d.pad = Math.min(INK.padMax, Math.ceil(eff + (isPaper() ? window.innerHeight*0.5/P.s : INK.pad))); changed(); };
+  P.canGrow = ()=>!!P.d && Math.max(P.d.pad, fillU()) < INK.padMax;
   P.layout = layout;
-  P.destroy = ()=>{ if (ro) ro.disconnect(); P.d = null; };
+  P.release = release;
+  P.destroy = ()=>{ if (ro) ro.disconnect(); if (io) io.disconnect(); release(); P.d = null; };
   return P;
 }
 
@@ -1505,46 +1781,111 @@ const isvg = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 const ICON = {
   none: isvg('<path d="M5.5 3.5l13 7.4-5.8 1.6-3 5.8z"/>'),
   pen: isvg('<path d="M15.5 4.5l4 4L8.5 19.5l-5 1 1-5z"/><path d="M13.5 6.5l4 4"/>'),
+  pc: isvg('<path d="M4 20l1.3-4.7L15.6 5a2 2 0 012.8 0l.6.6a2 2 0 010 2.8L8.7 18.7z"/><path d="M5.3 15.3l3.4 3.4"/><path d="M13.6 7l3.4 3.4"/>'),
   hl: isvg('<path d="M14 4l6 6-7.5 7.5H8v-4.5z"/><path d="M8 17.5l-3 3h6"/>'),
   er: isvg('<path d="M9.5 20.5h11"/><path d="M3.8 14.2l9.4-9.4a1.6 1.6 0 012.3 0l4.2 4.2a1.6 1.6 0 010 2.3l-8 8H9.4z"/><path d="M8.5 9.5l6.5 6.5"/>'),
   undo: isvg('<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 010 11H11"/>'),
   clear: isvg('<path d="M4 7h16"/><path d="M9.5 7V4.5h5V7"/><path d="M6.5 7l1 13h9l1-13"/>'),
   grow: isvg('<path d="M12 5v14M5 12h14"/>'),
+  paper: isvg('<path d="M6 3h8.5L19 7.5V21H6z"/><path d="M14.5 3v4.5H19"/><path d="M9 12.5h7M9 16.5h4.5"/>'),
+  more: isvg('<circle cx="5.5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18.5" cy="12" r="1.2"/>'),
+  full: isvg('<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>'),
+  unfull: isvg('<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>'),
+  zoom: isvg('<circle cx="10.5" cy="10.5" r="6.2"/><path d="M20 20l-5-5M10.5 8v5M8 10.5h5"/>'),
+  fit: isvg('<circle cx="10.5" cy="10.5" r="6.2"/><path d="M20 20l-5-5M8 10.5h5"/>'),
 };
-const TOOLS = [['none','瀏覽','瀏覽（可捲動頁面、點圖放大）'],['pen','畫筆','畫筆：寫計算或畫圖'],['hl','螢光筆','螢光筆：劃重點'],['er','橡皮擦','橡皮擦：擦走部分筆跡']];
+const TOOLS = [['none','瀏覽','瀏覽（可捲動頁面、點圖放大）'],['pen','畫筆','畫筆（原子筆）：寫計算或畫圖'],['pc','鉛筆','鉛筆：好似用 HB 鉛筆打草稿'],['hl','螢光筆','螢光筆：劃重點'],['er','橡皮擦','橡皮擦：擦走部分筆跡']];
+function inkMenuHTML(pad){
+  const d = pad && pad.d, bg = paperBg();
+  const zoomOn = PAPER.zoom;
+  return `<div class="ink-menu" role="group" aria-label="更多">
+    <button type="button" class="im-b" data-act="clear" ${d && d.s.length ? '' : 'disabled'}>${ICON.clear}<span>清除本題筆跡</span></button>
+    <button type="button" class="im-b" data-act="grow" ${pad && pad.canGrow() ? '' : 'disabled'}>${ICON.grow}<span>加長草稿區</span></button>
+    <div class="im-row"><span class="im-lbl">草稿紙</span><span class="im-seg" role="group" aria-label="草稿紙">${PBG.map(([k,l])=>`<button type="button" data-bg="${k}" aria-pressed="${bg===k}">${l}</button>`).join('')}</span></div>
+    ${pad===PADS.quiz && PAPER.on && FS.ok ? `<button type="button" class="im-b" data-act="full">${FS.on() ? ICON.unfull : ICON.full}<span>${FS.on() ? '離開全螢幕' : '全螢幕（隱藏瀏覽器工具列）'}</span></button>` : ''}
+    ${pad===PADS.quiz && PAPER.on ? `<button type="button" class="im-b ph-only" data-act="zoom">${zoomOn ? ICON.fit : ICON.zoom}<span>${zoomOn ? '題目顯示全頁' : '放大題目（左右拖動）'}</span></button>` : ''}
+  </div>`;
+}
 function inkBarHTML(pad){
-  const t = ink.tool, d = pad && pad.d;
-  let h = `<div class="ink-grp ink-tools" role="group" aria-label="工具">${TOOLS.map(([k,l,tip])=>`<button type="button" class="ink-b" data-tool="${k}" aria-pressed="${t===k}" title="${tip}">${ICON[k]}<span>${l}</span></button>`).join('')}</div>`;
-  if (t==='pen' || t==='hl') h += `<div class="ink-grp ink-sw" role="group" aria-label="顏色">${INK.sw[t].map((c,i)=>`<button type="button" data-sw="${i}" aria-pressed="${ink[t]===i}" title="${INK.swName[t][i]}色" aria-label="${INK.swName[t][i]}色" style="background:${c}"></button>`).join('')}</div>`;
+  const t = ink.tool, d = pad && pad.d, isQ = pad===PADS.quiz;
+  let h = `<div class="ink-grp ink-tools" role="group" aria-label="工具">${TOOLS.map(([k,l,tip])=>`<button type="button" class="ink-b" data-tool="${k}" aria-pressed="${t===k}" title="${tip}" aria-label="${l}">${ICON[k]}<span>${l}</span></button>`).join('')}</div>`;
+  if (t==='pen' || t==='pc' || t==='hl') h += `<div class="ink-grp ink-sw" role="group" aria-label="顏色">${INK.sw[t].map((c,i)=>`<button type="button" data-sw="${i}" aria-pressed="${ink[t]===i}" title="${INK.swName[t][i]}" aria-label="${INK.swName[t][i]}${t==='pc'?'鉛筆':'色'}" style="background:${c}">${t==='pc' ? `<b>${INK.swName.pc[i]}</b>` : ''}</button>`).join('')}</div>`;
   if (t!=='none') h += `<div class="ink-grp ink-sz" role="group" aria-label="粗幼">${INK.size[t].map((w,i)=>`<button type="button" data-sz="${i}" aria-pressed="${ink.sz[t]===i}" title="${INK.sizeName[i]}" aria-label="${INK.sizeName[i]}"><i style="width:${5+i*4}px;height:${5+i*4}px"></i></button>`).join('')}</div>`;
   const showGrow = t!=='none' || (d && d.s.length);
   h += `<div class="ink-grp ink-act">
-    <button type="button" class="ink-b" data-act="undo" title="還原上一筆（Ctrl+Z）" ${d && d.h.length ? '' : 'disabled'}>${ICON.undo}<span>還原</span></button>
-    <button type="button" class="ink-b" data-act="clear" title="清除本題所有筆跡（可以按還原取回）" ${d && d.s.length ? '' : 'disabled'}>${ICON.clear}<span>清除</span></button>
-    ${showGrow ? `<button type="button" class="ink-b" data-act="grow" title="加長草稿區" ${d && d.pad<INK.padMax ? '' : 'disabled'}>${ICON.grow}<span>加長草稿</span></button>` : ''}</div>`;
+    <button type="button" class="ink-b" data-act="undo" title="還原上一筆（Ctrl+Z）" aria-label="還原" ${d && d.h.length ? '' : 'disabled'}>${ICON.undo}<span>還原</span></button>
+    <button type="button" class="ink-b wide-only" data-act="clear" title="清除本題所有筆跡（可以按還原取回）" aria-label="清除" ${d && d.s.length ? '' : 'disabled'}>${ICON.clear}<span>清除</span></button>
+    ${showGrow ? `<button type="button" class="ink-b wide-only" data-act="grow" title="加長草稿區" aria-label="加長草稿" ${pad && pad.canGrow() ? '' : 'disabled'}>${ICON.grow}<span>加長草稿</span></button>` : ''}
+    <button type="button" class="ink-b" data-act="menu" title="更多：草稿紙、全螢幕、放大" aria-label="更多" aria-expanded="${ink.menu}">${ICON.more}</button></div>`;
+  if (isQ) h += `<div class="ink-grp ink-paper"><button type="button" class="ink-b paper-b" data-act="paper" aria-pressed="${PAPER.on}" title="${PAPER.on ? '離開紙本模式' : '紙本模式：題目印喺試卷上，下面有大片空白位作答'}">${ICON.paper}<span>${PAPER.on ? '離開紙本' : '紙本模式'}</span></button></div>`;
+  if (ink.menu) h += inkMenuHTML(pad);
   return h;
 }
 function renderInkBars(){
   const a = document.activeElement, bar = a && a.closest && a.closest('.inkbar');
   let key = null;
-  if (bar) for (const k of ['tool','sw','sz','act']) if (a.dataset[k]!=null){ key = `[data-${k}="${a.dataset[k]}"]`; break; }
+  if (bar) for (const k of ['tool','sw','sz','act','bg']) if (a.dataset[k]!=null){ key = `[data-${k}="${a.dataset[k]}"]`; break; }
   document.querySelectorAll('.inkbar[data-pad]').forEach(b=>{ b.innerHTML = inkBarHTML(PADS[b.dataset.pad]); b.classList.toggle('drawing', ink.tool!=='none'); });
   if (bar && key){ const el = bar.querySelector(key); if (el && !el.disabled) el.focus(); }
 }
-function refreshInk(){ Object.values(PADS).forEach(p=>{ p.mode(); p.layout(); }); renderInkBars(); }
+// 手機紙本模式「放大題目」：題目圖片放大到原尺寸左右（圖片解像度足夠），可左右拖動
+function applyZoom(){
+  const qb = document.getElementById('qBody'); if (!qb) return;
+  const on = PAPER.on && PAPER.zoom, img = qb.querySelector('img');
+  qb.classList.toggle('pz', on);
+  if (!img) return;
+  if (on){ const w = +img.getAttribute('width') || 600; img.style.width = Math.round(Math.min(w*1.4, Math.max(qb.clientWidth*1.5, w))) + 'px'; }
+  else img.style.width = '';
+}
+function refreshInk(){
+  document.body.dataset.pbg = paperBg();
+  applyZoom();
+  Object.values(PADS).forEach(p=>{ p.mode(); p.layout(); }); renderInkBars();
+}
 function setTool(t){ ink.tool = t; refreshInk(); }
+function qbarH(){ const qb = document.querySelector('.qbar'); return qb ? qb.offsetHeight : 0; }
+function paperTop(){
+  const qc = document.querySelector('#quiz .qcard'); if (!qc) return;
+  const y = qc.getBoundingClientRect().top - qbarH() - 8;
+  if (y < 0) window.scrollBy(0, y);
+}
+function setPaper(on, o={}){
+  PAPER.on = !!on;
+  if (!o.keep){ PAPER.want = PAPER.on; savePaper(); }
+  document.body.classList.toggle('paper', PAPER.on);
+  if (PAPER.on && ink.tool==='none') ink.tool = 'pen';
+  if (!PAPER.on){ ink.menu = false; FS.exit(); }
+  refreshInk();
+  if (o.scroll!==false) paperTop();
+  if (PAPER.on && !o.keep && matchMedia('(pointer:coarse)').matches)
+    inkToast(ink.penSeen ? '紙本模式：用觸控筆書寫，手指捲動；寫到底部會自動加長' : '紙本模式：一隻手指書寫，兩隻手指捲動；寫到底部會自動加長');
+}
+function paperHint(){
+  if (PAPER.want || store.get('mc-paper-hint', 0) >= 2 || !matchMedia('(pointer:coarse)').matches) return;
+  store.set('mc-paper-hint', store.get('mc-paper-hint', 0) + 1);
+  setTimeout(()=>{ if (!PAPER.on && Q && !Q.done) inkToast('提示：撳「紙本模式」可以放大書寫空間，好似喺試卷上作答'); }, 900);
+}
 PADS.quiz = makePad($('#qBody'), true);
 PADS.peek = makePad($('#peekBody'), true);
 document.querySelectorAll('.inkbar[data-pad]').forEach(bar=>bar.addEventListener('click', e=>{
   const b = e.target.closest('button'); if (!b || b.disabled) return;
-  const pad = PADS[bar.dataset.pad];
+  const pad = PADS[bar.dataset.pad], act = b.dataset.act;
   if (b.dataset.tool) setTool(b.dataset.tool);
   else if (b.dataset.sw!=null){ ink[ink.tool] = +b.dataset.sw; saveInkPref(); renderInkBars(); }
   else if (b.dataset.sz!=null){ ink.sz[ink.tool] = +b.dataset.sz; saveInkPref(); renderInkBars(); }
-  else if (b.dataset.act==='undo') pad.undo();
-  else if (b.dataset.act==='clear') pad.clear();
-  else if (b.dataset.act==='grow') pad.grow();
+  else if (b.dataset.bg){ PAPER.bg = b.dataset.bg; savePaper(); refreshInk(); }
+  else if (act==='undo') pad.undo();
+  else if (act==='clear'){ ink.menu = false; pad.clear(); renderInkBars(); }
+  else if (act==='grow'){ ink.menu = false; pad.grow(); }
+  else if (act==='menu'){ ink.menu = !ink.menu; renderInkBars(); }
+  else if (act==='paper') setPaper(!PAPER.on);
+  else if (act==='full'){ ink.menu = false; FS.on() ? FS.exit() : FS.enter(); renderInkBars(); }
+  else if (act==='zoom'){ ink.menu = false; PAPER.zoom = !PAPER.zoom; refreshInk(); }
 }));
+document.addEventListener('click', e=>{ if (ink.menu && !e.target.closest('.ink-menu,[data-act="menu"]')){ ink.menu = false; renderInkBars(); } });
+document.addEventListener('keydown', e=>{ if (ink.menu && e.key==='Escape'){ ink.menu = false; renderInkBars(); } });
+document.addEventListener('fullscreenchange', ()=>renderInkBars());
+document.addEventListener('webkitfullscreenchange', ()=>renderInkBars());
 // Ctrl+Z／⌘Z：還原筆跡
 document.addEventListener('keydown', e=>{
   if (!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey || String(e.key).toLowerCase()!=='z') return;
