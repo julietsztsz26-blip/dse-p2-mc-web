@@ -8,6 +8,9 @@
 (function(){var shown=false;function bar(m){if(shown)return;shown=true;var d=document.createElement('div');d.setAttribute('role','alert');d.style.cssText='position:fixed;left:0;right:0;top:0;z-index:99999;background:#B42318;color:#fff;font:14px/1.6 sans-serif;padding:10px 16px';d.textContent='網頁出錯：'+m+'（請截圖給老師）';(document.body||document.documentElement).appendChild(d);}
 window.addEventListener('error',function(e){bar((e&&e.message)||'未知錯誤');});
 window.addEventListener('load',function(){setTimeout(function(){if(!window.__MC_READY)bar('程式未能啟動');},2000);});})();
+
+/* 載入提示：網頁較大，手機下載需時；程式啟動前在底部顯示「載入中」及秒數 */
+(function(){var t0=Date.now(),d=null;function tick(){if(window.__MC_READY){if(d&&d.parentNode)d.parentNode.removeChild(d);return;}if(!d){d=document.createElement('div');d.id='mcBoot';d.setAttribute('role','status');d.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:99998;background:#24272C;color:#fff;font:15px/1.5 sans-serif;padding:9px 18px;border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.3);white-space:nowrap;max-width:94vw;overflow:hidden;text-overflow:ellipsis';(document.body||document.documentElement).appendChild(d);}d.textContent='解說教室載入中（約 8 MB，第一次打開需時較長）…（'+Math.round((Date.now()-t0)/1000)+' 秒）';setTimeout(tick,500);}setTimeout(tick,400);})();
 </script>
 <title>DSE 卷二 MC 解說教室</title>
 <meta name="description" content="HKDSE Mathematics Paper 2 (2018–2026) — interactive step-by-step lessons on Level 3, Level 4 and Level 5 / 5* / 5** MC questions (DSE 2018–2026), grouped by question type">
