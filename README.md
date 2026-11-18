@@ -4,9 +4,10 @@ HKDSE 數學卷二多項選擇題的網頁版，用 GitHub Pages 發佈，可以
 
 | 網頁 | 內容 |
 |---|---|
-| `index.html` | 主頁，連到以下兩頁 |
+| `index.html` | 主頁，連到以下三頁 |
 | `DSE_Paper2_MC_Challenge.html` | 卷二 MC 實戰：分級限時挑戰、交卷分析、老師專區（Google Sheet 紀錄） |
 | `DSE_P2_Interactive_Lessons.html` | MC 解說教室：Level 3 至 5** 題目（DSE 2018–2025）及 DSE 2026 常錯題的逐步互動解說 |
+| `DSE_MC_Results.html` | DSE MC 成績查詢：學生揀班別及輸入中文全名查閱個人成績；老師以密碼查閱全班成績。成績資料已加密，頁面內沒有明文姓名、成績或密碼 |
 
 這裏的 HTML 是 Android App 版本的網頁部分的副本（App 版本的 repo 是 private）。
 
