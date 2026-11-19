@@ -605,6 +605,20 @@ html.ink-lock,html.ink-lock body{overflow:hidden}
 .fp{fill:#e6d6f7;stroke:none}
 .ap{stroke:#7b3fc4;stroke-width:3;fill:none;stroke-linecap:round}
 .op5{opacity:.5}
+/* DSE 2020 修訂解說：表格、顏色（跟老師手寫解說） */
+.t20{border-collapse:collapse;font-size:16px;margin:4px 0 6px;font-family:var(--math)}
+.t20 th,.t20 td{border:1.4px solid #a9bcc5;padding:3px 10px;text-align:center;vertical-align:middle}
+.t20 th{font-family:var(--sans);font-size:12.5px;font-weight:700;color:var(--muted);background:#f2f7f9}
+.mk.v{background:#e2d3fb}.mk.c{background:#c8f0fa}
+.ca-m,.ca-m b{color:#c2188f;font-weight:700}
+.ca-b,.ca-b b{color:#1f5fd6;font-weight:700}
+.lgn{stroke:#1d8a4a;stroke-width:2.4;fill:none}
+.lmg{stroke:#c2188f;stroke-width:2.4;fill:none}
+.lcy{stroke:#0ea5c6;stroke-width:2.4;fill:none}
+.lgn.thick,.lmg.thick,.lcy.thick,.r.thick,.lo.thick2{stroke-width:4.6}
+.fcy{fill:#c8f0fa;stroke:none}
+.stage text.cy{fill:#0b87a3;font-weight:700}
+.dot.g{fill:#1d8a4a}.dot.mg{fill:#c2188f}.dot.pu{fill:#7b3fc4}.dot.bl{fill:#1f5fd6}.dot.cy{fill:#0ea5c6}
 .pbox{fill:none;stroke:#7b3fc4;stroke-width:3}
 .xbar{text-decoration:overline;text-decoration-thickness:1.5px}
 .q37-def{display:flex;gap:6px 40px;flex-wrap:wrap;align-items:center;font-family:var(--math);font-size:22px;line-height:1.5}
@@ -11303,25 +11317,67 @@ addX({
   ],
 });
 
+/* ---------- DSE 2020：按老師手寫解說修訂的圖解（Q8、Q22、Q36、Q38、Q39、Q40）共用 ---------- */
+// 角的顏色：填色、弧線、文字
+const AG20 = { g: ['hgG', 'lgn', 'g'], o: ['fb2', 'o', 'o'], p: ['fp', 'ap', 'pu'], m: ['hgP', 'lmg', 'mg'], r: ['fd', 'r', 'r'], b: ['fcy', 'lb', 'bl'], t: ['fa', 'hl', 'hl'] };
+function ang20(V, A, B, r, lab, c, on, lr, lo = 0) {
+  let a0 = angOf(V, A), a1 = angOf(V, B), d = (((a1 - a0) % 360) + 360) % 360;
+  if (d > 180) { [a0, a1] = [a1, a0]; d = 360 - d; }
+  const k = AG20[c] || AG20.t, m = pol(V[0], V[1], lr || r + 20, a0 + d / 2 + lo);
+  return (on ? sector(V[0], V[1], r, a0, a0 + d, k[0] + ' op') + ph(arcD(V[0], V[1], r, a0, a0 + d), k[1]) : ph(arcD(V[0], V[1], r, a0, a0 + d), 'thin'))
+    + (lab ? tx(m[0], m[1] + 6, lab, on ? 'm ' + k[2] : 'm') : '');
+}
+// 標籤後面的顏色底（螢光筆效果）
+const hg20 = (x, y, w, c, h = 28) => rect(x, y - h + 8, w, h, c, 6);
+const T20 = (r) => `<table class="t20">${r.map((row, k) => `<tr>${row.map((c, j) => k === 0 || j === 0 ? `<th>${c}</th>` : `<td>${c}</td>`).join('')}</tr>`).join('')}</table>`;
+
 addX({
-  key: '2020-8', ans: 'A', short: '兩直線：由圖判斷 a、b、c', topic: 'STRAIGHT LINES',
-  en: 'L₁: x + ay + b = 0 and L₂: bx + y + c = 0 from the figure', zh: '直線：斜率及 y 截距的符號，再比較兩個 y 截距', trap: 'D',
+  key: '2020-8', ans: 'A', short: '列表：斜率、截距，再由圖比較', topic: 'STRAIGHT LINES',
+  en: 'L₁: x + ay + b = 0 and L₂: bx + y + c = 0 from the figure', zh: '直線：Ax + By + C = 0 的斜率 = −A/B；先列表，再由圖比較 y 截距及斜率', trap: 'D',
   opts: { A: 'I and II only', B: 'I and III only', C: 'II and III only', D: 'I, II and III' },
   why: {
-    A: 'c &lt; 0 ✓；ab &lt; 0 &lt; 1 ✓；III：L₂ 的 y 截距較大 ⇒ ac &gt; b ✗。',
-    B: 'III 錯：−c &gt; −b/a，乘 a（負）⇒ −ac &lt; −b ⇒ ac &gt; b。',
-    C: 'I 對：L₂ 的 y 截距 −c &gt; 0 ⇒ c &lt; 0。',
-    D: 'III 不成立。',
+    A: 'I：L₂ 的 y 截距 −c &gt; 0 ⇒ c &lt; 0 ✓；II：m<sub>L₁</sub> &gt; m<sub>L₂</sub> ⇒ ab &lt; 1 ✓；III：y 截距 L₂ &gt; L₁ ⇒ ac &gt; b，所以 ac &lt; b ✗。',
+    B: 'III 錯：−c &gt; −b/a ⇒ c &lt; b/a，兩邊乘 a（負數）要反轉 ⇒ ac &gt; b。II 其實對。',
+    C: 'I 對：L₂ 與 y 軸交於 O 上方 ⇒ −c &gt; 0 ⇒ c &lt; 0。III 錯。',
+    D: 'III 不成立：由 y 截距比較得 ac &gt; b，不是 ac &lt; b。',
   },
-  diag: '只有 33% 答對。L₁ 斜率 −1/a &gt; 0 ⇒ a &lt; 0；L₂ 斜率 −b &lt; 0 ⇒ b &gt; 0；L₂ 的 y 截距 −c &gt; 0 ⇒ c &lt; 0。比較兩個 y 截距時乘以負數 a 要反轉不等號。',
-  rule: 'L₁：斜率 −1/a，y 截距 −b/a；L₂：斜率 −b，y 截距 −c。',
-  pit: '圖中 L₂ 與 y 軸的交點比 L₁ 高。',
+  diag: '只有 33% 答對。先用 Ax + By + C = 0 寫出兩條線的斜率及截距（列表），之後每一句都是「由圖比較兩個數」：I 看 L₂ 的 y 截距，II 比較斜率，III 比較 y 截距。L₁ 向右上斜 ⇒ a &lt; 0，兩邊乘 a 時不等號要反轉。',
+  rule: 'Ax + By + C = 0：斜率 = −A/B；x 截距（代 y = 0）；y 截距（代 x = 0）。',
+  pit: '1/a &lt; b 及 c &lt; b/a 兩邊乘 a 時，因 a &lt; 0 要反轉不等號：得 ab &lt; 1 及 ac &gt; b。忘記反轉就會以為 III 對（選 D）。',
   steps: [
-    S('L₁', 'Line L₁', '斜率 ' + FR('−1', 'a') + ' &gt; 0 ⇒ <b>a &lt; 0</b>；y 截距 ' + FR('−b', 'a') + ' &gt; 0 ⇒ b &gt; 0', '', ''),
-    S('L₂', 'Line L₂', '斜率 −b &lt; 0 ✓；y 截距 −c &gt; 0 ⇒ <b>c &lt; 0</b>（I ✓）', '', ''),
-    S('II', 'Statement II', 'a &lt; 0、b &gt; 0 ⇒ ab &lt; 0 &lt; 1 ✓', '', ''),
-    S('III', 'Statement III', '−c &gt; ' + FR('−b', 'a') + ' ⇒ ×a（負）⇒ −ac &lt; −b ⇒ <b>ac &gt; b</b> ✗ ⇒ A', '', '', { key: true }),
+    S('列表', 'Slopes and intercepts', T20([['', 'L₁', 'L₂'], ['斜率 m', FR('−1', 'a'), '−b'], ['x 截距（y = 0）', '−b', FR('−c', 'b')], ['y 截距（x = 0）', FR('−b', 'a'), '−c']]), 'Ax + By + C = 0 的斜率 = −A/B；代 y = 0 得 x 截距，代 x = 0 得 y 截距。', 'Slope = −A/B; put y = 0 for the x-intercept, x = 0 for the y-intercept.', { cap: '先在圖上標出兩條線的斜率及截距。' }),
+    S('I：L₂ 的 y 截距', 'I: y-intercept of L₂', MK('L₂ 的 y 截距 &gt; 0', 'g') + ' ⇒ −c &gt; 0 ⇒ <b>c &lt; 0</b> ✓', 'L₂ 與 y 軸交於 O 的上方。', 'L₂ cuts the y-axis above O.', { cap: '綠色＝L₂ 的 y 截距 −c &gt; 0。' }),
+    S('a 的符號', 'Sign of a', 'L₁ 向右上斜：' + FR('−1', 'a') + ' &gt; 0 ⇒ <b>a &lt; 0</b>', '之後兩邊乘以 a 時，不等號要反轉。', 'L₁ has a positive slope, so a &lt; 0: multiplying by a reverses an inequality.', { cap: 'L₁ 斜率正 ⇒ a 是負數。' }),
+    S('II：比較斜率', 'II: compare slopes', MK('m<sub>L₁</sub> &gt; m<sub>L₂</sub>', 'v') + ' ⇒ ' + FR('−1', 'a') + ' &gt; −b ⇒ ' + FR('1', 'a') + ' &lt; b<br>∵ a &lt; 0，兩邊 ×a 要反轉 ⇒ 1 &gt; ab ⇒ <b>ab &lt; 1</b> ✓', 'L₁ 斜率正、L₂ 斜率負，所以 m<sub>L₁</sub> &gt; m<sub>L₂</sub>。', 'L₁ slopes up and L₂ slopes down, so m₁ &gt; m₂.', { key: true, cap: '紫色＝兩條線的斜率：m<sub>L₁</sub> &gt; 0 &gt; m<sub>L₂</sub>。' }),
+    S('III：比較 y 截距', 'III: compare y-intercepts', MK('y 截距：L₂ &gt; L₁', 'p') + ' ⇒ −c &gt; ' + FR('−b', 'a') + ' ⇒ c &lt; ' + FR('b', 'a') + '<br>∵ a &lt; 0，×a 要反轉 ⇒ <b>ac &gt; b</b>，所以 III ✗ ⇒ A', 'L₂ 與 y 軸的交點比 L₁ 高。', 'L₂ cuts the y-axis higher than L₁.', { key: true, cap: '粉紅色＝兩個 y 截距：−c &gt; −b/a。' }),
   ],
+  draw(i, st, at) {
+    const o = plane({ X0: 230, Y0: 320, sx: 64, sy: 64, x0: -2.6, x1: 5.2, y0: -1.2, y1: 3.9, step: 100, tick: 100, labels: false });
+    const P = o.P, m1 = 0.9, c1 = 0.9, m2 = -0.55, c2 = 2.4;
+    const Y1 = P(0, c1), X1 = P(-c1 / m1, 0), Y2 = P(0, c2), X2 = P(-c2 / m2, 0);
+    let g = o.svg + tx(o.X(0) - 8, o.Y(0) + 20, 'O', 'm', 'end');
+    if (i === 1) g += at(1, hg20(Y2[0] - 62, Y2[1] + 6, 50, 'hgG'));
+    if (i === 4) g += at(4, hg20(Y2[0] - 62, Y2[1] + 6, 50, 'hgP') + hg20(Y1[0] - 70, Y1[1] + 6, 58, 'hgP'));
+    const sl = i === 3 ? 'lp thick' : 'ln';
+    g += o.line(m1, -1, -c1, i === 2 ? 'hl' : sl) + o.line(-m2, 1, c2, sl);
+    g += tx(...P(3.25, 3.55), 'L₁', 'm', 'start') + tx(...P(-2.45, 3.92), 'L₂', 'm', 'start');
+    // 截距
+    g += dt(...Y1, i === 4 ? 'r' : '') + dt(...Y2, i === 1 || i === 4 ? 'r' : '') + dt(...X1) + dt(...X2);
+    g += tx(Y1[0] - 12, Y1[1] + 6, '−b/a', i === 4 ? 'm mg' : 'm', 'end') + tx(Y2[0] - 12, Y2[1] + 6, '−c', i === 1 ? 'm g' : i === 4 ? 'm mg' : 'm', 'end');
+    g += tx(X1[0] - 10, X1[1] - 10, '−b', 'm', 'end') + tx(X2[0], X2[1] + 24, '−c/b', 'm');
+    // 斜率
+    const s1 = i === 3 ? 'm pu' : i === 2 ? 'm hl' : 'm', s2 = i === 3 ? 'm pu' : 'm';
+    g += tx(...P(2.15, 3.05), 'm = −1/a', s1, 'end') + tx(...P(3.9, 0.55), 'm = −b', s2, 'start');
+    // 每一步的結論
+    if (i === 1) g += at(1, tx(...P(0.25, 3.35), '−c &gt; 0 ⇒ c &lt; 0', 'm g', 'start'));
+    if (i === 2) g += at(2, tx(...P(2.3, 2.35), '−1/a &gt; 0 ⇒ a &lt; 0', 'm hl', 'start'));
+    if (i === 3) g += at(3, tx(...P(1.4, -0.75), 'm₁ &gt; 0 &gt; m₂', 'm pu', 'start'));
+    if (i === 4) {
+      const xa = o.X(0) + 20;
+      g += at(4, arrow(xa, Y1[1] - 6, xa, Y2[1] + 8, 'lmg') + tx(...P(0.32, 0.42), '−c &gt; −b/a', 'm mg', 'start'));
+    }
+    return g;
+  },
 });
 
 addX({
@@ -11345,22 +11401,23 @@ addX({
 });
 
 addX({
-  key: '2020-10', ans: 'B', short: '面積比 = 比例尺²', topic: 'MAP SCALES',
-  en: 'Actual area 0.75 km², map area 300 cm²: the scale', zh: '比例尺：先把單位統一，面積比開方', trap: 'D',
+  key: '2020-10', ans: 'B', short: '(長度比)² = 面積比，先換成 m²', topic: 'MAP SCALES',
+  en: 'Actual area 0.75 km², map area 300 cm²: the scale', zh: '比例尺：(圖上長度 ÷ 實際長度)² = 面積比；單位統一成 m²', trap: 'D',
   opts: { A: '1 : 250', B: '1 : 5 000', C: '1 : 62 500', D: '1 : 25 000 000' },
   why: {
-    A: '1 km² = 10¹⁰ cm²，單位轉換錯了。',
-    B: '300 : 7.5 × 10⁹ = 1 : 25 000 000 ⇒ 長度比 1 : 5 000。',
-    C: '單位轉換錯了。',
-    D: '1 : 25 000 000 是面積比，比例尺是長度比，要開方。',
+    A: '單位換算錯了：10 000 cm² = 1 m²，1 km² = 1 000 000 m²。',
+    B: '(長度比)² = 0.03 m² ÷ 750 000 m² = 1/25 000 000 ⇒ 長度比 = 1/5 000。',
+    C: '單位換算錯了：先把 300 cm² 及 0.75 km² 都換成 m²。',
+    D: '1 : 25 000 000 是面積比；比例尺是長度比，要開方。',
   },
-  diag: '只有 33% 答對。1 km = 10⁵ cm ⇒ 1 km² = 10¹⁰ cm²。比例尺是長度之比，面積之比是它的平方。',
-  rule: '面積比 = (長度比)²；單位要先統一。',
-  pit: '0.75 km² = 7.5 × 10⁹ cm²。',
+  diag: '只有 33% 答對。比例尺是「長度」之比，題目給的是「面積」，所以 (圖上長度 ÷ 實際長度)² = 圖上面積 ÷ 實際面積。最易錯的是單位：100 cm = 1 m ⇒ 10 000 cm² = 1 m²；1 km = 1 000 m ⇒ 1 km² = 1 000 000 m²。',
+  rule: '(圖上長度 ÷ 實際長度)² = 圖上面積 ÷ 實際面積；兩個面積要用同一單位。',
+  pit: '面積單位要平方：1 m² = 100² cm² = 10 000 cm²，1 km² = 1 000² m² = 1 000 000 m²。求出 1/25 000 000 後記得開方（否則選 D）。',
   steps: [
-    S('統一單位', 'Same units', '0.75 km² = 0.75 × 10¹⁰ = <b>7.5 × 10⁹ cm²</b>', '', ''),
-    S('面積比', 'Ratio of areas', '300 : 7.5 × 10⁹ = <b>1 : 25 000 000</b>', '', ''),
-    S('開方', 'Square root', '√25 000 000 = 5 000 ⇒ <b>1 : 5 000</b> ⇒ B', '', '', { key: true }),
+    S('單位換算', 'Units', '100 cm = 1 m ⇒ <b>10 000 cm² = 1 m²</b><br>1 km = 1 000 m ⇒ <b>1 km² = 1 000 000 m²</b>', '長度單位平方，面積單位就要用平方的換算。', 'Square the length conversion to convert areas.'),
+    S('列式', 'Set up', '(' + FR('圖上長度', '實際長度') + ')² = ' + FR('300 cm²', '0.75 km²') + ' = ' + FR('0.03 m²', '750 000 m²'), '面積比 = 長度比的平方。', 'Ratio of areas = (ratio of lengths)².', { key: true }),
+    S('面積比', 'Ratio of areas', '(' + FR('圖上長度', '實際長度') + ')² = <b>' + FR('1', '25 000 000') + '</b>', '', ''),
+    S('開方', 'Square root', FR('圖上長度', '實際長度') + ' = √' + FR('1', '25 000 000') + ' = ' + FR('1', '5 000') + ' ⇒ <b>1 : 5 000</b> ⇒ B', '', ''),
   ],
 });
 
@@ -11466,22 +11523,22 @@ addX({
 });
 
 addX({
-  key: '2020-16', ans: 'B', short: '把 πa²b 當成一個整體', topic: 'MENSURATION',
-  en: 'Cylinder radius 5a, height 7b has volume 525; cone radius 7a, height 5b', zh: '立體：由圓柱求 πa²b = 3', trap: 'D',
+  key: '2020-16', ans: 'B', short: '由圓柱求 πa²b = 3，整體代入', topic: 'MENSURATION',
+  en: 'Cylinder radius 5a, height 7b has volume 525; cone radius 7a, height 5b', zh: '立體：由圓柱體積求 πa²b，再把 πa²b 整體代入圓錐體積', trap: 'D',
   opts: { A: '175 cm³', B: '245 cm³', C: '490 cm³', D: '735 cm³' },
   why: {
-    A: '175 = 525 ÷ 3：圓錐的尺寸也變了。',
-    B: '⅓π(49a²)(5b) = (245/3)πa²b = (245/3)(3) = 245。',
-    C: '490 = 2 × 245：可能沒有乘 ⅓ 後又錯除。',
-    D: '735 = 245 × 3：漏了圓錐的 ⅓。',
+    A: '175 = 525 ÷ 3：圓錐的半徑及高都變了，要代入 ⅓π(7a)²(5b)。',
+    B: '⅓π(7a)²(5b) = (245/3)πa²b = (245/3) × 3 = 245 cm³。',
+    C: '490 = 2 × 245：計算錯了。',
+    D: '735 = 245 × 3：漏了圓錐體積的 ⅓。',
   },
-  diag: '不用分別求 a、b：圓柱 π(25a²)(7b) = 175πa²b = 525 ⇒ πa²b = 3。',
+  diag: '不用分別求 a 和 b。由圓柱體積得 175πa²b = 525 ⇒ <b>πa²b = 3</b>；圓錐體積可以寫成 (245/3)πa²b，把 πa²b = 3 整體代入。',
   rule: '圓柱體積 = πr²h；圓錐體積 = ⅓πr²h。',
-  pit: '圓錐有 ⅓。',
+  pit: '(5a)² = 25a²、(7a)² = 49a²，括號外的係數都要平方；圓錐有 ⅓。',
   steps: [
-    S('圓柱', 'Cylinder', 'π(5a)²(7b) = 175πa²b = 525 ⇒ <b>πa²b = 3</b>', '', '', { key: true }),
-    S('圓錐', 'Cone', '⅓π(7a)²(5b) = ' + FR('245', '3') + 'πa²b', '', ''),
-    S('答案', 'Answer', FR('245', '3') + ' × 3 = <b>245 cm³</b> ⇒ B', '', ''),
+    S('圓柱體積 πr²h', 'Volume of the cylinder', 'π(5a)²(7b) = 525<br>175πa²b = 525 ⇒ ' + MK('<b>πa²b = 3</b>', 'g'), '由圓柱求出 πa²b 這個整體。', 'Find πa²b as a whole from the cylinder.', { key: true }),
+    S('圓錐體積 ⅓πr²h', 'Volume of the cone', FR('1', '3') + 'π(7a)²(5b) = ' + FR('245', '3') + MK('πa²b', 'g'), '', ''),
+    S('整體代入', 'Substitute', FR('245', '3') + ' × ' + MK('3', 'g') + ' = <b>245 cm³</b> ⇒ B', '', ''),
   ],
 });
 
@@ -11588,23 +11645,60 @@ addX({
 });
 
 addX({
-  key: '2020-22', ans: 'C', short: '直角 ⇒ AC 是直徑', topic: 'CIRCLE GEOMETRY',
-  en: 'Circle ABCDE; AB = 10, BC = 5, ∠ABC = 90°, ∠CED = 40°', zh: '半圓上的圓周角 = 90°，同弓形角 ∠CAD = 40°', trap: 'B',
+  key: '2020-22', ans: 'C', short: 'AC 是直徑，再用正弦定律', topic: 'CIRCLE GEOMETRY',
+  en: 'Circle ABCDE; AB = 10, BC = 5, ∠ABC = 90°, ∠CED = 40°', zh: '圓：∠ABC = 90° ⇒ AC 是直徑；圓內接四邊形求 ∠ACD，再在 △OCD 用正弦定律', trap: 'B',
   opts: { A: '5 cm', B: '6 cm', C: '7 cm', D: '8 cm' },
   why: {
-    A: '5 是 BC。',
-    B: '6 可能誤用了 cos 40°。',
-    C: 'AC = √125，CD = AC sin 40° ≈ 7.19 ≈ 7 cm。',
+    A: '5 是 BC 的長度，不是 CD。',
+    B: '6 不對：△OCD 中 CD/sin 80° = (√125/2)/sin 50° ⇒ CD ≈ 7.19。',
+    C: 'CD = (√125/2) × sin 80° ÷ sin 50° = 7.1865… ≈ 7 cm。',
     D: '8 不對應正確計算。',
   },
-  diag: '∠ABC = 90° ⇒ AC 是直徑 ⇒ ∠ADC = 90°。∠CAD = ∠CED = 40°（同弓形），CD 是 40° 的對邊。',
-  rule: '半圓上的圓周角是直角；同弓形內的圓周角相等。',
-  pit: 'CD 是 ∠CAD 的對邊 ⇒ 用 sin。',
+  diag: '∠ABC = 90° ⇒ AC 是直徑，AC = √(10² + 5²) = √125。連 AE 得 ∠AEC = 90°，於是圓內接四邊形 ACDE 的 ∠AED = 130°，∠ACD = 50°。圓心 O 是 AC 的中點，△OCD 是等腰三角形（兩邊都是半徑 √125/2），最後用正弦定律求 CD。',
+  rule: '半圓上的圓周角 = 90°（及其逆定理）；圓內接四邊形對角互補；等腰三角形底角相等；正弦定律 a/sin A = b/sin B。',
+  pit: '∠AED = ∠AEC + ∠CED = 90° + 40° = 130°；∠ACD 是它的對角，所以 = 50°。',
+  alt: '用計數機「三角形解」程式：△OCD 已知兩邊 √125/2 及夾角 80°，直接求 CD ≈ 7.19。另一方法：∠CAD = ∠CED = 40°（同弓形內的圓周角），△ACD 中 ∠ADC = 90°，CD = √125 sin 40° ≈ 7.19 cm。',
   steps: [
-    S('直徑', 'Diameter', '∠ABC = 90° ⇒ AC = √(10² + 5²) = <b>√125</b>', '', ''),
-    S('同弓形', 'Same segment', '∠CAD = ∠CED = <b>40°</b>，∠ADC = 90°', '', '', { key: true }),
-    S('CD', 'Find CD', 'CD = √125 sin 40° ≈ 7.19 ≈ <b>7 cm</b> ⇒ C', '', ''),
+    S('① AC 是直徑', 'AC is a diameter', '∠ABC = 90° ⇒ <span class="ca-r">AC 是直徑</span><br>AC = √(10² + 5²) = <b>√125</b>', '半圓上的圓周角的逆定理。', 'Converse of the angle in a semicircle.', { cap: '紅色＝直徑 AC。' }),
+    S('② ∠AEC', 'Angle AEC', '連 AE：<span class="ca-o">∠AEC = <b>90°</b></span>', '半圓上的圓周角（∠ in semi-circle）。', 'Angle in a semicircle.', { cap: '橙色＝△AEC，∠AEC = 90°。' }),
+    S('③ ∠ACD', 'Angle ACD', '∠AED = 90° + 40° = 130°<br><span class="ca-g">∠ACD = 180° − 130° = <b>50°</b></span>', '圓內接四邊形 ACDE 對角互補（opp. ∠s, cyclic quad.）。', 'Opposite angles of cyclic quadrilateral ACDE.', { key: true, cap: '黃色＝圓內接四邊形 ACDE；綠色＝∠ACD = 50°。' }),
+    S('④ 圓心 O', 'Centre O', 'O 是 AC 的中點：<span class="ca-m">OC = OD = ' + FR('√125', '2') + '</span>', '兩條都是半徑。', 'Both are radii.', { cap: '粉紅色＝半徑 OC、OD。' }),
+    S('⑤ 底角', 'Base angles', '<span class="ca-p">∠ODC = ∠OCD = <b>50°</b></span>', '等腰三角形底角（base ∠s, isos. △）。', 'Base angles of an isosceles triangle.', { cap: '紫色＝△OCD 的兩隻底角。' }),
+    S('⑥ ∠COD', 'Angle COD', '∠COD = 180° − 50° − 50° = <b>80°</b>', '三角形內角和（∠ sum of △）。', 'Angle sum of a triangle.', { cap: '' }),
+    S('⑦ 正弦定律', 'Sine rule', FR('CD', 'sin 80°') + ' = ' + FR('√125 ÷ 2', 'sin 50°') + '<br>CD = 7.1865… ≈ <b>7 cm</b> ⇒ C', '', '', { key: true, cap: '紅色＝所求的 CD。' }),
   ],
+  draw(i, st, at) {
+    const O = [320, 250], R = 185, Q_ = d => pol(O[0], O[1], R, d);
+    const A = Q_(190), B = Q_(63.13), C = Q_(10), D = Q_(-70), E = Q_(-125);
+    let g = '';
+    if (i === 2) g += at(2, pg([A, C, D, E], 'hgY op5'));
+    if (i >= 3) g += at(3, pg([O, C, D], i === 6 ? 'fd op5' : 'fp op5'));
+    g += ci(O[0], O[1], R) + ln(...A, ...B) + ln(...B, ...C) + ln(...C, ...E) + ln(...E, ...D) + ln(...D, ...C);
+    // ① 直徑 AC
+    g += ln(...A, ...C, i === 0 ? 'r thick' : 'r') + rightMark(B, A, C, 14, 'thin');
+    const mAB = mid(A, B), mBC = mid(B, C), mAC = mid(A, C);
+    g += tx(mAB[0] - 14, mAB[1] - 6, '10', 'm bl') + tx(mBC[0] + 16, mBC[1] - 4, '5', 'm bl');
+    g += tx(mAC[0] - 40, mAC[1] - 14, '√125', 'm r');
+    // ② AE，∠AEC = 90°
+    if (i >= 1) g += at(1, ln(...A, ...E, i === 1 ? 'lo thick' : 'lo') + rightMark(E, A, C, 15, i === 1 ? 'o' : 'thin'));
+    if (i === 1) g += at(1, ln(...E, ...C, 'lo thick'));
+    // 角
+    g += ang20(E, C, D, 34, '40°', 'b', i === 2);
+    if (i >= 2) g += at(2, ang20(C, A, D, 30, '50°', i === 4 ? 'p' : 'g', i === 2 || i === 4, 54));
+    // ④ 圓心及半徑
+    if (i >= 3) {
+      g += at(3, ln(...O, ...D, i === 3 ? 'lmg thick' : 'lmg') + dt(...O, 'r') + tx(O[0] - 4, O[1] + 24, 'O', 'm', 'end'));
+      const mOC = mid(O, C);
+      g += at(3, tx(mOC[0] + 6, mOC[1] - 12, '√125/2', 'm mg'));
+      if (i === 3) g += at(3, ln(...O, ...C, 'lmg thick'));
+    }
+    if (i >= 4) g += at(4, ang20(D, O, C, 26, '50°', 'p', i === 4, 46));
+    if (i >= 5) g += at(5, ang20(O, C, D, 30, '80°', 'm', i === 5, 52));
+    if (i === 6) g += at(6, ln(...C, ...D, 'r thick') + tx(mid(C, D)[0] + 14, mid(C, D)[1] + 4, 'CD ≈ 7.19', 'm r', 'start'));
+    const L = (p, t, dx, dy) => tx(p[0] + dx, p[1] + dy, t, 'm');
+    g += L(A, 'A', -16, 6) + L(B, 'B', 4, -12) + L(C, 'C', 16, 6) + L(D, 'D', 8, 24) + L(E, 'E', -12, 22);
+    return g;
+  },
 });
 
 addX({
@@ -11845,43 +11939,74 @@ addX({
 });
 
 addX({
-  key: '2020-35', ans: 'D', short: '檢查相鄰兩項的差', topic: 'ARITHMETIC SEQUENCES',
-  en: 'Which are arithmetic sequences (a &gt; 0)?', zh: '等差數列：T₂ − T₁ = T₃ − T₂', trap: 'C',
+  key: '2020-35', ans: 'D', short: '相鄰兩項相減，公差相同', topic: 'ARITHMETIC SEQUENCES',
+  en: 'Which are arithmetic sequences (a &gt; 0)?', zh: '等差數列：T₂ − T₁ = T₃ − T₂；對數用 log x − log y = log(x/y)', trap: 'C',
   opts: { A: 'I and II only', B: 'I and III only', C: 'II and III only', D: 'I, II and III' },
   why: {
-    A: 'III 也是：sin a, 0, −sin a，公差 −sin a。',
-    B: 'II 也是：公差 1 − a。',
-    C: 'I 也是：−3 log a, log a, 5 log a，公差 4 log a。',
-    D: '三個都是等差數列。',
+    A: 'III 也是：cos 90° − cos(90° − a)° = −sin a = cos(90° + a)° − cos 90°。',
+    B: 'II 也是：兩個差都是 1 − a。',
+    C: 'I 也是：log a − log a⁻³ = log a⁴ = log a⁵ − log a。',
+    D: '三個數列相鄰兩項的差都相同，全部都是等差數列。',
   },
-  diag: 'I：log a⁻³ = −3 log a、log a⁵ = 5 log a ⇒ 公差 4 log a。III：cos(90° − a) = sin a，cos(90° + a) = −sin a。',
-  rule: '對數律 log aⁿ = n log a；cos(90° ± a) = ∓ sin a。',
-  pit: '公差可以是 0 或負數，仍然是等差數列。',
+  diag: '判斷等差數列：把第二項減第一項、第三項減第二項，兩個差相同就是。I 用 log x − log y = log(x/y)；III 用 cos(90° − a) = sin a、cos(90° + a) = −sin a、cos 90° = 0。',
+  rule: '等差數列 ⇔ T₂ − T₁ = T₃ − T₂（公差可以是負數或含 a 的式）。',
+  pit: '公差 1 − a、−sin a 都含 a，只要兩個差相同就是等差數列，不需要是常數數字。',
+  alt: '或隨便代一個 a 的數值試，例如 a = 30：I：log 30⁻³ ≈ −4.431、log 30 ≈ 1.477、log 30⁵ ≈ 7.386（兩個差都約是 5.909）✓；II：−112、−141、−170（差 −29）✓；III：cos 60° = 0.5、cos 90° = 0、cos 120° = −0.5（差 −0.5）✓。',
   steps: [
-    S('I', 'Sequence I', '−3 log a, log a, 5 log a：公差 <b>4 log a</b> ✓', '', ''),
-    S('II', 'Sequence II', '8 − 4a, 9 − 5a, 10 − 6a：公差 <b>1 − a</b> ✓', '', ''),
-    S('III', 'Sequence III', 'sin a, 0, −sin a：公差 <b>−sin a</b> ✓ ⇒ D', '', '', { key: true }),
+    S('I', 'Sequence I', '<span class="ca-p">log a − log a⁻³ = log ' + FR('a', 'a⁻³') + ' = log a⁴</span><br><span class="ca-p">log a⁵ − log a = log ' + FR('a⁵', 'a') + ' = log a⁴</span> ⇒ <b>I ✓</b>', '兩個差都是 log a⁴。', 'Both differences equal log a⁴.'),
+    S('II', 'Sequence II', '<span class="ca-o">(9 − 5a) − (8 − 4a) = 1 − a</span><br><span class="ca-o">(10 − 6a) − (9 − 5a) = 1 − a</span> ⇒ <b>II ✓</b>', '', ''),
+    S('III', 'Sequence III', '<span class="ca-m">cos 90° − cos(90 − a)° = 0 − sin a = −sin a</span><br><span class="ca-m">cos(90 + a)° − cos 90° = −sin a − 0 = −sin a</span> ⇒ <b>III ✓</b> ⇒ D', 'cos(90° − a) = sin a，cos(90° + a) = −sin a。', 'cos(90° − a) = sin a and cos(90° + a) = −sin a.', { key: true }),
   ],
 });
 
 addX({
-  key: '2020-36', ans: 'C', short: '最小值在頂點 (2, −7)', topic: 'LINEAR PROGRAMMING',
-  en: 'Least value of 4x + 3y + k is 24 in region D', zh: '線性規劃：求 4x + 3y 的最小值 −13', trap: 'B',
+  key: '2020-36', ans: 'C', short: '畫區域，代頂點：最小值在 (2, −7)', topic: 'LINEAR PROGRAMMING',
+  en: 'Least value of 4x + 3y + k is 24 in region D', zh: '線性規劃：用截距畫出三條界線，找區域 D 的頂點，再逐一代入', trap: 'B',
   opts: { A: '25', B: '27', C: '37', D: '53' },
   why: {
-    A: '25 = 24 + 1：用錯了頂點。',
-    B: '27 = 24 + 3：用錯了頂點 (0, −1)。',
-    C: '4x + 3y 最小 −13（在 (2, −7)）⇒ −13 + k = 24 ⇒ k = 37。',
+    A: '25 = 24 + 1：用了頂點 (2, −3)，但那裏不是最小值。',
+    B: '27 = 24 + 3：用了頂點 (0, −1)，那裏其實是最大值。',
+    C: '最小值在 (2, −7)：4(2) + 3(−7) + k = −13 + k = 24 ⇒ k = 37。',
     D: '53 不對應任何頂點。',
   },
-  diag: '頂點：(0, −3)、(0, −1)、(2, −3)、(2, −7)。4x + 3y 的值：−9、−3、−1、−13，最小 −13。',
-  rule: '線性函數的最小值在可行區域的頂點。',
-  pit: '2x + y + 3 = 0 與 x + y + 1 = 0 交於 x = −2，在 0 ≤ x ≤ 2 之外，所以區域是四邊形。',
+  diag: '先用 x 截距、y 截距畫出 2x + y + 3 = 0 及 x + y + 1 = 0，再加上 x = 0、x = 2。區域 D 在 ① 的上方、② 的下方、兩條鉛垂線之間，是一個四邊形，頂點是 (0, −1)、(0, −3)、(2, −3)、(2, −7)。',
+  rule: '線性函數在可行區域內的最大值、最小值出現在頂點；逐一代入頂點比較。',
+  pit: '同一個 x 時，y 愈細，4x + 3y + k 愈細（y 的係數 3 &gt; 0）：(0, −3) 一定細過 (0, −1)，(2, −7) 一定細過 (2, −3)，所以可以只試這兩點。',
+  alt: '只試 (0, −3) 和 (2, −7)：−9 + k 與 −13 + k，最細是 −13 + k = 24 ⇒ k = 37。',
   steps: [
-    S('頂點', 'Vertices', '(0, −3)、(0, −1)、(2, −3)、(2, −7)', '', ''),
-    S('最小值', 'Least value', '4x + 3y 最小 = 8 − 21 = <b>−13</b>（在 (2, −7)）', '', '', { key: true }),
+    S('畫界線', 'Draw the boundaries', T20([['', 'x 截距', 'y 截距'], ['① 2x + y + 3 = 0', FR('−3', '2'), '−3'], ['② x + y + 1 = 0', '−1', '−1']]) + '③ 0 ≤ x ≤ 2：x = 0 與 x = 2 之間', '用兩個截距畫直線。', 'Use the two intercepts to draw each line.', { cap: '紫色＝①；粉紅色＝②；綠色＝③ x = 0、x = 2。' }),
+    S('區域 D', 'Region D', '2x + y + 3 ≥ 0：① 的上方<br>x + y + 1 ≤ 0：② 的下方<br>⇒ <b>黃色四邊形</b>', '代 (0, 0) 檢查：2(0) + 0 + 3 ≥ 0 ✓，0 + 0 + 1 ≤ 0 ✗。', 'Test (0, 0) to decide each side.', { cap: '黃色＝區域 D。' }),
+    S('頂點', 'Vertices', '<span class="ca-b">(0, −1)、(0, −3)、(2, −3)、(2, −7)</span>', '把 x = 0、x = 2 代入 ①、② 得到。', 'Put x = 0 and x = 2 into lines ① and ②.', { cap: '藍色＝四個頂點。' }),
+    S('代入頂點', 'Test the vertices', '(0, −1)：−3 + k　(0, −3)：−9 + k<br>(2, −3)：−1 + k　(2, −7)：<b>−13 + k</b>（最細）', '同一個 x，y 愈細值愈細：(0, −3)、(2, −7) 一定細過上面的點，可只試這兩點。', 'For the same x, a smaller y gives a smaller value, so only the two lower points need testing.', { key: true, cap: '紅色＝最小值所在的頂點 (2, −7)。' }),
     S('求 k', 'Find k', '−13 + k = 24 ⇒ <b>k = 37</b> ⇒ C', '', ''),
   ],
+  draw(i, st, at) {
+    const o = plane({ X0: 190, Y0: 90, sx: 44, sy: 44, x0: -3, x1: 3.6, y0: -8.2, y1: 1.6, step: 1, tick: 1, labels: false });
+    const P = o.P;
+    let g = o.svg + tx(o.X(0) - 6, o.Y(0) + 18, 'O', 's', 'end') + tx(o.X(2) + 6, o.Y(0) + 18, '2', 's', 'start');
+    const V = [[0, -1], [0, -3], [2, -3], [2, -7]];
+    if (i >= 1) g += at(1, pg([P(0, -1), P(2, -3), P(2, -7), P(0, -3)], 'hgY op'));
+    g += o.line(2, 1, -3, i === 0 ? 'lp thick' : 'lp') + o.line(1, 1, -1, i === 0 ? 'lmg thick' : 'lmg');
+    g += o.line(1, 0, 2, 'lgn') + ln(...P(0, -8.2), ...P(0, 1.6), 'lgn');
+    g += tx(...P(0.55, -7.85), '①', 'm pu', 'start') + tx(...P(-2.85, 1.25), '②', 'm mg', 'start') + tx(...P(2.12, 1.2), '③', 'm g', 'start');
+    if (i === 0) g += at(0, dt(...P(-1.5, 0), 'pu') + dt(...P(0, -3), 'pu') + dt(...P(-1, 0), 'mg') + dt(...P(0, -1), 'mg')
+      + tx(o.X(-1.5) - 6, o.Y(0) + 20, '−3/2', 'm pu', 'end') + tx(o.X(-1) + 6, o.Y(0) - 8, '−1', 'm mg', 'start')
+      + tx(o.X(0) - 8, o.Y(-1) + 20, '−1', 'm mg', 'end') + tx(o.X(0) - 8, o.Y(-3) + 22, '−3', 'm pu', 'end'));
+    if (i >= 2) {
+      const lab = [['(0, −1)', 10, -10, 'start'], ['(0, −3)', -10, 6, 'end'], ['(2, −3)', 10, -8, 'start'], ['(2, −7)', 10, -6, 'start']];
+      V.forEach(([x, y], k) => {
+        const p = P(x, y), [t, dx, dy, an] = lab[k], low = k === 3 && i >= 3;
+        g += at(2, dt(...p, low ? 'r' : 'bl') + tx(p[0] + dx, p[1] + dy, t, low ? 'm r' : 'm bl', an));
+      });
+    }
+    if (i >= 3) {
+      // 代入頂點：列在圖的右邊（跟老師的寫法一樣）
+      const rows = [['(0, −1)：−3 + k', 'm'], ['(0, −3)：−9 + k', 'm'], ['(2, −3)：−1 + k', 'm'], ['(2, −7)：−13 + k 最細', 'm r']];
+      if (i === 4) rows.push(['−13 + k = 24 ⇒ k = 37', 'm r']);
+      g += at(3, panel(o.X(3.6) + 26, o.Y(0.9), 250, rows, 'boxp', 32));
+    }
+    return g;
+  },
 });
 
 addX({
@@ -11906,83 +12031,170 @@ addX({
 });
 
 addX({
-  key: '2020-38', ans: 'A', short: '海倫公式：s = 14 + k', topic: '3D TRIGONOMETRY',
-  en: 'Right prism; AB = AC = 12, AP = 9, EP = 5, BD = 2k; area of △BDP', zh: '先用畢氏定理求 BP、DP，再用海倫公式', trap: 'B',
+  key: '2020-38', ans: 'A', short: '畢氏定理求 PD、PB，再用海倫公式', topic: '3D TRIGONOMETRY',
+  en: 'Right prism; AB = AC = 12, AP = 9, EP = 5, BD = 2k; area of △BDP', zh: '先在兩個直角三角形用畢氏定理求 PD、PB，再用海倫公式', trap: 'B',
   opts: { A: '√((<i>k</i>² − 1)(196 − <i>k</i>²)) cm²', B: '√((<i>k</i>² − 1)(196 + <i>k</i>²)) cm²', C: '√((<i>k</i>² + 1)(196 − <i>k</i>²)) cm²', D: '√((<i>k</i>² + 1)(196 + <i>k</i>²)) cm²' },
   why: {
-    A: 's = 14 + k ⇒ √[(14 + k)(k − 1)(k + 1)(14 − k)] = √((k² − 1)(196 − k²))。',
-    B: 's − 2k = 14 − k，所以是 196 − k²。',
-    C: 's − 15 = k − 1，所以是 k² − 1。',
-    D: '兩個因式的符號都錯。',
+    A: 's = k + 14 ⇒ √[(k + 14)(k − 1)(k + 1)(14 − k)] = √((196 − k²)(k² − 1))。',
+    B: 's − 2k = 14 − k，(k + 14)(14 − k) = 196 − k²，不是 196 + k²。',
+    C: 's − 15 = k − 1，s − 13 = k + 1，(k − 1)(k + 1) = k² − 1，不是 k² + 1。',
+    D: '兩個因式的符號都錯了。',
   },
-  diag: '只有 29% 答對。AB ⊥ AE ⇒ BP = √(12² + 9²) = 15；ED = AC = 12 ⊥ AE ⇒ DP = √(12² + 5²) = 13。三邊 15、13、2k 用海倫公式。',
-  rule: '海倫公式：面積 = √[s(s − a)(s − b)(s − c)]，s = 半周界。',
-  pit: '(14 + k)(14 − k) = 196 − k²；(k + 1)(k − 1) = k² − 1。',
+  diag: '只有 29% 答對。△BDP 三條邊：PD 在 △PED（∠PED = 90°），PB 在 △PAB（∠PAB = 90°），BD = 2k。三邊都知道就用海倫公式。',
+  rule: '海倫公式：面積 = √[s(s − a)(s − b)(s − c)]，s = ½(a + b + c)。',
+  pit: 'ED = AC = 12（柱體上下兩個三角形全等）。(k + 14)(14 − k) = 196 − k²；(k − 1)(k + 1) = k² − 1。',
+  alt: '或直接代一個 k 的特別數值試答案，例如 k = 5（BD = 10）：用計數機「三角形解」程式或 FMLA 03（海倫公式）計 15、13、10 的三角形面積 ≈ 64.06；選項 A：√(24 × 171) = √4104 ≈ 64.06 ✓，其他選項都不等。',
   steps: [
-    S('BP、DP', 'BP and DP', 'BP = √(12² + 9²) = <b>15</b>；DP = √(12² + 5²) = <b>13</b>', '', ''),
-    S('半周界', 'Semi-perimeter', 's = ' + FR('15 + 13 + 2k', '2') + ' = <b>14 + k</b>', '', ''),
-    S('海倫公式', 'Heron’s formula', '√[(14 + k)(k − 1)(k + 1)(14 − k)] = <b>√((k² − 1)(196 − k²))</b> ⇒ A', '', '', { key: true }),
+    S('PD', 'Find PD', '<span class="ca-p">△PED：PD = √(5² + 12²) = <b>13</b></span>', 'ED = AC = 12，∠PED = 90°。', 'ED = AC = 12 and ∠PED = 90°.', { cap: '紫色＝直角三角形 PED。' }),
+    S('PB', 'Find PB', '<span class="ca-g">△PAB：PB = √(9² + 12²) = <b>15</b></span>', '∠PAB = 90°（直立柱體的側棱垂直底面）。', '∠PAB = 90° in a right prism.', { cap: '綠色＝直角三角形 PAB。' }),
+    S('半周界', 'Semi-perimeter', '△BDP 三邊：15、13、2k<br>s = ' + FR('1', '2') + '(15 + 13 + 2k) = <b>k + 14</b>', '', '', { cap: '藍色＝△BDP。' }),
+    S('海倫公式', 'Heron’s formula', '面積 = √[s(s − 15)(s − 13)(s − 2k)]<br>= √[(k + 14)(k − 1)(k + 1)(14 − k)]<br>= <b>√((196 − k²)(k² − 1))</b> ⇒ A', '(k + 14)(14 − k) = 196 − k²；(k − 1)(k + 1) = k² − 1。', 'Pair the factors as differences of squares.', { key: true, cap: '' }),
   ],
+  draw(i, st, at) {
+    const E = [80, 40], D = [470, 40], F = [335, 160], A = [80, 340], C = [470, 340], B = [335, 455];
+    const P = mid(E, A, 5 / 14);
+    let g = '';
+    if (i === 0) g += at(0, pg([P, E, D], 'fp op5'));
+    if (i === 1) g += at(1, pg([P, A, B], 'hgG op5'));
+    if (i >= 2) g += at(2, pg([P, B, D], 'fcy op5'));
+    // 柱體
+    g += ln(...E, ...D) + ln(...E, ...F) + ln(...F, ...D) + ln(...A, ...B) + ln(...B, ...C) + ln(...A, ...C, 'thin dash');
+    g += ln(...E, ...A) + ln(...F, ...B) + ln(...D, ...C);
+    // △BDP
+    g += ln(...P, ...D, i === 0 ? 'lp thick' : i >= 2 ? 'lb' : 'thin dash') + ln(...P, ...B, i === 1 ? 'lgn thick' : i >= 2 ? 'lb' : 'thin dash') + ln(...B, ...D, i >= 2 ? 'lb' : 'ln');
+    if (i === 0) g += at(0, ln(...E, ...D, 'lp thick') + ln(...P, ...E, 'lp thick') + rightMark(E, P, D, 16, 'ap'));
+    if (i === 1) g += at(1, ln(...A, ...B, 'lgn thick') + ln(...P, ...A, 'lgn thick') + rightMark(A, P, B, 16, 'lgn'));
+    // 長度
+    g += tx(E[0] - 12, mid(E, P)[1] + 6, '5', 'm', 'end') + tx(A[0] - 12, mid(P, A)[1] + 6, '9', 'm', 'end');
+    g += tx(mid(E, D)[0], E[1] - 10, '12', i === 0 ? 'm pu' : 'm') + tx(mid(A, B)[0] - 12, mid(A, B)[1] + 22, '12', i === 1 ? 'm g' : 'm');
+    const mPD = mid(P, D), mPB = mid(P, B), mBD = mid(B, D);
+    if (i >= 0) g += tx(mPD[0] - 6, mPD[1] - 10, '13', i === 0 ? 'm pu' : i >= 2 ? 'm bl' : 'm');
+    if (i >= 1) g += at(1, tx(mPB[0] - 14, mPB[1] + 6, '15', i === 1 ? 'm g' : 'm bl', 'end'));
+    g += tx(mBD[0] + 14, mBD[1] + 6, '2k', i >= 2 ? 'm bl' : 'm', 'start');
+    if (i >= 2) g += at(2, tx(250, 520, 's = ½(15 + 13 + 2k) = k + 14', 'm bl'));
+    if (i === 3) g += at(3, tx(250, 552, '面積 = √((196 − k²)(k² − 1))', 'm r'));
+    const L = (p, t, dx, dy) => tx(p[0] + dx, p[1] + dy, t, 'm');
+    g += L(E, 'E', -10, -8) + L(D, 'D', 12, -8) + L(F, 'F', 14, 18) + L(A, 'A', -14, 6) + L(C, 'C', 14, 6) + L(B, 'B', 0, 26) + L(P, 'P', -16, 6) + dt(...P);
+    return g;
+  },
 });
 
 addX({
-  key: '2020-39', ans: 'A', short: '公切線：兩個圓都用交錯弓形', topic: 'CIRCLE GEOMETRY',
-  en: 'Circles ABC and CDE touch at C; AB tangent at E; ∠ADE = 100°, ∠BCQ = 35°', zh: '交錯弓形用三次：∠BAC = 35°，∠AED = ∠DCE，∠ABC = ∠PCA = ∠CED', trap: 'C',
+  key: '2020-39', ans: 'A', short: '加線：交錯弓形的圓周角用多次', topic: 'CIRCLE GEOMETRY',
+  en: 'Circles ABC and CDE touch at C; AB tangent at E; ∠ADE = 100°, ∠BCQ = 35°', zh: '設 BC 與小圓交於 F，連 DF、EF；用「交錯弓形的圓周角」及「圓內接四邊形外角」一步步推', trap: 'C',
   opts: { A: '55°', B: '65°', C: '70°', D: '80°' },
   why: {
-    A: '∠DCE = 45°，∠CDE = 80° ⇒ ∠ABC = ∠CED = 55°。',
+    A: '∠DFC = 100° − 45° = 55° = ∠PCD = ∠PCA = ∠ABC。',
     B: '65° 不對應正確推論。',
     C: '70° 不對應正確推論。',
-    D: '80° 是 ∠CDE。',
+    D: '80° = 180° − 100°，是 ∠CDE，不是 ∠ABC。',
   },
-  diag: '只有 28% 答對。關鍵是公切線 PQ：在大圓 ∠PCA = ∠ABC，在小圓 ∠PCD = ∠CED，而 D 在 CA 上 ⇒ ∠ABC = ∠CED。',
-  rule: '切線與弦的夾角 = 交錯弓形內的圓周角。',
-  pit: '△ADE：∠DAE = ∠BAC = 35°（大圓，∠BCQ 的交錯弓形）⇒ ∠AED = 45° = ∠DCE（小圓）。',
+  diag: '只有 28% 答對。設 BC 與小圓再交於 F，連 DF、EF。切線有三條：PQ（兩個圓共用）、AB（小圓在 E 的切線），每條切線都可用「交錯弓形的圓周角」。小圓 CDEF 是圓內接四邊形，可用外角。',
+  rule: '交錯弓形的圓周角（∠ in alt. segment）：切線與弦的夾角 = 弦另一邊弓形內的圓周角；圓內接四邊形外角 = 內對角（ext. ∠, cyclic quad.）。',
+  pit: 'D 在 AC 上，所以 ∠PCD = ∠PCA；在大圓中 ∠PCA = ∠ABC（交錯弓形）。',
   steps: [
-    S('大圓', 'Big circle', '∠BAC = ∠BCQ = <b>35°</b>', '', ''),
-    S('△ADE', 'Triangle ADE', '∠AED = 180° − 100° − 35° = <b>45°</b> = ∠DCE', '小圓：切線 AE 與弦 ED。', 'Small circle: tangent AE and chord ED.'),
-    S('△CDE', 'Triangle CDE', '∠CDE = 80° ⇒ ∠CED = 180° − 80° − 45° = <b>55°</b>', '', ''),
-    S('公切線', 'Common tangent', '∠ABC = ∠PCA = ∠CED = <b>55°</b> ⇒ A', '', '', { key: true }),
+    S('① 大圓', 'Big circle', '<span class="ca-g">∠BAC = ∠BCQ = <b>35°</b></span>', '交錯弓形的圓周角（∠ in alt. segment）。', 'Angle in the alternate segment.', { cap: '綠色＝∠BAC = ∠BCQ = 35°。' }),
+    S('② ③ 加線 DF', 'Join DF', '設 BC 與小圓交於 F，連 DF<br><span class="ca-m">∠CDF = ∠FCQ = <b>35°</b></span>', '小圓：交錯弓形的圓周角。', 'Small circle: angle in the alternate segment.', { cap: '粉紅色＝DF 及 ∠CDF = 35°。' }),
+    S('④ 加線 EF', 'Join EF', '連 EF：<b>CDEF 是圓內接四邊形</b>', 'C、D、E、F 四點都在小圓上。', 'C, D, E, F all lie on the small circle.', { cap: '淺藍色＝EF。' }),
+    S('⑤ ∠EFC', 'Angle EFC', '<span class="ca-p">∠EFC = ∠ADE = <b>100°</b></span>', '圓內接四邊形外角（ext. ∠, cyclic quad.）。', 'Exterior angle of a cyclic quadrilateral.', { cap: '紫色＝∠ADE 與 ∠EFC。' }),
+    S('⑥ △ADE', 'Triangle ADE', '<span class="ca-o">∠AED = 180° − 100° − 35° = <b>45°</b></span>', '三角形內角和（∠ sum of △）。', 'Angle sum of a triangle.', { cap: '黃色＝△ADE。' }),
+    S('⑦ ∠DFE', 'Angle DFE', '<span class="ca-o">∠DFE = ∠AED = <b>45°</b></span>', '小圓：切線 AE、弦 ED，交錯弓形的圓周角。', 'Small circle: tangent AE and chord ED.', { cap: '橙色＝∠AED = ∠DFE = 45°。' }),
+    S('⑧ ∠DFC', 'Angle DFC', '∠DFC = 100° − 45° = <b>55°</b>', '', '', { cap: '' }),
+    S('⑨ ∠PCD', 'Angle PCD', '<span class="ca-b">∠PCD = ∠DFC = <b>55°</b></span>', '小圓：切線 PC、弦 CD，交錯弓形的圓周角。', 'Small circle: tangent PC and chord CD.', { key: true, cap: '藍色＝∠DFC = ∠PCD = 55°。' }),
+    S('⑩ ∠ABC', 'Angle ABC', '<span class="ca-b">∠ABC = ∠PCA = <b>55°</b></span> ⇒ A', '大圓：切線 PC、弦 CA，交錯弓形的圓周角。', 'Big circle: tangent PC and chord CA.', { key: true, cap: '' }),
   ],
+  draw(i, st, at) {
+    const K = 205, X0 = 330, Y0 = 470, T = (x, y) => [X0 + K * x, Y0 - K * y];
+    const A = T(-0.9397, 1.342), B = T(0.9397, 0.658), C = T(0, 0), D = T(-0.4553, 0.6502), E = T(0.1657, 0.9397), F = T(0.4553, 0.3188);
+    const Pp = T(-1.25, 0), Qp = T(1.25, 0);
+    let g = '';
+    if (i === 4) g += at(4, pg([A, D, E], 'hgY op'));
+    if (i === 3) g += at(3, pg([C, D, E, F], 'fp op5'));
+    g += ci(...T(0, 1), K) + ci(...T(0, 0.4845), K * 0.4845);
+    g += ln(...Pp, ...Qp) + ln(...A, ...B) + ln(...A, ...C) + ln(...D, ...E) + ln(...C, ...B);
+    if (i >= 1) g += at(1, ln(...D, ...F, i === 1 ? 'lmg thick' : 'lmg') + dt(...F));
+    if (i >= 2) g += at(2, ln(...E, ...F, i === 2 ? 'lcy thick' : 'lcy'));
+    // 已知角
+    g += ang20(D, A, E, 26, '100°', 'p', i === 3, 48);
+    g += ang20(C, B, Qp, 46, '35°', 'g', i === 0 || i === 1, 68);
+    // 推出的角
+    g += at(0, ang20(A, B, C, 40, '35°', 'g', i === 0, 62));
+    if (i >= 1) g += at(1, ang20(D, C, F, 30, '35°', 'm', i === 1, 50));
+    if (i >= 3) g += at(3, ang20(F, E, C, 50, '100°', 'p', i === 3, 76, -36));
+    if (i >= 4) g += at(4, ang20(E, A, D, 30, '45°', 'o', i === 4 || i === 5, 52));
+    if (i >= 5) g += at(5, ang20(F, D, E, 28, '45°', 'o', i === 5, 46));
+    if (i >= 6) g += at(6, ang20(F, D, C, 28, '55°', 'b', i === 6 || i === 7, 46));
+    if (i >= 7) g += at(7, ang20(C, Pp, D, 40, '55°', 'b', i === 7 || i === 8, 62));
+    if (i >= 8) g += at(8, ang20(B, A, C, 40, '55°', 'b', true, 62));
+    const L = (p, t, dx, dy) => tx(p[0] + dx, p[1] + dy, t, 'm');
+    g += L(A, 'A', -14, -6) + L(B, 'B', 16, 6) + L(C, 'C', 0, 26) + L(D, 'D', -16, 4) + L(E, 'E', 2, -12) + L(Pp, 'P', -4, 24) + L(Qp, 'Q', 4, 24);
+    if (i >= 1) g += at(1, L(F, 'F', 16, 10));
+    return g;
+  },
 });
 
 addX({
-  key: '2020-40', ans: 'D', short: '對稱 ⇒ 內心在 x 軸上', topic: 'IN-CENTRE',
-  en: 'Sides 4x + 3y = 24, 4x − 3y = 24, x = a; in-centre x = 31', zh: '內心到三邊距離相等：|31 − a| = 20', trap: 'C',
+  key: '2020-40', ans: 'D', short: '內心在 x 軸上，用 tan θ = 4/3 求半徑', topic: 'IN-CENTRE',
+  en: 'Sides 4x + 3y = 24, 4x − 3y = 24, x = a; in-centre x = 31', zh: '內心：兩條斜邊關於 x 軸對稱 ⇒ 內心 (31, 0)；在直角三角形用 sin θ 求內切圓半徑', trap: 'B',
   opts: { A: '15', B: '31', C: '45', D: '51' },
   why: {
-    A: '15 不滿足距離條件。',
-    B: '31 是內心的 x 坐標。',
-    C: '45 不滿足距離條件。',
-    D: '內心 (31, 0) 到 4x + 3y = 24 的距離 = 100/5 = 20 ⇒ a = 31 + 20 = 51。',
+    A: '15 不對：內切圓半徑是 20，x = a 在內心右邊 20 單位。',
+    B: '31 是內心的 x 坐標，不是 a。',
+    C: '45 不對：31 + 20 = 51。',
+    D: 'r = 25 sin θ = 25 × 4/5 = 20 ⇒ a = 31 + 20 = 51。',
   },
-  diag: '只有 23% 答對。兩條斜邊關於 x 軸對稱，交於 (6, 0) ⇒ 內心在 x 軸上：(31, 0)。內心到每邊距離 = 內切圓半徑。',
-  rule: '點到直線的距離 = |Ax₀ + By₀ + C| / √(A² + B²)。',
-  pit: 'a = 11 時內心不在三角形內，要捨去。',
+  diag: '只有 23% 答對。4x + 3y = 24 與 4x − 3y = 24 交於 (6, 0)，而且關於 x 軸對稱，所以內心在 x 軸上：(31, 0)。由 (6, 0) 到內心距離 25，斜邊與 x 軸的夾角 θ 滿足 tan θ = 4/3，內切圓半徑 r = 25 sin θ = 20。x = a 是內切圓的切線，所以 a = 31 + 20。',
+  rule: '內心是三條角平分線的交點，到三邊的距離相等（= 內切圓半徑）。直線 4x − 3y = 24 的斜率 4/3 = tan θ。',
+  pit: 'tan θ = 4/3 ⇒ sin θ = 4/5（3-4-5 三角形），不用計 θ 的度數。',
+  alt: '可用計數機「四心」程式代入各選項試答案（輸入三個頂點求內心），但要試四次。',
   steps: [
-    S('內心位置', 'In-centre', '對稱 ⇒ 內心 = <b>(31, 0)</b>', '', ''),
-    S('內切圓半徑', 'In-radius', FR('|4(31) − 24|', '5') + ' = <b>20</b>', '', '', { key: true }),
-    S('求 a', 'Find a', '|a − 31| = 20 ⇒ a = 51（a = 11 捨去）⇒ D', '', ''),
+    S('兩邊的交點', 'Where the two sides meet', '<span class="ca-r">4x + 3y = 24</span>、<span class="ca-g">4x − 3y = 24</span> ⇒ <b>(6, 0)</b>', '兩條線關於 x 軸對稱。', 'The two lines are symmetric about the x-axis.', { cap: '紅色、綠色＝兩條斜邊。' }),
+    S('內心', 'In-centre', '對稱 ⇒ 內心在 x 軸上：<b>(31, 0)</b>', '角平分線就是 x 軸。', 'The angle bisector at (6, 0) is the x-axis.', { cap: '淺藍色＝內切圓。' }),
+    S('直角三角形', 'Right-angled triangle', '(6, 0) 到 (31, 0)：31 − 6 = <b>25</b><br>tan θ = ' + FR('4', '3') + '（4x − 3y = 24 的斜率）', '內切圓半徑垂直於切線（斜邊）。', 'The radius is perpendicular to the tangent.', { key: true, cap: '淺藍色＝直角三角形，θ 在 (6, 0)。' }),
+    S('內切圓半徑', 'In-radius', 'r = 25 sin θ = 25 × ' + FR('4', '5') + ' = <b>20</b>', 'tan θ = 4/3 ⇒ sin θ = 4/5。', 'tan θ = 4/3 gives sin θ = 4/5.', { cap: '' }),
+    S('求 a', 'Find a', 'x = a 與內切圓相切：<b>a = 31 + 20 = 51</b> ⇒ D', '', '', { cap: '橙色＝第三邊 x = a。' }),
   ],
+  draw(i, st, at) {
+    const o = plane({ X0: 70, Y0: 255, sx: 7, sy: 7, x0: -4, x1: 58, y0: -33, y1: 33, step: 10, tick: 10, labels: false });
+    const P = o.P, V = P(6, 0), I = P(31, 0), Tt = P(15, 12), Tg = P(51, 0);
+    let g = o.svg;
+    if (i === 2 || i === 3) g += at(2, pg([V, I, Tt], 'fcy op'));
+    if (i >= 1) g += at(1, ci(...I, 20 * 7, i === 1 ? 'lcy thick' : 'lcy'));
+    g += o.line(4, 3, 24, 'r') + o.line(4, -3, 24, 'lgn');
+    g += o.line(1, 0, 51, i === 4 ? 'lo thick' : 'lo');
+    g += tx(...P(52.5, 30), 'x = a', 'm o', 'start');
+    g += tx(...P(13.5, -27), '4x + 3y = 24', 'm r', 'start') + tx(...P(13.5, 27.5), '4x − 3y = 24', 'm g', 'start');
+    g += at(0, dt(...V, i === 0 ? 'r' : '') + tx(V[0] - 14, V[1] + 16, '(6, 0)', i === 0 ? 'm r' : 'm', 'end'));
+    if (i >= 1) g += at(1, dt(...I, 'cy') + tx(I[0] + 6, I[1] + 22, '(31, 0)', 'm cy', 'start'));
+    if (i >= 2) {
+      g += at(2, ln(...V, ...I, i === 2 ? 'lcy thick' : 'lcy') + rightMark(Tt, V, I, 9, 'thin'));
+      g += at(2, ang20(V, I, Tt, 34, 'θ', 'b', i === 2, 52) + tx(mid(V, I)[0], V[1] - 8, '25', 'm cy'));
+    }
+    if (i >= 3) g += at(3, ln(...I, ...Tt, i === 3 ? 'r thick' : 'r') + tx(mid(I, Tt)[0] + 10, mid(I, Tt)[1] - 4, 'r = 20', 'm r', 'start'));
+    if (i === 4) g += at(4, ln(...I, ...Tg, 'r thick') + dt(...Tg, 'o') + tx(Tg[0] + 8, Tg[1] + 22, '51', 'm o', 'start'));
+    return g;
+  },
 });
 
 addX({
-  key: '2020-41', ans: 'D', short: '代入後判別式 ≥ 0', topic: 'CIRCLES AND LINES',
-  en: 'x² + y² − 6x + cy − 7 = 0 and x − y + 9 = 0 intersect', zh: '判別式：c² − 48c − 448 ≥ 0', trap: 'B',
+  key: '2020-41', ans: 'D', short: '代直線入圓方程，Δ ≥ 0', topic: 'CIRCLES AND LINES',
+  en: 'x² + y² − 6x + cy − 7 = 0 and x − y + 9 = 0 intersect', zh: '相交：把直線方程代入圓方程，得二次方程，判別式 Δ ≥ 0', trap: 'B',
   opts: { A: '−56 ≤ <i>c</i> ≤ 8', B: '−8 ≤ <i>c</i> ≤ 56', C: '<i>c</i> ≤ −56 or <i>c</i> ≥ 8', D: '<i>c</i> ≤ −8 or <i>c</i> ≥ 56' },
   why: {
-    A: '因式的符號錯了。',
-    B: '−8 ≤ c ≤ 56 是 Δ ≤ 0（不相交或相切），方向錯。',
-    C: '因式的符號錯了：(c − 56)(c + 8) ≥ 0。',
-    D: '(c − 56)(c + 8) ≥ 0 ⇒ c ≤ −8 或 c ≥ 56。',
+    A: '因式的符號錯了，而且方向錯：應是 (c + 8)(c − 56) ≥ 0。',
+    B: '−8 ≤ c ≤ 56 是 Δ ≤ 0 的範圍，方向錯了。',
+    C: '因式的符號錯了：c² − 48c − 448 = (c + 8)(c − 56)。',
+    D: 'c² − 48c − 448 ≥ 0 ⇒ (c + 8)(c − 56) ≥ 0 ⇒ c ≤ −8 或 c ≥ 56。',
   },
-  diag: '代 y = x + 9：2x² + (12 + c)x + (74 + 9c) = 0。相交 ⇔ Δ ≥ 0。',
-  rule: '直線與圓相交 ⇔ 代入後的二次方程 Δ ≥ 0。',
-  pit: '(12 + c)² − 8(74 + 9c) = c² − 48c − 448。',
+  diag: '「相交」包括相交於兩點及相切，所以是 Δ ≥ 0。由 x − y + 9 = 0 得 y = x + 9，代入圓方程得 2x² + (12 + c)x + 74 + 9c = 0。',
+  rule: '直線與圓相交 ⇔ 代入後的二次方程 Δ ≥ 0（Δ &gt; 0 兩點，Δ = 0 相切）。',
+  pit: '展開要小心：(x + 9)² = x² + 18x + 81，c(x + 9) = cx + 9c；Δ = (12 + c)² − 4(2)(74 + 9c)。',
+  alt: '小技巧：圓的半徑 r = √(3² + (−c/2)² + 7)。c 愈大或愈細，半徑愈大，與直線 y = x + 9 相交的機會愈大 ⇒ 範圍一定是向兩邊伸延 ⇒ 答案一定是 C 或 D，再用計數機程式試答案。例如代 c = 10（在 C 內但不在 D 內）：圓心 (3, −5)、半徑 √41 ≈ 6.4，到直線距離 17/√2 ≈ 12.0 &gt; 6.4 ⇒ 不相交 ⇒ 刪去 C。',
   steps: [
-    S('代入', 'Substitute', '<b>2x² + (12 + c)x + (74 + 9c) = 0</b>', '', ''),
-    S('判別式', 'Discriminant', '(12 + c)² − 8(74 + 9c) ≥ 0 ⇒ c² − 48c − 448 ≥ 0', '', '', { key: true }),
-    S('解', 'Solve', '(c − 56)(c + 8) ≥ 0 ⇒ <b>c ≤ −8 或 c ≥ 56</b> ⇒ D', '', ''),
+    S('代直線入圓方程', 'Substitute the line', 'y = x + 9<br>x² + (x + 9)² − 6x + c(x + 9) − 7 = 0', '相交 ⇔ 聯立方程有實數解。', 'They intersect when the system has a real solution.'),
+    S('展開', 'Expand', 'x² + x² + 18x + 81 − 6x + cx + 9c − 7 = 0<br><b>2x² + (12 + c)x + 74 + 9c = 0</b>', '', ''),
+    S('Δ ≥ 0', 'Discriminant', '(12 + c)² − 4(2)(74 + 9c) ≥ 0<br>144 + 24c + c² − 592 − 72c ≥ 0<br><b>c² − 48c − 448 ≥ 0</b>', '相交（兩點或相切）⇒ Δ ≥ 0。', 'Intersect (two points or touching) means Δ ≥ 0.', { key: true }),
+    S('解不等式', 'Solve', '(c + 8)(c − 56) ≥ 0 ⇒ <b>c ≤ −8 或 c ≥ 56</b> ⇒ D', '≥ 0 取兩邊。', 'For ≥ 0 take the two outer parts.'),
   ],
 });
 
