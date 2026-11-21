@@ -6783,39 +6783,49 @@ addQ({
 
 /* ---------- 2023 Q17 ---------- */
 addQ({
-  key: '2023-17', short: '平行四邊形：相似 + 同高三角形', topic: 'AREAS & SIMILAR TRIANGLES',
-  en: 'Parallelogram PQRS: [PXY] = 32 cm², [QRYX] = 58 cm²', zh: '面積：設 k = PY/YR，[PSY] = 32/k，[RSY] = 32/k²', trap: 'A',
+  key: '2023-17', short: '設 1 : n：32、32n、32n²，兩半平行四邊形相等', topic: 'AREAS & SIMILAR TRIANGLES',
+  en: 'Parallelogram PQRS: [PXY] = 32 cm², [QRYX] = 58 cm²', zh: '面積：△PXY ~ △RSY，設比為 1 : n；同高三角形得 32n，相似三角形得 32n²', trap: 'A',
   opts: { A: '40 cm²', B: '50 cm²', C: '58 cm²', D: '72 cm²' },
   why: {
-    A: '40 cm² 是 △PSY 的面積（32 ÷ 0.8），不是 △RSY。',
-    B: 'k = 4/5：[RSY] = 32 ÷ (4/5)² = 50 cm²。',
+    A: '40 cm² 是 △PSY 的面積（32n = 32 × 1.25），不是 △RSY。',
+    B: '32n² + 32n = 32 + 58 ⇒ n = 1.25 ⇒ △RSY = 32(1.25)² = 50 cm²。',
     C: '58 cm² 是四邊形 QRYX 的面積，與 △RSY 不一定相等。',
-    D: '72 cm² 不符合：[PSY] + [RSY] 必須等於 [PSR] = 90。',
+    D: '72 cm² 不符合：△PSY + △RSY 必須等於 △PSR = 32 + 58 = 90。',
   },
-  diag: '要把三個三角形的面積連起來：△PXY ~ △RSY（比是 k），而同高三角形的面積比 = 底之比。設 k = PY/YR，列出 32/k + 32/k² = 90。',
-  rule: '同高三角形：面積比 = 底之比。相似三角形：面積比 = 邊長比的平方。',
-  pit: '對角線 PR 把平行四邊形分成兩個面積相等的三角形：[PSR] = [PQR] = 90。',
+  diag: '設 PX : SR = 1 : n。△PXY ~ △RSY，所以 XY : YS = PY : YR = 1 : n。三角形等高：△PSY = 32n；相似三角形：△RSY = 32n²。對角線 PR 把平行四邊形分成兩個面積相等的三角形，得 32n² + 32n = 32 + 58。',
+  rule: '三角形等高：面積比 = 底之比（例如底 2 : 3 ⇒ 面積 4 : 6）。相似三角形：A₁/A₂ = (邊長比)²（例如 (2/3)²）。',
+  pit: 'n 是邊長比，面積要用 n²；解出 n = −2.25 要捨去（長度比不可以是負數）。',
   steps: [
-    S('一半的平行四邊形', 'Half the parallelogram', '[PQR] = 32 + 58 = <b>90</b> = [PSR]', '', '', { cap: '' }),
-    S('相似三角形', 'Similar triangles', 'PX ∥ SR ⇒ △PXY ~ △RSY<br>設 <b>k = PY/YR = XY/YS</b>', '', '', { cap: '' }),
-    S('同高三角形', 'Same height', '[PSY] = ' + FR('32', 'k') + '，[RSY] = ' + FR('[PSY]', 'k') + ' = ' + FR('32', 'k²'), '△PXY、△PSY 同以 P 為頂點，底 XY : YS = k；△PSY、△RSY 同以 S 為頂點，底 PY : YR = k。', 'Triangles with a common vertex and bases on one line: area ratio = base ratio.', { key: true, cap: '' }),
-    S('解方程', 'Solve', FR('32', 'k') + ' + ' + FR('32', 'k²') + ' = 90 ⇒ 45k² − 16k − 16 = 0 ⇒ <b>k = 4/5</b>', '', '', { cap: '' }),
-    S('答案', 'Answer', '[RSY] = 32 ÷ (4/5)² = <b>50 cm²</b> ⇒ B', '', '', { cap: '' }),
+    S('相似三角形', 'Similar triangles', 'PX ∥ SR ⇒ △PXY ~ △RSY<br>設 <span class="ca-r">PX : SR = 1 : n</span> ⇒ XY : YS = PY : YR = <b>1 : n</b>', '', '', { cap: '紅色＝對應邊 1 : n。' }),
+    S('① 三角形等高', 'Same height', '<span class="ca-g">△PXY、△PSY 同高，底 XY : YS = 1 : n</span><br>⇒ △PSY = <b>32n</b>', '兩個三角形同以 P 為頂點，底在同一直線 SX 上。', 'Common vertex P, bases on line SX: area ratio = base ratio.', { key: true, cap: '綠色＝△PSX：△PXY 與 △PSY 同高。' }),
+    S('相似三角形面積', 'Area of similar triangles', '△RSY = 32 × n² = <b>32n²</b>', '相似三角形面積比 = 邊長比的平方。', 'Areas of similar figures scale by the square of the ratio.', { cap: '黃色＝△RSY。' }),
+    S('② 兩半平行四邊形', 'Two halves', '<span class="ca-p">△PSR = △PQR</span><br>32n² + 32n = 32 + 58', '對角線 PR 把平行四邊形分成兩個面積相等的三角形。', 'Diagonal PR halves the parallelogram.', { key: true, cap: '紫色＝△PSR；另一半 △PQR = 32 + 58。' }),
+    S('解方程', 'Solve', '32n² + 32n − 90 = 0<br>n = <b>1.25</b> 或 −2.25（捨去）', '', '', { cap: '' }),
+    S('答案', 'Answer', '△RSY = 32(1.25)² = <b>50 cm²</b> ⇒ B', '', '', { cap: '' }),
   ],
   draw(i, st, at) {
     const Pp = [80, 380], Q = [520, 380], R = [640, 70], Sx = [200, 70], X = mid(Pp, Q, 0.8), Y = isect(Pp, R, Sx, X);
+    const cen = (...p) => [p.reduce((a, q) => a + q[0], 0) / p.length, p.reduce((a, q) => a + q[1], 0) / p.length];
     let g = '';
-    if (i === 0) g += at(0, pg([Pp, Q, R], 'fa op'));
-    if (i >= 2) g += at(2, pg([Pp, Sx, Y], 'fc op') + pg([R, Sx, Y], 'fb2 op'));
-    g += pg([Pp, X, Y], 'fd op');
-    g += pg([Pp, Q, R, Sx]) + ln(Pp[0], Pp[1], R[0], R[1]) + ln(Sx[0], Sx[1], X[0], X[1]);
-    g += tx((Pp[0] + X[0] + Y[0]) / 3, (Pp[1] + X[1] + Y[1]) / 3 + 8, '32', 'm r');
-    g += tx((X[0] + Q[0] + R[0] + Y[0]) / 4 + 10, (X[1] + Q[1] + R[1] + Y[1]) / 4 + 6, '58', 'm');
-    if (i === 0) g += at(0, tx(560, 330, '[PQR] = 90', 'm hl'));
-    if (i >= 2) g += at(2, tx((Pp[0] + Sx[0] + Y[0]) / 3, (Pp[1] + Sx[1] + Y[1]) / 3 + 6, '32/k', 'm') + tx((R[0] + Sx[0] + Y[0]) / 3, (R[1] + Sx[1] + Y[1]) / 3, i >= 4 ? '50' : '32/k²', i >= 4 ? 'm o big' : 'm o'));
-    [[Pp, 'P', -10, 20, 'end'], [Q, 'Q', 10, 20, 'start'], [R, 'R', 10, -6, 'start'], [Sx, 'S', -10, -6, 'end'], [X, 'X', 0, 26, 'middle'], [Y, 'Y', 0, -14, 'middle']].forEach(([p, n, dx, dy, an]) => { g += dt(p[0], p[1]) + tx(p[0] + dx, p[1] + dy, n, 'm', an); });
-    if (i >= 1) g += at(1, parMark(Pp, X, 'hl') + parMark(Sx, R, 'hl'));
-    if (i >= 3) g += at(3, panel(420, 160, 260, [['k = 4/5', 'm hl']], 'boxt', 30));
+    if (i === 1) g += at(1, pg([Sx, Pp, X], 'hgG op'));
+    if (i === 3) g += at(3, pg([Pp, Sx, R], 'fp op') + pg([Pp, Q, R], 'fa op5'));
+    if (i === 2 || i >= 5) g += at(i, pg([R, Sx, Y], 'hgY op'));
+    g += pg([Pp, X, Y], 'fd op5');
+    g += pg([Pp, Q, R, Sx]) + ln(...Pp, ...R) + ln(...Sx, ...X);
+    if (i === 1) g += at(1, pl([Sx, Pp, X, Sx], 'lgn thick'));
+    if (i === 3) g += at(3, pl([Pp, Sx, R, Pp], 'lp thick'));
+    // 邊長比 1 : n（紅色）
+    const lab = (p, q, t, dx, dy) => { const m = mid(p, q); return tx(m[0] + dx, m[1] + dy, t, 'm r'); };
+    g += at(0, lab(Pp, X, '1', 0, 26) + lab(Sx, R, 'n', 0, -12) + lab(Pp, Y, '1', -4, -12) + lab(Y, R, 'n', 0, -14) + lab(X, Y, '1', 14, 6) + lab(Y, Sx, 'n', -16, 4));
+    // 面積
+    const c1 = cen(Pp, X, Y), c2 = cen(X, Q, R, Y), c3 = cen(Pp, Sx, Y), c4 = cen(R, Sx, Y);
+    g += tx(c1[0], c1[1] + 8, '32', 'm r') + tx(c2[0] + 14, c2[1] + 8, '58', 'm bl');
+    if (i >= 1) g += at(1, tx(c3[0] - 4, c3[1] + 6, i >= 5 ? '40' : '32n', 'm g'));
+    if (i >= 2) g += at(2, tx(c4[0], c4[1] + 4, i >= 5 ? '50' : '32n²', i >= 5 ? 'm o big' : 'm o'));
+    [[Pp, 'P', -10, 20, 'end'], [Q, 'Q', 10, 20, 'start'], [R, 'R', 10, -6, 'start'], [Sx, 'S', -10, -6, 'end'], [X, 'X', 0, 26, 'middle'], [Y, 'Y', 0, -16, 'middle']].forEach(([p, n, dx, dy, an]) => { g += dt(p[0], p[1]) + tx(p[0] + dx, p[1] + dy, n, 'm', an); });
+    if (i >= 0) g += at(0, parMark(Pp, X, 'hl') + parMark(Sx, R, 'hl'));
+    if (i === 3) g += at(3, panel(250, 425, 260, [['32n² + 32n = 32 + 58', 'm pu']], 'boxp', 30));
+    if (i === 4) g += at(4, panel(250, 425, 260, [['n = 1.25（−2.25 捨去）', 'm hl']], 'boxt', 30));
     return g;
   },
 });
@@ -7780,35 +7790,37 @@ addQ({
 
 /* ---------- 2023 Q43 ---------- */
 addQ({
-  key: '2023-43', short: '至少 2 次 = 1 − P(0) − P(1)', topic: 'PROBABILITY',
-  en: 'P(hit) = 0.6, 4 throws: P(at least 2 hits)', zh: '概率：用反面，P(1) 要乘 C(4, 1) = 4', trap: 'D',
+  key: '2023-43', short: '列出中 0–4 次，至少 2 次 = 2 + 3 + 4 次', topic: 'PROBABILITY',
+  en: 'P(hit) = 0.6, 4 throws: P(at least 2 hits)', zh: '概率：先列出中 target 可能次數的概率 C⁴ᵣ(0.6)ʳ(0.4)⁴⁻ʳ，再把 2、3、4 次相加', trap: 'D',
   opts: { A: '0.5248', B: '0.7056', C: '0.8208', D: '0.8464' },
   why: {
     A: '0.5248 = P(0) + P(1) + P(2)，是「最多 2 次」的概率。',
-    B: '0.7056 不是「至少 2 次」的概率；正確是 1 − 0.0256 − 0.1536。',
-    C: 'P(≥ 2) = 1 − P(0) − P(1) = 1 − 0.0256 − 0.1536 = 0.8208。',
-    D: '0.8464 = 1 − P(1)：漏減了 P(0) = 0.4⁴ = 0.0256。',
+    B: '0.7056 不是「至少 2 次」的概率；正確是 P(2) + P(3) + P(4)。',
+    C: 'P(2) + P(3) + P(4) = 0.3456 + 0.3456 + 0.1296 = 0.8208。',
+    D: '0.8464 = 1 − P(1)：漏了 P(0)；或者只計了部分情況。',
   },
-  diag: '「至少 2 次」的反面是「0 次或 1 次」，兩項都要減。P(1) 要乘 C(4, 1) = 4，因為命中的那一次可以是 4 次中的任何一次。',
-  rule: 'P(恰好 r 次) = C(n, r) pʳ(1 − p)ⁿ⁻ʳ。「至少」的題目多數用 1 − 反面。',
-  pit: '1 − P(1) 只減了一項；還要減 P(0)。',
+  diag: '先把「中 target 可能次數」0、1、2、3、4 次全部列出：中 r 次的概率是 C⁴ᵣ(0.6)ʳ(0.4)⁴⁻ʳ。「至少 2 次」就是 2 次、3 次、4 次三種情況相加。C⁴ᵣ 不可以漏，因為中的那幾次可以是 4 次中的任何幾次。',
+  rule: 'P(n 次中恰好 r 次) = Cⁿᵣ pʳ(1 − p)ⁿ⁻ʳ；「至少 r 次」= r 次、r + 1 次……n 次相加。',
+  pit: '每一項都要乘 C⁴ᵣ（C⁴₂ = 6、C⁴₃ = 4、C⁴₄ = 1）；(0.4) 的次方 = 4 − 中的次數。',
+  alt: '用反面：P(至少 2 次) = 1 − P(0) − P(1) = 1 − 0.0256 − 0.1536 = 0.8208。',
   steps: [
-    S('用反面', 'Use the complement', 'P(≥ 2) = 1 − <b>P(0)</b> − <b>P(1)</b>', '', '', { cap: '橙＝要減去的部分。' }),
-    S('P(0)', 'P(0)', '0.4⁴ = <b>0.0256</b>', '', '', { cap: '' }),
-    S('P(1)', 'P(1)', 'C(4, 1)(0.6)(0.4)³ = 4 × 0.0384 = <b>0.1536</b>', '', '', { key: true, cap: '' }),
-    S('相減', 'Subtract', '1 − 0.0256 − 0.1536 = <b>0.8208</b> ⇒ C', '', '', { cap: '' }),
+    S('中 target 可能次數', 'Possible numbers of hits', T20([['中的次數', '概率'], ['0', 'C⁴₀(0.6)⁰(0.4)⁴'], ['1', 'C⁴₁(0.6)¹(0.4)³'], ['2', 'C⁴₂(0.6)²(0.4)²'], ['3', 'C⁴₃(0.6)³(0.4)¹'], ['4', 'C⁴₄(0.6)⁴(0.4)⁰']]), '中 r 次：C⁴ᵣ(0.6)ʳ(0.4)⁴⁻ʳ。', 'r hits: ⁴Cᵣ(0.6)ʳ(0.4)⁴⁻ʳ.', { cap: '五條柱＝中 0 至 4 次的概率。' }),
+    S('At least 2 times', 'At least 2 times', '<span class="ca-o">至少 2 次 = 2 次 + 3 次 + 4 次</span>', '', '', { cap: '橙色＝要相加的三種情況。' }),
+    S('相加', 'Add', 'C⁴₂(0.6)²(0.4)² + C⁴₃(0.6)³(0.4)¹ + C⁴₄(0.6)⁴(0.4)⁰<br>= 0.3456 + 0.3456 + 0.1296 = <b>0.8208</b> ⇒ C', '', '', { key: true, cap: '' }),
   ],
   draw(i, st, at) {
-    const P = [0.0256, 0.1536, 0.3456, 0.3456, 0.1296], x0 = 110, w = 90, base = 360, sc = 700;
+    const P = [0.0256, 0.1536, 0.3456, 0.3456, 0.1296], x0 = 110, w = 96, base = 380, sc = 700;
+    const F = ['C⁴₀(0.6)⁰(0.4)⁴', 'C⁴₁(0.6)¹(0.4)³', 'C⁴₂(0.6)²(0.4)²', 'C⁴₃(0.6)³(0.4)¹', 'C⁴₄(0.6)⁴(0.4)⁰'];
     let g = ln(x0 - 20, base, x0 + 5 * w + 10, base, 'axis') + tx(x0 - 20, base - 0.4 * sc - 10, '概率', 's', 'start');
     for (let v = 0.1; v <= 0.35; v += 0.1) g += ln(x0 - 24, base - v * sc, x0 - 16, base - v * sc, 'thin') + tx(x0 - 28, base - v * sc + 4, f1(v), 's', 'end');
     P.forEach((p, k) => {
-      const c = k < 2 ? (i >= 1 + k ? 'fb2' : 'boxg') : 'fa';
-      g += rect(x0 + k * w + 10, base - p * sc, w - 20, p * sc, c, 2) + tx(x0 + k * w + w / 2, base + 22, k + ' 次', 's');
-      if ((k === 0 && i >= 1) || (k === 1 && i >= 2) || k >= 2) g += tx(x0 + k * w + w / 2, base - p * sc - 8, p, k < 2 ? 's o' : 's hl');
+      const on = k >= 2 && i >= 1, c = on ? 'fb2' : 'boxg', cx = x0 + k * w + w / 2;
+      g += rect(x0 + k * w + 12, base - p * sc, w - 24, p * sc, c, 2) + tx(cx, base + 22, k + ' 次', on ? 's o' : 's');
+      g += tx(cx, base + 44, F[k], on ? 's o' : 's');
+      if (i >= 2 || k < 2) g += tx(cx, base - p * sc - 8, p, on ? 's o' : 's');
     });
-    g += at(0, underBrace(x0 + 2 * w + 10, x0 + 5 * w - 10, base + 34, '至少 2 次', 'hl', 'm hl'));
-    if (i >= 3) g += at(3, tbox(x0 + 2 * w, 40, 270, 56, '1 − 0.0256 − 0.1536 = 0.8208', 'boxt', 'm hl'));
+    if (i >= 1) g += at(1, underBrace(x0 + 2 * w + 10, x0 + 5 * w - 10, base + 58, '至少 2 次', 'o', 'm o'));
+    if (i >= 2) g += at(2, tbox(x0 + 2 * w - 30, 30, 330, 56, '0.3456 + 0.3456 + 0.1296 = 0.8208', 'boxt', 'm hl'));
     return g;
   },
 });
@@ -7932,23 +7944,23 @@ addQ({
 
 /* ---------- 2023 Q45 ---------- */
 addQ({
-  key: '2023-45', short: '平移：標準差、分佈域不變，中位數會變', topic: 'DISPERSION',
-  en: '{1 − 9n, 3 − 9n, 4 − 9n, 5 − 9n, 7 − 9n}, n an integer', zh: '離差：看 {1, 3, 4, 5, 7}，u = 2、w = 6；中位數 v = 4 − 9n', trap: null,
+  key: '2023-45', short: '全部 −9n：+／− 只影響中位數，SD、分佈域不變', topic: 'DISPERSION',
+  en: '{1 − 9n, 3 − 9n, 4 − 9n, 5 − 9n, 7 − 9n}, n an integer', zh: '離差：{1, 3, 4, 5, 7} 可當全部「+(−9n)」；SD = 2、分佈域 = 6；中位數 = 4 − 9n', trap: null,
   opts: OPT_1,
   why: {
-    A: '平移不改變離差：{1, 3, 4, 5, 7} 的標準差 = 2（I ✓）；分佈域 = 6（III ✗）；v = 4 − 9n，n = 0 時 v = 4（II ✗）。',
-    B: 'II 不一定：n 可以是 0 或負整數，此時 v ≥ 4。',
+    A: '只有 I 必定成立：u = 2 ✓；w = 6，不是大於 6 ✗；v = 4 − 9n 不一定小於 4 ✗。',
+    B: 'II 不一定：n 是甚麼整數都得，n = 0 時 v = 4，n &lt; 0 時 v &gt; 4。',
     C: 'III 錯：分佈域 = 7 − 1 = 6，不是大於 6。',
     D: 'II、III 都不是必定成立；只有 I 必定成立。',
   },
-  diag: '每個數都減去 9n，相當於把整組數據平移：標準差和分佈域不變，所以直接看 {1, 3, 4, 5, 7}。中位數會跟着平移：v = 4 − 9n，而 n 是整數（可以是 0 或負數），所以 v &lt; 4 不一定成立。',
-  rule: '每個數 + c：平均數、中位數 + c；標準差、分佈域、四分位數間距不變。',
-  pit: 'n 是「整數」，不一定是正整數。',
+  diag: '每個數都是 {1, 3, 4, 5, 7} 再加上同一個數 −9n。加減同一個數（+／−）只會影響平均數、眾數、中位數；標準差、分佈域不變。所以 SD 和分佈域直接用 {1, 3, 4, 5, 7} 計，中位數則是 4 − 9n。',
+  rule: '+／− 同一個數 ⇒ 只影響 Mean／Mode／Median；×／÷ 同一個數 ⇒ 全部都會影響（方差按倍數的 2 次方改變）。',
+  pit: 'n 是「整數」，可以是 0 或負數，所以 4 − 9n 不一定 &lt; 4。',
   steps: [
-    S('平移', 'A translation', '每個數都是 {1, 3, 4, 5, 7} <b>減去 9n</b>', '', '', { cap: '用按鈕改變 n。' }),
-    S('I：標準差', 'I: standard deviation', '平均 4，方差 = ' + FR('9 + 1 + 0 + 1 + 9', '5') + ' = 4 ⇒ <b>u = 2</b> ✓', '', '', { key: true, cap: '' }),
-    S('III：分佈域', 'III: the range', 'w = 7 − 1 = <b>6</b>，不是大於 6 ✗', '', '', { cap: '' }),
-    S('II：中位數', 'II: the median', 'v = 4 − 9n；n = 0 ⇒ v = 4，n &lt; 0 ⇒ v &gt; 4 ⇒ II ✗ ⇒ A', '', '', { cap: '' }),
+    S('全部 +(−9n)', 'All shifted by −9n', '{1, 3, 4, 5, 7} 可當全部「+(−9n)」', '+／− 同一個數只影響平均數、眾數、中位數。', 'Adding the same number only moves the mean, mode and median.', { cap: '用按鈕改變 n：整組數據只是左右平移。' }),
+    S('I：標準差', 'I: standard deviation', '<span class="ca-o">SD = <b>2</b></span> ⇒ u = 2 ✓', '計數機 Mode 2（STAT）直接輸入 1, 3, 4, 5, 7。（或：平均 4，方差 = (9 + 1 + 0 + 1 + 9) ÷ 5 = 4）', 'Use the calculator’s STAT mode on 1, 3, 4, 5, 7.', { key: true, cap: '橙色＝標準差，不受 n 影響。' }),
+    S('III：分佈域', 'III: the range', '<span class="ca-m">Range = 7 − 1 = <b>6</b></span>，不是大於 6 ⇒ III ✗', '', '', { cap: '粉紅色＝分佈域。' }),
+    S('II：中位數', 'II: the median', '<span class="ca-p">Median = <b>4 − 9n</b></span><br>n 是甚麼整數都得，所以 4 − 9n 不一定 &lt; 4 ⇒ II ✗ ⇒ A', '例如 n = 0：v = 4；n = −1：v = 13。', 'For example n = 0 gives v = 4.', { cap: '紫色＝中位數，會跟 n 移動。' }),
   ],
   init: () => ({ n: 1 }),
   controls: [{ type: 'seg', k: 'n', label: 'n', opts: [['-1', 'n = −1'], ['0', 'n = 0'], ['1', 'n = 1']] }],
@@ -7960,9 +7972,9 @@ addQ({
     for (let t = -10; t <= 18; t++) g += ln(X(t), y - 4, X(t), y + 4, 'thin') + (t % 2 === 0 ? tx(X(t), y + 22, mn(t), 's') : '');
     D.forEach(v => { g += ci(X(v), y - 14, 7, 'dot hl'); });
     g += tx(X(-10), 60, `n = ${mn(n)}：{${D.map(mn).join(', ')}}`, 'm', 'start');
-    if (i >= 1) g += at(1, tx(X(-10), 92, 'u = 2（不受 n 影響）', 'm hl', 'start'));
-    if (i >= 2) g += at(2, pl([[X(D[0]), y + 40], [X(D[0]), y + 50], [X(D[4]), y + 50], [X(D[4]), y + 40]], 'o') + tx((X(D[0]) + X(D[4])) / 2, y + 74, 'w = 6', 'm o'));
-    if (i >= 3 || st.user) g += at(3, ln(X(D[2]), y - 50, X(D[2]), y, 'r dash') + tx(X(D[2]), y - 58, `v = ${mn(D[2])}`, 'm r') + ln(X(4), y - 4, X(4), y + 4, 'r'));
+    if (i >= 1) g += at(1, tx(X(-10), 92, 'SD：u = 2（不受 n 影響）', 'm o', 'start'));
+    if (i >= 2) g += at(2, pl([[X(D[0]), y + 40], [X(D[0]), y + 50], [X(D[4]), y + 50], [X(D[4]), y + 40]], 'lmg') + tx((X(D[0]) + X(D[4])) / 2, y + 74, 'Range：w = 6', 'm mg'));
+    if (i >= 3 || st.user) g += at(3, ln(X(D[2]), y - 50, X(D[2]), y, 'lp dash') + tx(X(D[2]), y - 58, `Median：v = ${mn(D[2])}`, 'm pu') + ln(X(4), y - 4, X(4), y + 4, 'r'));
     return g;
   },
 });
@@ -11329,7 +11341,7 @@ function ang20(V, A, B, r, lab, c, on, lr, lo = 0) {
 }
 // 標籤後面的顏色底（螢光筆效果）
 const hg20 = (x, y, w, c, h = 28) => rect(x, y - h + 8, w, h, c, 6);
-const T20 = (r) => `<table class="t20">${r.map((row, k) => `<tr>${row.map((c, j) => k === 0 || j === 0 ? `<th>${c}</th>` : `<td>${c}</td>`).join('')}</tr>`).join('')}</table>`;
+function T20(r) { return `<table class="t20">${r.map((row, k) => `<tr>${row.map((c, j) => k === 0 || j === 0 ? `<th>${c}</th>` : `<td>${c}</td>`).join('')}</tr>`).join('')}</table>`; }
 
 addX({
   key: '2020-8', ans: 'A', short: '列表：斜率、截距，再由圖比較', topic: 'STRAIGHT LINES',
