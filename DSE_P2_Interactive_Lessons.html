@@ -752,7 +752,7 @@ html.ink-lock,html.ink-lock body{overflow:hidden}
 
     <section class="card model-card" id="modelCard">
       <div class="panel-head">
-        <div class="vis-head"><div><div class="panel-title">2D 互動圖解 · VISUAL</div><div class="panel-sub">圖像、推理與解題步驟同步 · 新元素會淡入</div></div><button type="button" class="ink-toggle" id="vinkBtn" aria-pressed="false" title="在圖解上寫字、畫畫、用螢光筆"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4.5-1L19 8.5 15.5 5 5 15.5z"/><path d="M13.5 7l3.5 3.5"/></svg><span>畫畫</span></button></div>
+        <div class="vis-head"><div><div class="panel-title" id="visTitle">2D 互動圖解 · VISUAL</div><div class="panel-sub" id="visSub">圖像、推理與解題步驟同步 · 新元素會淡入</div></div><button type="button" class="ink-toggle" id="vinkBtn" aria-pressed="false" title="在圖解上寫字、畫畫、用螢光筆"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4.5-1L19 8.5 15.5 5 5 15.5z"/><path d="M13.5 7l3.5 3.5"/></svg><span>畫畫</span></button></div>
         <div class="transport"><button id="prev" type="button">← 上一步</button><button id="play" class="primary" type="button">▶ 自動播放</button><button id="next" type="button">下一步 →</button></div>
       </div>
       <div class="stage">
@@ -1090,7 +1090,8 @@ function stepHTML(s, k) {
 
 function renderStep() {
   const qq = q(), st = stOf(qq), n = qq.steps.length, i = app.step, s = qq.steps[i];
-  const an = qq.anim && !st.user ? qq.anim(i) : null; if (an) st[an.k] = an.from;
+  finishAnim();
+  const an = qq.anim && !st.user ? qq.anim(i, st) : null; if (an) animPairs(an).forEach(([k, v]) => { st[k] = v[0]; });
   $('stepDots').innerHTML = qq.steps.map((_, k) => `<button type="button" data-k="${k}" class="${k === i ? 'active' : k < i ? 'done' : ''}" aria-label="第 ${k + 1} 步">${k + 1}</button>`).join('');
   $('steps').innerHTML = stepHTML(s, i);
   $('stepCount').textContent = `步驟 ${i + 1} / ${n}`;
@@ -1108,6 +1109,8 @@ function drawStage() {
   try { svg = qq.draw(i, st, at); } catch (err) { svg = tx(360, 230, '圖解載入出錯', 'r'); console.error(err); }
   $('svg').innerHTML = svg;
   $('svg').classList.toggle('rot3d', !!qq.rot3d);
+  const vt = $('visTitle'), d3 = qq.rot3d ? '1' : '0';
+  if (vt && vt.dataset.d3 !== d3) { vt.dataset.d3 = d3; vt.textContent = qq.rot3d ? '3D 立體模擬 · 3D SIMULATION' : '2D 互動圖解 · VISUAL'; $('visSub').textContent = qq.rot3d ? '拖動圖可以旋轉 · 步驟有 3D 動畫 · 電腦、iPad、手機都可以操作' : '圖像、推理與解題步驟同步 · 新元素會淡入'; }
   const s = qq.steps[i];
   $('stageLegend').innerHTML = (s.cap || '') + (qq.capx ? qq.capx(i, st) : '');
   $('caption').innerHTML = `<span class="en">${s.en || ''}</span> <span class="zh">${s.zh || ''}</span>`;
@@ -1121,6 +1124,7 @@ function drawStage() {
   sv.addEventListener('pointerdown', e => {
     const qq = q(); if (!qq.rot3d || (e.pointerType === 'mouse' && e.button !== 0)) return;
     drag = { id: e.pointerId, x: e.clientX, y: e.clientY }; sv.classList.add('dragging');
+    if (animKeys.indexOf('yaw') >= 0 || animKeys.indexOf('pitch') >= 0) startAnim(null);
     try { sv.setPointerCapture(e.pointerId); } catch (err) { /* 不支援就算 */ }
     stopPlay();
   });
@@ -1132,7 +1136,7 @@ function drawStage() {
     const touch = e.pointerType === 'touch';
     if (touch && Math.abs(dx) < Math.abs(dy)) return;                 // 手指上下掃＝捲動頁面
     st.yaw = Math.round((((+st.yaw || 0) + dx * 0.6 + 540) % 360) - 180);
-    if (!touch) st.pitch = Math.round(Math.max(-10, Math.min(85, (+st.pitch || 0) + dy * 0.4)));   // 手指用「上下旋轉」滑桿
+    if (!touch) st.pitch = Math.round(Math.max(-10, Math.min(qq.pitchMax || 85, (+st.pitch || 0) + dy * 0.4)));   // 手指用「上下旋轉」滑桿
     if (!raf) raf = requestAnimationFrame(() => { raf = 0; app.live = true; drawStage(); app.live = false; });
   });
   const end = e => { if (drag && e.pointerId === drag.id) { drag = null; sv.classList.remove('dragging'); } };
@@ -1140,21 +1144,26 @@ function drawStage() {
 })();
 
 /* 3D 動畫：某些步驟一開始會自動推動一個滑桿（例如翻摺、陽光投影）；一郁滑桿或者轉步就停 */
-let animRAF = 0;
+let animRAF = 0, animKeys = [], animCur = null;
+const animPairs = a => a.set ? Object.keys(a.set).map(k => [k, a.set[k]]) : [[a.k, [a.from, a.to]]];
+// 轉步時，未播完而又標明 finish 的動畫（例如鏡頭）直接跳到最後
+function finishAnim() { if (animCur && animCur.a.finish) animPairs(animCur.a).forEach(([k, v]) => { animCur.st[k] = v[1]; }); animCur = null; }
 function startAnim(a) {
   if (animRAF) { cancelAnimationFrame(animRAF); animRAF = 0; }
+  animKeys = []; animCur = null;
   if (!a) return;
+  const pairs = animPairs(a); animKeys = pairs.map(p => p[0]); animCur = { a, st: stOf(q()) };
   const qq = q(), st = stOf(qq), key = qq.key, step = app.step;
   let reduce = false; try { reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (err) { /* 舊瀏覽器 */ }
   let t0 = 0;
   const tick = now => {
     animRAF = 0;
-    if (q().key !== key || app.step !== step || st.user) return;
+    if (q().key !== key || app.step !== step || st.user) { animKeys = []; animCur = null; return; }
     if (!t0) t0 = now;
     const u = reduce ? 1 : Math.max(0, Math.min(1, (now - t0 - (a.delay || 0)) / a.ms)), e = u < .5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
-    st[a.k] = a.from + (a.to - a.from) * e;
+    pairs.forEach(([k, v]) => { st[k] = v[0] + (v[1] - v[0]) * e; });
     app.live = true; drawStage(); app.live = false;
-    if (u < 1) animRAF = requestAnimationFrame(tick);
+    if (u < 1) animRAF = requestAnimationFrame(tick); else { animKeys = []; animCur = null; }
   };
   animRAF = requestAnimationFrame(tick);
 }
@@ -1166,6 +1175,7 @@ function renderControls() {
     if (c.type === 'seg') return `<div class="ctl"><label>${c.label}</label><span class="seg">${c.opts.map(o => `<button type="button" data-k="${c.k}" data-v="${o[0]}">${o[1]}</button>`).join('')}</span></div>`;
     if (c.type === 'check') return `<div class="ctl"><label><input type="checkbox" id="c_${c.k}" data-k="${c.k}"> ${c.label}</label></div>`;
     if (c.type === 'note') return `<div class="note">${c.text}</div>`;
+    if (c.type === 'preset') return `<div class="ctl"><label>${c.label}</label><span class="seg">${c.opts.map((o, j) => `<button type="button" data-p="${j}">${o[0]}</button>`).join('')}</span></div>`;
     return '';
   }).join('') : '';
 }
@@ -1177,6 +1187,7 @@ function syncControls() {
     if (c.type === 'range') { const inp = $('c_' + c.k); if (inp) { inp.value = eff[c.k]; $('o_' + c.k).textContent = c.fmt ? c.fmt(eff[c.k]) : eff[c.k]; } }
     if (c.type === 'seg') document.querySelectorAll(`.seg button[data-k="${c.k}"]`).forEach(b => b.classList.toggle('active', String(eff[c.k]) === b.dataset.v));
     if (c.type === 'check') { const inp = $('c_' + c.k); if (inp) inp.checked = !!eff[c.k]; }
+    if (c.type === 'preset') document.querySelectorAll('.seg button[data-p]').forEach(b => { const o = c.opts[+b.dataset.p][1]; b.classList.toggle('active', Object.keys(o).every(k => Math.abs((+eff[k] || 0) - o[k]) < 1)); });
   });
 }
 function takeOver(st) { const qq = q(); if (!st.user && qq.eff) Object.assign(st, qq.eff(app.step, st)); st.user = true; }
@@ -1187,6 +1198,12 @@ $('controls').addEventListener('input', e => {
   stopPlay(); app.live = t.type === 'range'; drawStage(); app.live = false;
 });
 $('controls').addEventListener('click', e => {
+  const pb = e.target.closest('button[data-p]');
+  if (pb) {
+    const qq = q(), c = (qq.controls || []).find(x => x.type === 'preset'); if (!c) return;
+    if (animKeys.indexOf('yaw') >= 0 || animKeys.indexOf('pitch') >= 0) startAnim(null);
+    Object.assign(stOf(qq), c.opts[+pb.dataset.p][1]); stopPlay(); drawStage(); return;
+  }
   const b = e.target.closest('.seg button'); if (!b) return;
   const st = stOf(q()); takeOver(st);
   const v = b.dataset.v; st[b.dataset.k] = isNaN(+v) ? v : +v;
@@ -1369,7 +1386,7 @@ addQ({
 
 /* ================= DSE 2025 Q19 ================= */
 /* 3D 立體圖工具（2025 Q19、Q40 用）：正交投影；先繞 y 軸（左右旋轉），再繞 x 軸（上下旋轉） */
-function view3(st, K, cx, cy, c0) {
+function view3(st, K, cx, cy, c0, D) {
   const yw = rad(+st.yaw || 0), pt = rad(+st.pitch || 0);
   const sub = (a, b) => a.map((v, k) => v - b[k]), add = (a, b) => a.map((v, k) => v + b[k]), mul = (a, s) => a.map(v => v * s);
   const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
@@ -1377,7 +1394,7 @@ function view3(st, K, cx, cy, c0) {
   const nrm = a => { const L = Math.hypot(...a) || 1; return a.map(v => v / L); };
   const lerp = (a, b, t) => a.map((v, k) => v + (b[k] - v) * t);
   const rot = ([x, y, z]) => { const x1 = x * Math.cos(yw) + z * Math.sin(yw), z1 = -x * Math.sin(yw) + z * Math.cos(yw); return [x1, y * Math.cos(pt) - z1 * Math.sin(pt), y * Math.sin(pt) + z1 * Math.cos(pt)]; };
-  const pr = p => { const r = rot(sub(p, c0)); return [cx + K * r[0], cy - K * r[1]]; };
+  const pr = p => { const r = rot(sub(p, c0)), s = D ? D / Math.max(0.5, D - r[2]) : 1; return [cx + K * s * r[0], cy - K * s * r[1]]; };
   const facing = n => rot(n)[2] > 1e-6;                                   // 法向量向住觀眾
   const rotAxis = (p, a, u, t) => { u = nrm(u); const v = sub(p, a), c = Math.cos(t), s = Math.sin(t); return add(a, add(add(mul(v, c), mul(crs(u, v), s)), mul(u, dot(u, v) * (1 - c)))); };
   const arc = (V, A, B, r, n = 18) => {                                   // V 點的角，由 VA 轉到 VB
@@ -1392,8 +1409,8 @@ function view3(st, K, cx, cy, c0) {
 
 /* ---------- 2025 Q19（3D：翻摺證全等、飛過去證相似） ---------- */
 addQ({
-  key: '2025-19', paper: '2025', q: 19, group: 'geo', short: '3D：設 x，全等＋平行線＋相似', topic: 'PLANE GEOMETRY', rot3d: true,
-  en: 'A square, a rhombus and a pair of parallel lines', zh: '平面幾何：先設 x，用全等、平行線、相似三角形，三句一起解決', ans: 'D', hk: 28, trap: 'A',
+  key: '2025-19', paper: '2025', q: 19, group: 'geo', short: '3D 模擬：翻摺、搬角、對摺、飛移', topic: 'PLANE GEOMETRY', rot3d: true, pitchMax: 90,
+  en: 'A square, a rhombus and a pair of parallel lines', zh: '3D 模擬：把圖放在桌面上，翻摺證全等、搬角證平行線、對摺證等腰、飛移證相似', ans: 'D', hk: 28, trap: 'A',
   opts: { A: 'I and II only', B: 'I and III only', C: 'II and III only', D: 'I, II and III' },
   why: {
     A: 'III 都成立：∠ABG + ∠BFD = (90° + 2x) + 2x = 4(22.5°) + 90° = 180°。',
@@ -1406,94 +1423,131 @@ addQ({
   pit: 'CB = CD（正方形）、CF = CD（菱形）、∠FCB = ∠FCD = 135° ⇒ △FCB ≅ △FCD（SAS）。',
   steps: [
     S('① 菱形：設 x', 'Rhombus: call the angle x', 'CF = CD ⇒ <span class="ca-r"><b>∠CFD = ∠CDF = x</b></span><br>FE = ED ⇒ <span class="ca-r"><b>∠DFE = ∠FDE = x</b></span>',
-      '菱形四邊相等：△CDF、△EFD 都是等腰三角形；對角線 FD 平分 ∠F 和 ∠D。', 'All sides of a rhombus are equal, and the diagonal FD bisects the angles at F and D.', { cap: '紅色＝四隻 x。用滑鼠或手指拖動圖，可以旋轉。' }),
+      '菱形四邊相等：△CDF、△EFD 都是等腰三角形；對角線 FD 平分 ∠F 和 ∠D。', 'All sides of a rhombus are equal, and the diagonal FD bisects the angles at F and D.', { cap: '3D 動畫：課本的平面圖放上桌面，變成立體。拖動圖可以 360° 旋轉；按「平面」可返回課本的樣子。' }),
     S('② △FCB ≅ △FCD', 'Congruent triangles', 'CB = CD，FC = FC，∠FCB = ∠FCD = 135°<br><span class="ca-t">△FCB ≅ △FCD（SAS）</span><br>⇒ <b>∠CFB = ∠CBF = x</b>，<b>FB = FD</b>',
-      '看 3D 動畫：△FCB 沿 FC 翻過去，剛好蓋住 △FCD。', 'Watch △FCB flip over FC and land exactly on △FCD.', { key: true, cap: '青色＝△FCB 沿 FC 翻摺（可拖「翻摺」滑桿；再按一次這一步可以重播）。' }),
-    S('③ 平行線 AF ∥ BG', 'Parallel lines AF ∥ BG', '<span class="ca-g"><b>∠FBG = ∠CFB = x</b>（錯角）</span><br><span class="ca-g"><b>∠BGF = ∠CFD = x</b>（同位角）</span>',
-      'BF 橫過兩條平行線：錯角；GD 橫過兩條平行線：同位角。', 'BF cuts the parallels (alternate angles); GD cuts them (corresponding angles).', { cap: '綠色＝由平行線搬過去的 x。' }),
+      '看 3D 動畫：△FCB 沿 FC 翻起，剛好蓋住 △FCD，B 落在 D。', 'Watch △FCB flip up about FC and land exactly on △FCD.', { key: true, cap: '3D 動畫：青色 △FCB 沿 FC 翻摺（連埋 B 的角一齊翻）。' }),
+    S('③ 平行線 AF ∥ BG', 'Parallel lines AF ∥ BG', '<span class="ca-g"><b>∠BGF = ∠CFD = x</b>（同位角）</span><br><span class="ca-g"><b>∠FBG = ∠CFB = x</b>（錯角）</span>',
+      '看 3D 動畫：紅色 x 沿 FG 滑到 G（同位角）；青色 x 繞 BF 的中點轉半個圈，落在 B（錯角）。', 'Watch the red x slide along FG to G (corresponding angles) and the teal x turn half a circle about the midpoint of BF to B (alternate angles).', { cap: '3D 動畫：兩隻 x 飛到 G 和 B，變成綠色。' }),
     S('④⑤ I：DF = FG', 'Statement I', '△BFG：∠FBG = ∠BGF = x ⇒ <b>FG = FB</b><br>FB = FD ⇒ <span class="ca-p"><b>DF = FG</b></span> ✓（I）',
-      '等角對等邊。', 'Equal angles are opposite equal sides.', { cap: '紫色＝FD、FB、FG 一樣長。' }),
+      '看 3D 動畫：△BFG 沿中線對摺，FB 剛好疊在 FG 上（等角對等邊）。', 'Watch △BFG fold along its axis of symmetry: FB lands exactly on FG.', { key: true, cap: '3D 動畫：△BFG 對摺；紫色＝FD、FB、FG 一樣長。' }),
     S('⑥ II：△BFG ~ △DEF', 'Statement II', '△BFG：x、x、180° − 2x<br>△DEF：x、x、180° − 2x<br>⇒ <span class="ca-m"><b>△BFG ~ △DEF</b>（AAA）</span> ✓（II）',
-      '看 3D 動畫：△DEF 飛起、轉向、放大，剛好蓋住 △BFG（D → B，E → F，F → G）。', 'Watch △DEF lift, turn and enlarge onto △BFG (D → B, E → F, F → G).', { key: true, cap: '黃色＝△DEF；粉紅色＝△BFG（可拖「相似」滑桿；再按一次這一步可以重播）。' }),
+      '看 3D 動畫：△DEF 飛起、轉向、放大，剛好蓋住 △BFG（D → B，E → F，F → G）。', 'Watch △DEF lift, turn and enlarge onto △BFG (D → B, E → F, F → G).', { key: true, cap: '3D 動畫：黃色 △DEF 飛到粉紅色 △BFG 上面。' }),
     S('III：x = 22.5°', 'Statement III', '△ABF：2x + 90° + 45° = 180° ⇒ <b>x = 22.5°</b><br><span class="ca-m">∠ABG</span> + <span class="ca-g">∠BFD</span> = (90° + 2x) + 2x<br>= 4(22.5°) + 90° = <b>180°</b> ✓ ⇒ D',
-      '△ABF 的三隻角：∠ABF = 90° + x，∠BAF = 45°，∠AFB = x。', 'In △ABF the angles are 90° + x, 45° and x.', { cap: '粉紅色＝∠ABG；綠色＝∠BFD。' }),
+      '看 3D 動畫：綠色 ∠BFD（2x = 45°）飛到 B，與粉紅色 ∠ABG（135°）拼成一條直線。', 'Watch ∠BFD (45°) fly to B and join ∠ABG (135°) to make a straight line.', { cap: '3D 動畫：兩隻角拼成 180°（直線）。' }),
   ],
-  init: () => ({ yaw: -18, pitch: 12, fold: 180, morph: 100 }),
+  init: () => ({ yaw: -20, pitch: 55, t: 100 }),
   controls: [
-    { type: 'range', k: 'yaw', label: '左右旋轉', min: -180, max: 180, step: 1, fmt: v => v + '°' },
-    { type: 'range', k: 'pitch', label: '上下旋轉', min: -10, max: 85, step: 1, fmt: v => v + '°' },
-    { type: 'range', k: 'fold', label: '② 翻摺 △FCB', min: 0, max: 180, step: 1, fmt: v => Math.round(v) + '°' },
-    { type: 'range', k: 'morph', label: '⑥ 相似 △DEF → △BFG', min: 0, max: 100, step: 1, fmt: v => Math.round(v) + '%' },
-    { type: 'note', text: '用滑鼠、手指或觸控筆左右拖動圖，都可以旋轉；第 2、5 步有 3D 動畫。' },
+    { type: 'preset', label: '視角', opts: [['平面', { yaw: 0, pitch: 90 }], ['立體', { yaw: -20, pitch: 55 }], ['側面', { yaw: -38, pitch: 24 }]] },
+    { type: 'range', k: 'yaw', label: '左右旋轉', min: -180, max: 180, step: 1, fmt: v => Math.round(v) + '°' },
+    { type: 'range', k: 'pitch', label: '上下旋轉', min: -10, max: 90, step: 1, fmt: v => Math.round(v) + '°' },
+    { type: 'range', k: 't', label: '3D 動畫', min: 0, max: 100, step: 1, fmt: v => Math.round(v) + '%' },
+    { type: 'note', text: '電腦：用滑鼠拖動圖旋轉。iPad／手機：手指左右拖動旋轉（上下掃＝捲動頁面，上下旋轉用滑桿）。拖「3D 動畫」滑桿可以慢慢睇；再按一次步驟圓點可以重播。' },
   ],
-  eff(i, st) { return st.user ? st : { ...st, fold: i === 1 ? st.fold : 0, morph: i === 4 ? st.morph : 0 }; },
-  anim(i) { return i === 1 ? { k: 'fold', from: 0, to: 180, ms: 2600, delay: 300 } : i === 4 ? { k: 'morph', from: 0, to: 100, ms: 2800, delay: 300 } : null; },
+  eff(i, st) { return st; },
+  anim(i, st) {
+    if (i === 0) { if (st.seen0) return null; st.seen0 = true; return { set: { pitch: [90, 55], yaw: [0, -20] }, ms: 2400, delay: 500, finish: true }; }
+    return { k: 't', from: 0, to: 100, ms: i === 4 ? 2800 : 2600, delay: 350 };
+  },
   draw(i, st, at) {
-    const e = this.eff(i, st), r2 = Math.SQRT1_2, fold = +e.fold || 0, morph = +e.morph || 0;
-    const W = { B: [0, 0, 0], A: [1, 0, 0], D: [1, 1, 0], C: [0, 1, 0], F: [-r2, 1 + r2, 0], E: [1 - r2, 1 + r2, 0], G: [-1 - 2 * r2, 1 + 2 * r2, 0] };
-    const v = view3(e, 128, 318, 236, [-0.707, 1.207, 0]);
-    const P = {}; for (const k in W) P[k] = v.pr(W[k]);
-    const AM = (Vk, Ak, Bk, r, c, lab, fill = true) => {
-      const a = v.arc(W[Vk], W[Ak], W[Bk], r), k = AG20[c];
-      let s = (fill ? pg([P[Vk], ...a.pts], k[0] + ' op') : '') + pl(a.pts, k[1]);
-      if (lab) { const m = a.lab(r + 0.15); s += tx(m[0], m[1] + 5, lab, 'm ' + k[2]); }
-      return s;
+    const r2 = Math.SQRT1_2, t = Math.max(0, Math.min(1, (+st.t || 0) / 100)), done = t >= 0.995, bump = Math.sin(Math.PI * t);
+    const M = { B: [0, 0], A: [1, 0], D: [1, 1], C: [0, 1], F: [-r2, 1 + r2], E: [1 - r2, 1 + r2], G: [-1 - 2 * r2, 1 + 2 * r2] };
+    const v = view3(st, 138, 352, 240, [-0.707, 0, -1.207], 9);
+    const w = (p, h = 0) => [p[0], h, -p[1]];                       // 課本平面坐標 → 桌面上的 3D 坐標
+    const pp = (pts, f = q => q) => pts.map(p => v.pr(f(w(p))));
+    const P = {}; for (const k in M) P[k] = v.pr(w(M[k]));
+    const an = (p, q) => Math.atan2(q[1] - p[1], q[0] - p[0]), lerp2 = (p, q, s) => [p[0] + (q[0] - p[0]) * s, p[1] + (q[1] - p[1]) * s];
+    const rig = (c0, c1, th, h) => p => { const dx = p[0] - c0[0], dz = -p[2] - c0[1]; return w([c1[0] + dx * Math.cos(th) - dz * Math.sin(th), c1[1] + dx * Math.sin(th) + dz * Math.cos(th)], h); };
+    const flat = p => [p[0], 0, p[2]];
+    const sect = (V, a0, a1, r, n = 16) => { const s = [V]; for (let k = 0; k <= n; k++) { const a = a0 + (a1 - a0) * k / n; s.push([V[0] + r * Math.cos(a), V[1] + r * Math.sin(a)]); } return s; };
+    const span = (Vk, Ak, Bk) => { const a0 = an(M[Vk], M[Ak]); let d = an(M[Vk], M[Bk]) - a0; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; return [a0, a0 + d]; };
+    // 角（扇形）；f＝3D 變換（翻摺、搬動用）
+    const AM = (Vk, Ak, Bk, r, c, lab, f = q => q, shadow = false) => {
+      const [a0, a1] = span(Vk, Ak, Bk), k = AG20[c], s2 = sect(M[Vk], a0, a1, r), m = (a0 + a1) / 2;
+      const L = [M[Vk][0] + (r + 0.15) * Math.cos(m), M[Vk][1] + (r + 0.15) * Math.sin(m)];
+      let o = shadow ? pg(pp(s2, q => flat(f(q))), 'fsh') : '';
+      const sp = pp(s2, f); o += pg(sp, k[0] + ' op') + pl(sp.slice(1), k[1]);
+      if (lab) { const q = v.pr(f(w(L))); o += tx(q[0], q[1] + 5, lab, 'm ' + k[2]); }
+      return o;
     };
     const tick = (a, b, c, n = 1) => {
-      const A = v.pr(a), B = v.pr(b), m = mid(A, B), u = unit(A, B); let s = '';
+      const A = v.pr(w(a)), B = v.pr(w(b)), m = mid(A, B), u = unit(A, B); let s = '';
       for (let k = 0; k < n; k++) { const o = (k - (n - 1) / 2) * 6, x = m[0] + u[0] * o, y = m[1] + u[1] * o; s += ln(x + u[1] * 8, y - u[0] * 8, x - u[1] * 8, y + u[0] * 8, c); }
       return s;
     };
     // 固定大小的外框：令旋轉時圖不會跳動
     let g = '<rect x="0" y="0" width="720" height="470" fill="none" stroke="none"/>';
+    // 桌面（有厚度的板）＋格線
+    const bd = [[-2.75, -0.42], [1.42, -0.42], [1.42, 2.78], [-2.75, 2.78]], th = 0.1;
+    for (let k = 0; k < 4; k++) { const a = bd[k], b = bd[(k + 1) % 4], n = [b[1] - a[1], 0, b[0] - a[0]]; if (v.facing(n)) g += pg([w(a), w(b), w(b, -th), w(a, -th)].map(v.pr), 'fsh2'); }
+    g += pg(pp(bd), 'fc op5') + pg(pp(bd), 'thin');
+    for (let x = -2.5; x <= 1.4; x += 0.5) g += ln(...v.pr(w([x, -0.42])), ...v.pr(w([x, 2.78])), 'thin op5');
+    for (let y = 0; y <= 2.78; y += 0.5) g += ln(...v.pr(w([-2.75, y])), ...v.pr(w([1.42, y])), 'thin op5');
     // 色塊
-    if (i === 0) g += at(0, pg([P.C, P.D, P.F], 'fd op5') + pg([P.F, P.E, P.D], 'fb2 op5'));
+    if (i === 0) g += pg([P.C, P.D, P.F], 'fd op5') + pg([P.F, P.E, P.D], 'fb2 op5');
     if (i === 1) g += pg([P.F, P.C, P.D], 'fb2 op5');
-    if (i === 3) g += at(3, pg([P.B, P.F, P.G], 'fp op5'));
+    if (i === 3) g += pg([P.B, P.F, P.G], 'fp op5');
     if (i === 4) g += pg([P.B, P.F, P.G], 'hgP op5') + pg([P.D, P.E, P.F], 'hgY op5');
     // 線
     g += pg([P.A, P.B, P.C, P.D], 'ln') + pg([P.C, P.D, P.E, P.F], 'ln') + ln(...P.A, ...P.F) + ln(...P.D, ...P.G) + ln(...P.B, ...P.G) + ln(...P.B, ...P.F);
-    // 正方形、菱形的等邊記號
-    g += tick(W.A, W.B, 'thin') + tick(W.B, W.C, 'thin') + tick(W.C, W.D, 'thin') + tick(W.D, W.A, 'thin') + tick(W.D, W.E, 'thin') + tick(W.E, W.F, 'thin') + tick(W.F, W.C, 'thin');
-    if (i === 2 || i === 3) g += at(2, parMark(P.A, P.F, 'lb') + parMark(P.B, P.G, 'lb'));
-    // III：∠ABG、∠BFD、45°、直角
-    if (i >= 5) g += at(5, AM('A', 'B', 'C', 0.24, 'b', '45°') + pl([v.pr([0, 0.12, 0]), v.pr([0.12, 0.12, 0]), v.pr([0.12, 0, 0])], 'thin'));
-    // 角 x
+    if (i === 2) g += ln(...P.D, ...P.G, 'lb') + ln(...P.B, ...P.F, 'lb') + parMark(P.A, P.F, 'lb') + parMark(P.B, P.G, 'lb');
+    g += tick(M.A, M.B, 'thin') + tick(M.B, M.C, 'thin') + tick(M.C, M.D, 'thin') + tick(M.D, M.A, 'thin') + tick(M.D, M.E, 'thin') + tick(M.E, M.F, 'thin') + tick(M.F, M.C, 'thin');
+    if (i >= 5) g += ln(...P.B, ...v.pr(w([-1.05, 0])), done ? 'lmg dash' : 'thin dash');
+    // 固定的角
     g += AM('F', 'C', 'D', 0.34, 'r', 'x') + AM('D', 'C', 'F', 0.34, 'r', 'x') + AM('F', 'D', 'E', 0.34, 'r', 'x') + AM('D', 'F', 'E', 0.34, 'r', 'x');
-    const showT = i >= 2 || (i === 1 && fold >= 179);
-    if (showT) g += AM('F', 'B', 'C', 0.34, 't', 'x') + AM('B', 'C', 'F', 0.42, 't', 'x');
-    if (i >= 2) g += at(2, AM('B', 'F', 'G', 0.42, 'g', 'x') + AM('G', 'B', 'F', 0.5, 'g', 'x'));
-    if (i >= 5) g += at(5, pl(v.arc(W.B, W.A, W.G, 0.62).pts, 'lmg thick') + pl(v.arc(W.F, W.B, W.D, 0.56).pts, 'lgn thick') + (p => tx(p[0], p[1] + 5, '∠ABG', 's mg'))(v.arc(W.B, W.A, W.G, 0.62).lab(0.8)) + (p => tx(p[0] + 6, p[1] + 5, '∠BFD', 's g', 'start'))(v.arc(W.F, W.B, W.D, 0.56).lab(0.66)));
-    // 等長
-    if (showT && i <= 2) g += tick(W.F, W.B, 'hl', 2) + tick(W.F, W.D, 'hl', 2);
-    if (i >= 3) g += at(3, tick(W.F, W.B, 'ap', 2) + tick(W.F, W.D, 'ap', 2) + tick(W.F, W.G, 'ap', 2));
-    if (i >= 3) g += at(3, ln(...P.D, ...P.F, i === 3 ? 'lp thick' : 'lp') + ln(...P.F, ...P.G, i === 3 ? 'lp thick' : 'lp'));
-    // ② 3D 翻摺：△FCB 沿 FC 轉 fold 度
-    if (i === 1 || (st.user && fold > 0.5)) {
-      const Bp = v.rotAxis(W.B, W.C, v.sub(W.F, W.C), rad(fold)), Q = v.pr(Bp);
-      g += pl([P.F, P.C, P.B, P.F], 'hl dash');
-      g += pg([P.F, P.C, Q], 'fa op5') + pl([P.F, P.C, Q, P.F], 'hl thick') + dt(...Q, 'hl') + tx(Q[0] + 12, Q[1] + 18, fold >= 179 ? '' : 'B', 'm hl', 'start');
-      if (i === 1) g += tx(P.C[0] + 26, P.C[1] - 34, '135°', 's') + tx(P.C[0] - 34, P.C[1] + 20, '135°', 's') + tick(W.C, W.B, 'lb', 1) + tick(W.C, W.D, 'lb', 1);
+    const showT = i >= 2 || (i === 1 && done);
+    if (showT) g += AM('F', 'B', 'C', 0.34, 't', 'x') + (i >= 5 ? '' : AM('B', 'C', 'F', 0.42, 't', 'x'));
+    if (i >= 3 || (i === 2 && done)) g += (i >= 5 ? '' : AM('B', 'F', 'G', 0.42, 'g', 'x')) + AM('G', 'B', 'F', 0.5, 'g', 'x');
+    if (i >= 5) g += AM('B', 'A', 'G', 0.44, 'm', '') + AM('A', 'B', 'C', 0.26, 'b', '45°') + (q => tx(q[0], q[1] + 5, '∠ABG = 90° + 2x', 's mg', 'start'))(v.pr(w([0.1, -0.36])));
+    // 等長記號
+    if (showT && i <= 2) g += tick(M.F, M.B, 'hl', 2) + tick(M.F, M.D, 'hl', 2);
+    if (i >= 4 || (i === 3 && done)) g += tick(M.F, M.B, 'ap', 2) + tick(M.F, M.D, 'ap', 2) + tick(M.F, M.G, 'ap', 2);
+    if (i >= 3) g += ln(...P.D, ...P.F, i === 3 ? 'lp thick' : 'lp') + ln(...P.F, ...P.G, i === 3 ? 'lp thick' : 'lp');
+    // ② 3D 翻摺：△FCB 沿 FC 翻起，蓋住 △FCD
+    if (i === 1) {
+      const u = v.sub(w(M.F), w(M.C)), sg = v.rotAxis(w(M.B), w(M.C), u, 0.4)[1] >= 0 ? 1 : -1, f = q => v.rotAxis(q, w(M.C), u, sg * Math.PI * t);
+      const tri = [w(M.F), w(M.C), f(w(M.B))];
+      g += pl([P.F, P.C, P.B, P.F], 'hl dash') + pg(tri.map(q => v.pr(flat(q))), 'fsh');
+      g += pg(tri.map(v.pr), 'fa op') + pl([...tri, tri[0]].map(v.pr), 'hl thick') + AM('B', 'C', 'F', 0.42, 't', 'x', f) + AM('F', 'B', 'C', 0.34, 't', '', f);
+      const Q = v.pr(tri[2]); if (!done) g += tx(Q[0] + 12, Q[1] - 8, 'B', 'm hl', 'start');
+      g += tx(P.C[0] + 24, P.C[1] - 30, '135°', 's') + tx(P.C[0] - 30, P.C[1] + 22, '135°', 's') + tick(M.C, M.B, 'lb', 1) + tick(M.C, M.D, 'lb', 1);
     }
-    // ⑥ 3D 相似：△DEF 飛起、轉向、放大，蓋住 △BFG
-    if (i === 4 || (st.user && morph > 0.5)) {
-      const t = morph / 100, lift = 0.9 * Math.sin(Math.PI * t);
-      const c1 = [0, 1].map(k => (W.D[k] + W.E[k] + W.F[k]) / 3), c2 = [0, 1].map(k => (W.B[k] + W.F[k] + W.G[k]) / 3);
-      const an = (p, q) => Math.atan2(q[1] - p[1], q[0] - p[0]);
-      const phi = an(W.B, W.F) - an(W.D, W.E), kk = Math.hypot(W.F[0] - W.B[0], W.F[1] - W.B[1]) / Math.hypot(W.E[0] - W.D[0], W.E[1] - W.D[1]);
-      const sc = 1 + (kk - 1) * t, a = phi * t, cc = [c1[0] + (c2[0] - c1[0]) * t, c1[1] + (c2[1] - c1[1]) * t];
-      const T = (p, z) => { const dx = p[0] - c1[0], dy = p[1] - c1[1]; return [cc[0] + sc * (dx * Math.cos(a) - dy * Math.sin(a)), cc[1] + sc * (dx * Math.sin(a) + dy * Math.cos(a)), z]; };
-      const tri = ['D', 'E', 'F'].map(k => v.pr(T(W[k], lift))), sh = ['D', 'E', 'F'].map(k => v.pr(T(W[k], 0)));
-      if (lift > 0.02) g += pg(sh, 'fsh');
-      g += pg(tri, t > 0.97 ? 'hgY op5' : 'hgY op') + pl([...tri, tri[0]], 'lo thick');
-      const m3 = [(tri[0][0] + tri[1][0] + tri[2][0]) / 3, (tri[0][1] + tri[1][1] + tri[2][1]) / 3];
-      if (t < 0.98) ['D', 'E', 'F'].forEach((k, j) => { const u = unit(m3, tri[j]); g += tx(tri[j][0] + u[0] * 16, tri[j][1] + u[1] * 16 + 5, k, 's o'); });
-      if (i === 4) g += at(4, tx(600, 440, '對應：D → B，E → F，F → G', 's'));
+    // ③ 搬角：同位角（滑過去）、錯角（繞 BF 中點轉半圈）
+    if (i === 2 && !done) {
+      const h = 0.55 * bump, mbf = lerp2(M.B, M.F, 0.5);
+      const fCor = rig(M.F, lerp2(M.F, M.G, t), 0, h), fAlt = rig(mbf, mbf, Math.PI * t, h);
+      g += AM('F', 'C', 'D', 0.34, 'r', 'x', fCor, true) + AM('F', 'B', 'C', 0.34, 't', 'x', fAlt, true);
     }
-    // 頂點名稱（跟平面一起轉）
+    if (i === 2) g += (q => tx(q[0], q[1], '同位角', 's bl', 'end'))(v.pr(w([M.G[0] - 0.12, M.G[1] - 0.35]))) + (q => tx(q[0], q[1], '錯角', 's bl', 'end'))(v.pr(w([-0.5, 0.42])));
+    // ④⑤ △BFG 沿中線對摺：FB 疊在 FG 上
+    if (i === 3 && !done) {
+      const N = lerp2(M.B, M.G, 0.5), u = v.sub(w(N), w(M.F)), sg = v.rotAxis(w(M.B), w(M.F), u, 0.4)[1] >= 0 ? 1 : -1, f = q => v.rotAxis(q, w(M.F), u, sg * Math.PI * t);
+      const tri = [w(M.F), w(N), f(w(M.B))];
+      g += pg(tri.map(q => v.pr(flat(q))), 'fsh') + pg(tri.map(v.pr), 'fp op') + pl([...tri, tri[0]].map(v.pr), 'ap') + ln(...P.F, ...v.pr(w(N)), 'lp dash') + AM('B', 'F', 'G', 0.42, 'g', 'x', f);
+    }
+    // ⑥ △DEF 飛起、轉向、放大，蓋住 △BFG
+    if (i === 4) {
+      const c1 = [0, 1].map(k => (M.D[k] + M.E[k] + M.F[k]) / 3), c2 = [0, 1].map(k => (M.B[k] + M.F[k] + M.G[k]) / 3);
+      const phi = an(M.B, M.F) - an(M.D, M.E), kk = Math.hypot(M.F[0] - M.B[0], M.F[1] - M.B[1]) / Math.hypot(M.E[0] - M.D[0], M.E[1] - M.D[1]);
+      const sc = 1 + (kk - 1) * t, a = phi * t, cc = lerp2(c1, c2, t), h = 0.9 * bump;
+      const f = q => { const dx = q[0] - c1[0], dy = -q[2] - c1[1]; return w([cc[0] + sc * (dx * Math.cos(a) - dy * Math.sin(a)), cc[1] + sc * (dx * Math.sin(a) + dy * Math.cos(a))], h); };
+      const tri = ['D', 'E', 'F'].map(k => f(w(M[k])));
+      if (h > 0.02) g += pg(tri.map(q => v.pr(flat(q))), 'fsh');
+      g += pg(tri.map(v.pr), done ? 'hgY op5' : 'hgY op') + pl([...tri, tri[0]].map(v.pr), 'lo thick') + AM('D', 'F', 'E', 0.34, 'o', '', f) + AM('F', 'D', 'E', 0.34, 'o', '', f);
+      const sp = tri.map(v.pr), m3 = [(sp[0][0] + sp[1][0] + sp[2][0]) / 3, (sp[0][1] + sp[1][1] + sp[2][1]) / 3];
+      if (!done) ['D', 'E', 'F'].forEach((k, j) => { const u = unit(m3, sp[j]); g += tx(sp[j][0] + u[0] * 16, sp[j][1] + u[1] * 16 + 5, k, 's o'); });
+      g += tx(600, 452, '對應：D → B，E → F，F → G', 's');
+    }
+    // III：∠BFD（2x）飛到 B，與 ∠ABG 拼成直線
+    if (i >= 5) {
+      const [a0] = span('F', 'B', 'D'), thAll = an(M.B, M.G) - a0, f = rig(M.F, lerp2(M.F, M.B, t), thAll * t, 0.7 * bump);
+      if (!done) g += AM('F', 'B', 'D', 0.5, 'g', '', q => q);
+      g += AM('F', 'B', 'D', 0.5, 'g', '2x', f, !done);
+      if (done) g += (q => tx(q[0], q[1] + 5, '135° + 45° = 180°', 'm hl', 'end'))(v.pr(w([-0.15, -0.32])));
+    }
+    // 頂點名稱（跟桌面一起轉）
     const off = { A: [0.13, -0.11], B: [-0.13, -0.11], C: [-0.16, -0.03], D: [0.13, -0.02], E: [0.08, 0.11], F: [-0.03, 0.15], G: [-0.14, 0.06] };
-    for (const k in W) { const p = v.pr([W[k][0] + off[k][0], W[k][1] + off[k][1], 0]); g += tx(p[0], p[1] + 6, k, 'm'); }
-    if (i >= 5) g += at(5, panel(492, 18, 220, [['△ABF：', 'm'], ['2x + 90° + 45° = 180°', 'm'], ['x = 22.5°', 'm hl'], ['∠ABG + ∠BFD', 'm'], ['= (90° + 2x) + 2x', 'm'], ['= 180° ✓', 'm hl']], 'boxp', 26));
+    for (const k in M) { const p = v.pr(w([M[k][0] + off[k][0], M[k][1] + off[k][1]])); g += tx(p[0], p[1] + 6, k, 'm'); }
+    if (i >= 5) g += panel(500, 14, 212, [['△ABF：', 'm'], ['2x + 90° + 45° = 180°', 'm'], ['x = 22.5°', 'm hl'], ['∠ABG + ∠BFD', 'm'], ['= (90° + 2x) + 2x = 180° ✓', 's hl']], 'boxp', 25);
     return g;
   },
 });
