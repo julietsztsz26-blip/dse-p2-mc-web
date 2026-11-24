@@ -285,7 +285,7 @@ tr.detail td { background: var(--hover); padding: 12px 10px 16px; }
 .qcard.c h3 { color: var(--setC); }
 .qcard .note { font-size: 12.5px; color: var(--muted); }
 .qlist { display: grid; gap: 3px; }
-.qrow { display: grid; grid-template-columns: 40px 1fr 52px; gap: 8px; align-items: center; border: 0; background: transparent; padding: 3px 4px; border-radius: 6px; cursor: pointer; text-align: left; }
+.qrow { display: grid; grid-template-columns: 44px 1fr 40px auto; gap: 8px; width: 100%; align-items: center; border: 0; background: transparent; padding: 3px 4px; border-radius: 6px; cursor: pointer; text-align: left; }
 .qrow:hover, .qrow.on { background: var(--hover); }
 .qrow.on { outline: 1px solid var(--accent); }
 .qrow .ql { font-family: var(--font-mono); font-size: 12.5px; }
@@ -333,7 +333,28 @@ tr.detail td { background: var(--hover); padding: 12px 10px 16px; }
 .misstable.mini { min-width: 0; margin-top: 4px; }
 .misstable.mini td, .misstable.mini th { padding: 5px 8px; font-size: 13px; }
 table.st { min-width: 1240px; }
-.qcard .qlist { max-height: 520px; overflow-y: auto; padding-right: 4px; }
+.qcard .qlist { max-height: 70vh; overflow-y: auto; padding-right: 4px; }
+.qcard .qtools { display: flex; justify-content: flex-end; }
+.qrow .qn { display: inline-flex; gap: 6px; font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; justify-content: flex-end; min-width: 76px; }
+.qrow .qn .n-ok { color: var(--ok); font-weight: 700; }
+.qrow .qn .n-bad { color: var(--bad); font-weight: 700; }
+.qrow .qn .n-ar { color: var(--muted); transition: transform .15s; }
+.qitem.open > .qrow { background: var(--hover); }
+.qitem.open > .qrow .n-ar { transform: rotate(90deg); }
+.qnames { margin: 2px 2px 10px 52px; padding: 8px 10px; border-left: 3px solid var(--line); display: grid; gap: 8px; font-size: 13px; }
+.qnames .ng { display: grid; gap: 4px; }
+.qnames .ng > b { font-size: 12.5px; }
+.qnames .ng.ok > b { color: var(--ok); }
+.qnames .ng.bad > b { color: var(--bad); }
+.qnames .ng.blank > b { color: var(--muted); }
+.nchips { display: flex; flex-wrap: wrap; gap: 4px 6px; }
+.nchip { display: inline-flex; align-items: baseline; gap: 4px; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); line-height: 1.5; }
+.ng.ok .nchip { background: var(--ok-soft); border-color: transparent; }
+.ng.bad .nchip { background: var(--bad-soft); border-color: transparent; }
+.nchip small { font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); }
+.nchip em { font-style: normal; font-weight: 700; color: var(--bad); font-size: 11.5px; }
+.qnames .none { color: var(--muted); }
+.qnames .btn { justify-self: start; font-size: 12.5px; padding: 4px 10px; }
 @media (max-width: 640px) { .lvrow { grid-template-columns: 84px 1fr; } .lvtxt { grid-column: 1 / -1; white-space: normal; } }
 </style>
 </head>
@@ -1022,31 +1043,64 @@ function mcYears_(recs) {
       document.querySelectorAll(".qrow").forEach(b => b.classList.toggle("on", b.dataset.q === state.q));
     }
 
+    // 某一題的學生名單（每位學生以最近一次作答計，與各題正確率相同）
+    function namesPanel(q) {
+      const p = el("div", "qnames");
+      const grp = { ok: [], bad: [], blank: [] };
+      students.forEach(s => { const x = s.last[q]; if (x) grp[stOf(x)].push([s, x]); });
+      [["ok", "答對"], ["bad", "答錯"], ["blank", "未答"]].forEach(([k, t]) => {
+        const L = grp[k].sort((a, b) => idOf(a[0]).localeCompare(idOf(b[0])));
+        if (k === "blank" && !L.length) return;
+        const row = el("div", "ng " + k);
+        row.append(el("b", null, t + " " + L.length + " 人"));
+        const box = el("div", "nchips");
+        if (!L.length) box.append(el("span", "none", "—"));
+        L.forEach(([st, x]) => {
+          const c = el("span", "nchip");
+          c.title = idOf(st) + " " + st.name + (k === "bad" ? "：選 " + x.a + "（答案 " + x.k + "）" : "");
+          c.append(el("small", null, idOf(st)), document.createTextNode(st.name));
+          if (k === "bad") c.append(el("em", null, x.a));
+          box.append(c);
+        });
+        row.append(box); p.append(row);
+      });
+      const f = el("button", "btn", "在下面學生表只顯示未答對的學生"); f.type = "button";
+      f.addEventListener("click", () => { state.q = q; state.qmode = "notok"; fQ.value = q; $("fQmode").value = "notok"; render(); sec.scrollIntoView({ behavior: "smooth", block: "start" }); });
+      p.append(f);
+      return p;
+    }
     function qCard(S) {
       const qs = qIds.filter(q => setOf(q, null) === S.id).sort((a, b) => pct(agg.q[a][0], agg.q[a][1]) - pct(agg.q[b][0], agg.q[b][1]) || qSort(a, b));
       const card = el("div", "panel qcard " + S.k);
-      card.append(el("h3", null, S.name + " 各題正確率"), el("p", "note", qs.length + " 題（" + S.rule + "），正確率最低的排在最前。按題目可列出未答對的學生。"));
+      card.append(el("h3", null, S.name + " 各題正確率"), el("p", "note", qs.length + " 題（" + S.rule + "），正確率最低的排在最前。每題顯示答對、答錯人數；按題目可展開答對及答錯學生的名單。"));
       const list = el("div", "qlist");
       if (!qs.length) list.append(el("p", "note", "未有學生做過這類題目。"));
+      const items = [];
       qs.forEach(q => {
         const [ok, nn, blank] = agg.q[q], bad = nn - ok - blank;
-        const b = el("button", "qrow"); b.type = "button"; b.dataset.q = q;
+        const item = el("div", "qitem");
+        const b = el("button", "qrow"); b.type = "button"; b.dataset.q = q; b.setAttribute("aria-expanded", "false");
         const stack = el("span", "stack");
         [["s-ok", ok], ["s-bad", bad], ["s-blank", blank]].forEach(([c, v]) => { const i = el("i", c); i.style.width = pct(v, nn) + "%"; stack.append(i); });
         const pp = el("span", "qp", Math.round(pct(ok, nn)) + "%"); if (pct(ok, nn) < 50) pp.style.color = "var(--bad)";
-        b.append(el("span", "ql", qShort(q)), stack, pp);
-        const msg = qLabel(q) + "（全港 " + (rateOf(q, null) == null ? "—" : rateOf(q, null) + "%") + "）答對 " + ok + " · 答錯 " + bad + " · 未答 " + blank;
-        b.setAttribute("aria-label", msg + "，按此篩選未答對的學生");
-        b.addEventListener("mousemove", e => { tip.textContent = msg + "　按一下：列出未答對的學生"; tip.style.display = "block"; tip.style.left = Math.min(innerWidth - 270, e.clientX + 12) + "px"; tip.style.top = (e.clientY + 14) + "px"; });
+        const cn = el("span", "qn"); cn.append(el("span", "n-ok", "對 " + ok), el("span", "n-bad", "錯 " + bad), el("span", "n-ar", "▸"));
+        b.append(el("span", "ql", qShort(q)), stack, pp, cn);
+        const msg = qLabel(q) + "（全港 " + (rateOf(q, null) == null ? "—" : rateOf(q, null) + "%") + "）答對 " + ok + " 人 · 答錯 " + bad + " 人 · 未答 " + blank + " 人";
+        b.setAttribute("aria-label", msg + "，按此展開學生名單");
+        b.addEventListener("mousemove", e => { tip.textContent = msg + "　按一下：展開答對及答錯學生名單"; tip.style.display = "block"; tip.style.left = Math.min(innerWidth - 270, e.clientX + 12) + "px"; tip.style.top = (e.clientY + 14) + "px"; });
         b.addEventListener("mouseleave", () => { tip.style.display = "none"; });
-        b.addEventListener("click", () => {
-          tip.style.display = "none";
-          if (state.q === q) state.q = ""; else { state.q = q; state.qmode = "notok"; }
-          fQ.value = state.q; $("fQmode").value = state.qmode; render();
-          if (state.q) sec.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
-        list.append(b);
+        const toggle = open => {
+          if (open && !item.querySelector(".qnames")) item.append(namesPanel(q));
+          item.classList.toggle("open", open); b.setAttribute("aria-expanded", String(open));
+        };
+        b.addEventListener("click", () => { tip.style.display = "none"; toggle(!item.classList.contains("open")); });
+        item.append(b); items.push(toggle); list.append(item);
       });
+      if (qs.length) {
+        const tools = el("div", "qtools"), all = el("button", "btn", "展開全部名單"); all.type = "button";
+        all.addEventListener("click", () => { const open = all.textContent === "展開全部名單"; items.forEach(f => f(open)); all.textContent = open ? "收起全部名單" : "展開全部名單"; });
+        tools.append(all); card.append(tools);
+      }
       const lg = el("div", "legend");
       lg.innerHTML = '<span><span class="sw" style="background:var(--ok)"></span>答對</span><span><span class="sw" style="background:var(--bad)"></span>答錯</span><span><span class="sw" style="background:var(--blank);opacity:.45"></span>未答</span>';
       card.append(list, lg);
