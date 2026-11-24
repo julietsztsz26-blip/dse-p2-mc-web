@@ -574,6 +574,9 @@ html.ink-lock,html.ink-lock body{overflow:hidden}
 /* ===== DSE 2018–2021：解題路線圖解（HTML 卡片放在 SVG 內）及 mathseasy.hk 連結 ===== */
 #foMeasure{position:absolute;left:-9999px;top:0;visibility:hidden;pointer-events:none}
 .fo{font-family:var(--sans);font-size:15px;line-height:1.55;color:var(--ink)}
+.fo .q10row{font-size:17px;white-space:nowrap;color:#1f5fbf}
+.fo .ring{border:2px solid #e0453a;border-radius:50%;padding:0 5px}
+.fo .ansy{background:#fff07a;border-radius:6px;padding:0 6px}
 .fo-t{font-size:16px;font-weight:800;color:var(--tc,var(--teal));line-height:1.45}
 .fo-t small{font-size:12px;font-weight:600;color:var(--muted);margin-left:8px;letter-spacing:.2px}
 .fo-eq{font-family:var(--math);font-size:20px;line-height:1.8;margin-top:2px;overflow-wrap:anywhere}
@@ -1136,7 +1139,7 @@ function drawStage() {
     const touch = e.pointerType === 'touch';
     if (touch && Math.abs(dx) < Math.abs(dy)) return;                 // 手指上下掃＝捲動頁面
     st.yaw = Math.round((((+st.yaw || 0) + dx * 0.6 + 540) % 360) - 180);
-    if (!touch) st.pitch = Math.round(Math.max(-10, Math.min(qq.pitchMax || 85, (+st.pitch || 0) + dy * 0.4)));   // 手指用「上下旋轉」滑桿
+    if (!touch) st.pitch = Math.round(Math.max(qq.pitchMin == null ? -10 : qq.pitchMin, Math.min(qq.pitchMax || 85, (+st.pitch || 0) + dy * 0.4)));   // 手指用「上下旋轉」滑桿
     if (!raf) raf = requestAnimationFrame(() => { raf = 0; app.live = true; drawStage(); app.live = false; });
   });
   const end = e => { if (drag && e.pointerId === drag.id) { drag = null; sv.classList.remove('dragging'); } };
@@ -11786,7 +11789,7 @@ addX({
     S('III：比較 y 截距', 'III: compare y-intercepts', MK('y 截距：L₂ &gt; L₁', 'p') + ' ⇒ −c &gt; ' + FR('−b', 'a') + ' ⇒ c &lt; ' + FR('b', 'a') + '<br>∵ a &lt; 0，×a 要反轉 ⇒ <b>ac &gt; b</b>，所以 III ✗ ⇒ A', 'L₂ 與 y 軸的交點比 L₁ 高。', 'L₂ cuts the y-axis higher than L₁.', { key: true, cap: '粉紅色＝兩個 y 截距：−c &gt; −b/a。' }),
   ],
   draw(i, st, at) {
-    const o = plane({ X0: 230, Y0: 320, sx: 64, sy: 64, x0: -2.6, x1: 5.2, y0: -1.2, y1: 3.9, step: 100, tick: 100, labels: false });
+    const o = plane({ X0: 190, Y0: 316, sx: 56, sy: 56, x0: -2.6, x1: 5.2, y0: -1.2, y1: 3.9, step: 100, tick: 100, labels: false });
     const P = o.P, m1 = 0.9, c1 = 0.9, m2 = -0.55, c2 = 2.4;
     const Y1 = P(0, c1), X1 = P(-c1 / m1, 0), Y2 = P(0, c2), X2 = P(-c2 / m2, 0);
     let g = o.svg + tx(o.X(0) - 8, o.Y(0) + 20, 'O', 'm', 'end');
@@ -11802,13 +11805,30 @@ addX({
     // 斜率
     const s1 = i === 3 ? 'm pu' : i === 2 ? 'm hl' : 'm', s2 = i === 3 ? 'm pu' : 'm';
     g += tx(...P(2.15, 3.05), 'm = −1/a', s1, 'end') + tx(...P(3.9, 0.55), 'm = −b', s2, 'start');
+    // 右：老師的列表（斜率、x 截距、y 截距）
+    {
+      const cx = [556, 628, 690], ry = [62, 104, 146, 188], x0 = 512, x1 = 716;
+      let t = '';
+      if (i === 1) t += hg20(cx[2] - 28, ry[3], 56, 'hgG', 34);
+      if (i === 2) t += hg20(cx[1] - 30, ry[1], 60, 'fa', 34);
+      if (i === 3) t += hg20(x0 + 2, ry[1], x1 - x0 - 4, 'fp', 36);
+      if (i === 4) t += hg20(x0 + 2, ry[3], x1 - x0 - 4, 'hgP', 36);
+      t += ln(x0, ry[0] + 20, x1, ry[0] + 20, 'lb') + ln(cx[0] + 40, ry[0] - 22, cx[0] + 40, ry[3] + 22, 'lb') + ln(cx[1] + 31, ry[0] - 22, cx[1] + 31, ry[3] + 22, 'lb');
+      t += ln(x0, ry[1] + 21, x1, ry[1] + 21, 'thin') + ln(x0, ry[2] + 21, x1, ry[2] + 21, 'thin');
+      t += tx(cx[1], ry[0] + 6, 'L₁', 'big') + tx(cx[2], ry[0] + 6, 'L₂', 'big');
+      t += tx(cx[0], ry[1] + 6, 'm', 'big bl') + tx(cx[1], ry[1] + 6, '−1/a', 'm') + tx(cx[2], ry[1] + 6, '−b', 'm');
+      t += tx(cx[0], ry[2] - 1, 'x 截距', 's bl') + tx(cx[0], ry[2] + 15, '代 y = 0', 's') + tx(cx[1], ry[2] + 6, '−b', 'm') + tx(cx[2], ry[2] + 6, '−c/b', 'm');
+      t += tx(cx[0], ry[3] - 1, 'y 截距', 's bl') + tx(cx[0], ry[3] + 15, '代 x = 0', 's') + tx(cx[1], ry[3] + 6, '−b/a', 'm') + tx(cx[2], ry[3] + 6, '−c', 'm');
+      t += tx(614, 236, 'Ax + By + C = 0：斜率 = −A/B', 's r');
+      g += t;
+    }
     // 每一步的結論
-    if (i === 1) g += at(1, tx(...P(0.25, 3.35), '−c &gt; 0 ⇒ c &lt; 0', 'm g', 'start'));
+    if (i === 1) g += at(1, tx(...P(0.25, 3.35), '−c &gt; 0 ⇒ c &lt; 0', 'm g', 'start') + tx(614, 284, 'L₂ 的 y 截距 &gt; 0', 'm g') + tx(614, 312, '−c &gt; 0 ⇒ c &lt; 0 ✓', 'big g'));
     if (i === 2) g += at(2, tx(...P(2.3, 2.35), '−1/a &gt; 0 ⇒ a &lt; 0', 'm hl', 'start'));
-    if (i === 3) g += at(3, tx(...P(1.4, -0.75), 'm₁ &gt; 0 &gt; m₂', 'm pu', 'start'));
+    if (i === 3) g += at(3, tx(...P(1.4, -0.75), 'm₁ &gt; 0 &gt; m₂', 'm pu', 'start') + tx(614, 284, '−1/a &gt; −b ⇒ 1/a &lt; b', 'm pu') + tx(614, 312, '∵ a &lt; 0 ⇒ 1 &gt; ab', 'm o') + tx(614, 342, 'ab &lt; 1 ✓', 'big pu'));
     if (i === 4) {
       const xa = o.X(0) + 20;
-      g += at(4, arrow(xa, Y1[1] - 6, xa, Y2[1] + 8, 'lmg') + tx(...P(0.32, 0.42), '−c &gt; −b/a', 'm mg', 'start'));
+      g += at(4, arrow(xa, Y1[1] - 6, xa, Y2[1] + 8, 'lmg') + tx(...P(0.32, 0.42), '−c &gt; −b/a', 'm mg', 'start') + tx(614, 284, '−c &gt; −b/a ⇒ c &lt; b/a', 'm mg') + tx(614, 312, '∵ a &lt; 0 ⇒ ac &gt; b', 'm o') + tx(614, 342, 'III ✗ ⇒ A', 'big mg'));
     }
     return g;
   },
@@ -11853,6 +11873,31 @@ addX({
     S('面積比', 'Ratio of areas', '(' + FR('圖上長度', '實際長度') + ')² = <b>' + FR('1', '25 000 000') + '</b>', '', ''),
     S('開方', 'Square root', FR('圖上長度', '實際長度') + ' = √' + FR('1', '25 000 000') + ' = ' + FR('1', '5 000') + ' ⇒ <b>1 : 5 000</b> ⇒ B', '', ''),
   ],
+  draw(i, st, at) {
+    const F_ = (a, b) => `<span class="fr"><span>${a}</span><span>${b}</span></span>`;
+    let g = '';
+    // 左上：單位換算（紅：cm → m；橙：km → m）
+    g += rect(16, 16, 330, 196, i === 0 ? 'boxt' : 'boxp', 12) + tx(30, 44, '單位換算', 'm', 'start');
+    g += tx(36, 84, '100 cm = 1 m', 'm r', 'start') + arrow(172, 79, 200, 79, 'r') + tx(208, 84, '10 000 cm² = 1 m²', 'm r', 'start') + tx(178, 104, '(×100)²', 's r');
+    g += tx(36, 158, '1 km = 1 000 m', 'm o', 'start') + arrow(176, 153, 202, 153, 'lo') + tx(208, 158, '1 km² = 1 000 000 m²', 's o', 'start') + tx(178, 178, '(×1 000)²', 's o');
+    // 左下：列式（老師的藍色推導）
+    const rows = [
+      [1, `(${F_('S<sub>圖</sub>', 'S<sub>真</sub>')})² = ${F_('<span class="ring">300</span> cm²', '<span class="ring">0.75</span> km²')}`],
+      [1, `(${F_('S<sub>圖</sub>', 'S<sub>真</sub>')})² = ${F_('0.03 m²', '750 000 m²')}`],
+      [2, `(${F_('S<sub>圖</sub>', 'S<sub>真</sub>')})² = ${F_('1', '25 000 000')}`],
+      [3, `${F_('S<sub>圖</sub>', 'S<sub>真</sub>')} = √${F_('1', '25 000 000')} = <b class="ansy">${F_('1', '5 000')}</b>`],
+    ];
+    rows.forEach(([k, html], r) => { if (i >= k) g += at(k, foBox(22, 224 + r * 60, 330, 58, `<div class="q10row">${html}</div>`)); });
+    // 右：圖上與實際的正方形（不按比例）
+    const sx = 392, sy = 392, s1 = 26, bx = 470, by = 70, s2 = 230;
+    g += pg([[bx, by], [bx + s2, by], [bx + s2, by + s2], [bx, by + s2]], i >= 2 ? 'fb2 op5' : 'fc op5') + pg([[bx, by], [bx + s2, by], [bx + s2, by + s2], [bx, by + s2]], 'ln');
+    g += pg([[sx, sy], [sx + s1, sy], [sx + s1, sy + s1], [sx, sy + s1]], i >= 2 ? 'fb2' : 'fc') + pg([[sx, sy], [sx + s1, sy], [sx + s1, sy + s1], [sx, sy + s1]], 'ln');
+    g += ln(sx, sy, bx, by, 'thin dash') + ln(sx + s1, sy + s1, bx + s2, by + s2, 'thin dash') + ln(sx + s1, sy, bx + s2, by, 'thin dash');
+    g += tx(sx + s1 / 2, sy + s1 + 22, '圖上 300 cm²', 's', 'middle') + tx(bx + s2 / 2, by + s2 / 2 - 8, '實際', 'm') + tx(bx + s2 / 2, by + s2 / 2 + 18, '0.75 km²', 'big');
+    if (i >= 2) g += at(2, tx(bx + s2 / 2, by + s2 + 34, '面積比 1 : 25 000 000', 'm o'));
+    if (i >= 3) g += at(3, tx(bx + s2 / 2, by - 14, '長度比 = √(面積比)', 's hl') + hg20(bx - 10, by + s2 + 74, s2 + 20, 'hgY', 36) + tx(bx + s2 / 2, by + s2 + 70, '比例尺 1 : 5 000', 'big hl'));
+    return g;
+  },
 });
 
 addX({
@@ -11957,7 +12002,7 @@ addX({
 });
 
 addX({
-  key: '2020-16', ans: 'B', short: '由圓柱求 πa²b = 3，整體代入', topic: 'MENSURATION',
+  key: '2020-16', ans: 'B', short: '3D：圓柱注水求 πa²b = 3，整體代入', topic: 'MENSURATION', rot3d: true, pitchMin: 5, pitchMax: 85,
   en: 'Cylinder radius 5a, height 7b has volume 525; cone radius 7a, height 5b', zh: '立體：由圓柱體積求 πa²b，再把 πa²b 整體代入圓錐體積', trap: 'D',
   opts: { A: '175 cm³', B: '245 cm³', C: '490 cm³', D: '735 cm³' },
   why: {
@@ -11970,10 +12015,83 @@ addX({
   rule: '圓柱體積 = πr²h；圓錐體積 = ⅓πr²h。',
   pit: '(5a)² = 25a²、(7a)² = 49a²，括號外的係數都要平方；圓錐有 ⅓。',
   steps: [
-    S('圓柱體積 πr²h', 'Volume of the cylinder', 'π(5a)²(7b) = 525<br>175πa²b = 525 ⇒ ' + MK('<b>πa²b = 3</b>', 'g'), '由圓柱求出 πa²b 這個整體。', 'Find πa²b as a whole from the cylinder.', { key: true }),
-    S('圓錐體積 ⅓πr²h', 'Volume of the cone', FR('1', '3') + 'π(7a)²(5b) = ' + FR('245', '3') + MK('πa²b', 'g'), '', ''),
-    S('整體代入', 'Substitute', FR('245', '3') + ' × ' + MK('3', 'g') + ' = <b>245 cm³</b> ⇒ B', '', ''),
+    S('圓柱體積 πr²h', 'Volume of the cylinder', 'π(5a)²(7b) = 525<br>175πa²b = 525 ⇒ ' + MK('<b>πa²b = 3</b>', 'g'), '由圓柱求出 πa²b 這個整體，不用分別求 a 和 b。', 'Find πa²b as a whole from the cylinder; a and b are not needed separately.', { key: true, cap: '3D 動畫：圓柱注滿水 = 525 cm³。拖動圖可以旋轉。' }),
+    S('圓錐體積 ⅓πr²h', 'Volume of the cone', FR('1', '3') + 'π(7a)²(5b) = ' + FR('245', '3') + MK('πa²b', 'g'), '圓錐體積 = 同底同高圓柱的 ⅓。', 'A cone holds one third of the cylinder with the same base and height.', { cap: '3D 動畫：圓錐注水；虛線＝同底同高的圓柱，圓錐只有它的 ⅓。' }),
+    S('整體代入', 'Substitute', FR('245', '3') + ' × ' + MK('3', 'g') + ' = <b>245 cm³</b> ⇒ B', '看動畫：a 改變（b = 3 ÷ πa²），兩個立體的形狀都變，但圓柱一直是 525 cm³，圓錐一直是 245 cm³。', 'As a changes (with b = 3 ÷ πa²), the shapes change but the volumes stay 525 cm³ and 245 cm³.', { key: true, cap: '3D 動畫：a 改變，體積不變。可以自己拖「a」滑桿。' }),
   ],
+  init: () => ({ yaw: -22, pitch: 20, a: 0.8, t: 100 }),
+  controls: [
+    { type: 'range', k: 'yaw', label: '左右旋轉', min: -180, max: 180, step: 1, fmt: v => Math.round(v) + '°' },
+    { type: 'range', k: 'pitch', label: '上下旋轉', min: 5, max: 85, step: 1, fmt: v => Math.round(v) + '°' },
+    { type: 'range', k: 'a', label: 'a（b = 3 ÷ πa²）', min: 0.62, max: 1.1, step: 0.01, fmt: v => 'a = ' + (+v).toFixed(2) },
+    { type: 'range', k: 't', label: '3D 動畫', min: 0, max: 100, step: 1, fmt: v => Math.round(v) + '%' },
+    { type: 'note', text: '電腦：用滑鼠拖動圖旋轉。iPad／手機：手指左右拖動旋轉（上下掃＝捲動頁面，上下旋轉用滑桿）。拖「3D 動畫」滑桿可以慢慢睇；再按一次步驟圓點可以重播。' },
+  ],
+  eff(i, st) { if (st.user) return st; const t = Math.max(0, Math.min(1, (+st.t || 0) / 100)); return { ...st, a: i === 2 ? 0.8 + 0.18 * Math.sin(2 * Math.PI * t) : 0.8 }; },
+  anim(i) { return { k: 't', from: 0, to: 100, ms: i === 2 ? 4600 : 2600, delay: 300 }; },
+  capx(i, st) { const a = +this.eff(i, st).a, b = 3 / (Math.PI * a * a); return `<br>a = ${a.toFixed(2)}，b = ${b.toFixed(2)}：圓柱 ${Math.round(Math.PI * 25 * a * a * 7 * b)} cm³，圓錐 ${Math.round(Math.PI * 49 * a * a * 5 * b / 3)} cm³`; },
+  draw(i, st, at) {
+    const e = this.eff(i, st), a = +e.a, b = 3 / (Math.PI * a * a), t = Math.max(0, Math.min(1, (+st.t || 0) / 100));
+    const R1 = 5 * a, H1 = 7 * b, R2 = 7 * a, H2 = 5 * b, X1 = -8.5, X2 = 9;
+    const v = view3(e, 15, 340, 250, [0.25, 6, 0]);
+    const yw = rad(+e.yaw || 0), pt = rad(+e.pitch || 0), vd = [-Math.sin(yw) * Math.cos(pt), Math.sin(pt), Math.cos(yw) * Math.cos(pt)];
+    const ring = (cx, y, R, n = 72) => { const p = []; for (let k = 0; k < n; k++) { const f = 2 * Math.PI * k / n; p.push([cx + R * Math.cos(f), y, R * Math.sin(f)]); } return p; };
+    const hull = pts => {
+      const P = pts.map(v.pr).sort((p, q) => p[0] - q[0] || p[1] - q[1]), cr = (o, p, q) => (p[0] - o[0]) * (q[1] - o[1]) - (p[1] - o[1]) * (q[0] - o[0]);
+      const lo = [], up = [];
+      for (const p of P) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], p) <= 0) lo.pop(); lo.push(p); }
+      for (let k = P.length - 1; k >= 0; k--) { const p = P[k]; while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], p) <= 0) up.pop(); up.push(p); }
+      return lo.slice(0, -1).concat(up.slice(0, -1));
+    };
+    // 底圓：看不到的一段用虛線；vis(f)＝該點的側面是否向住觀眾
+    const rim = (cx, R, vis, cls) => {
+      const n = 72; let s = '';
+      for (let k = 0; k < n; k++) { const f0 = 2 * Math.PI * k / n, f1_ = 2 * Math.PI * (k + 1) / n, p = v.pr([cx + R * Math.cos(f0), 0, R * Math.sin(f0)]), q = v.pr([cx + R * Math.cos(f1_), 0, R * Math.sin(f1_)]); s += ln(...p, ...q, vis((f0 + f1_) / 2) ? cls : cls + ' dash'); }
+      return s;
+    };
+    const cyl = (cx, R, H, fill, water, cls, ghost) => {
+      const B = ring(cx, 0, R), T = ring(cx, H, R), hl = hull(B.concat(T));
+      let s = ghost ? '' : pg(hl, fill);
+      if (water > 0.001) { const W = ring(cx, water * H, R); s += pg(hull(B.concat(W)), 'fcy op') + pg(W.map(v.pr), 'fcy') + pl(W.map(v.pr).concat([v.pr(W[0])]), 'lcy'); }
+      s += pl(hl.concat([hl[0]]), ghost ? cls + ' dash' : cls) + pl(T.map(v.pr).concat([v.pr(T[0])]), ghost ? cls + ' dash' : cls);
+      if (!ghost) s += rim(cx, R, f => Math.cos(f) * vd[0] + Math.sin(f) * vd[2] > 0, cls);
+      return s;
+    };
+    const cone = (cx, R, H, fill, water, cls) => {
+      const B = ring(cx, 0, R), A = [cx, H, 0], hl = hull(B.concat([A]));
+      let s = pg(hl, fill);
+      if (water > 0.001) { const hw = water * H, W = ring(cx, hw, R * (1 - water)); s += pg(hull(B.concat(W.length ? W : [A])), 'fcy op') + pg(W.map(v.pr), 'fcy') + pl(W.map(v.pr).concat([v.pr(W[0])]), 'lcy'); }
+      s += pl(hl.concat([hl[0]]), cls) + rim(cx, R, f => H * Math.cos(f) * vd[0] + R * vd[1] + H * Math.sin(f) * vd[2] > 0, cls);
+      return s;
+    };
+    let g = '<rect x="0" y="0" width="720" height="470" fill="none" stroke="none"/>';
+    // 地面陰影
+    g += pg(ring(X1, 0, R1 * 1.08).map(v.pr), 'fsh') + (i >= 1 ? pg(ring(X2, 0, R2 * 1.08).map(v.pr), 'fsh') : '');
+    // 圓柱
+    const w1 = i === 0 ? t : 1;
+    g += cyl(X1, R1, H1, 'fc op5', w1, i === 0 ? 'ln thick' : 'ln');
+    // 圓柱的半徑、高
+    const rx = [Math.cos(yw), 0, Math.sin(yw)], lft = [X1 - R1 * Math.cos(yw), 0, -R1 * Math.sin(yw)];
+    { const c0 = v.pr([X1, H1, 0]), c1 = v.pr([X1 + R1 * rx[0], H1, R1 * rx[2]]); g += ln(...c0, ...c1, 'r') + dt(...c0, 'r') + tx((c0[0] + c1[0]) / 2, (c0[1] + c1[1]) / 2 - 8, '5a', 'm r'); }
+    { const p0 = v.pr(lft), p1 = v.pr([lft[0], H1, lft[2]]); g += ln(p0[0] - 14, p0[1], p1[0] - 14, p1[1], 'r') + ln(p0[0] - 19, p0[1], p0[0] - 9, p0[1], 'r') + ln(p1[0] - 19, p1[1], p1[0] - 9, p1[1], 'r') + tx(p0[0] - 20, (p0[1] + p1[1]) / 2 + 5, '7b', 'm r', 'end'); }
+    // 圓錐（第 2 步開始出現）
+    if (i >= 1) {
+      if (i === 1) g += cyl(X2, R2, H2, '', 0, 'thin', true);
+      g += cone(X2, R2, H2, 'hgP op5', i === 1 ? t : 1, i === 1 ? 'lmg thick' : 'lmg');
+      const c0 = v.pr([X2, 0, 0]), c1 = v.pr([X2 + R2 * rx[0], 0, R2 * rx[2]]), ap = v.pr([X2, H2, 0]);
+      g += ln(...c0, ...c1, 'lmg') + tx((c0[0] + c1[0]) / 2, (c0[1] + c1[1]) / 2 + 20, '7a', 'm mg') + ln(...c0, ...ap, 'lmg dash') + dt(...c0, 'r') + tx(ap[0] + 10, (c0[1] + ap[1]) / 2, '5b', 'm mg', 'start');
+      if (i === 1) g += at(1, tx(v.pr([X2, H2, 0])[0], v.pr([X2, H2, 0])[1] - 14, '圓錐 = ⅓ × 同底同高圓柱', 's mg'));
+    }
+    // 右上：讀數
+    const V1 = Math.PI * 25 * a * a * 7 * b, V2 = Math.PI * 49 * a * a * 5 * b / 3;
+    const rd = [['a = ' + a.toFixed(2) + '，b = 3 ÷ πa² = ' + b.toFixed(2), 's'], ['圓柱 π(5a)²(7b) = ' + Math.round(i === 0 ? V1 * t : V1) + ' cm³', 'm r']];
+    if (i >= 1) rd.push(['圓錐 ⅓π(7a)²(5b) = ' + Math.round(i === 1 ? V2 * t : V2) + ' cm³', 'm mg']);
+    g += panel(456, 12, 256, rd, 'boxp', 26);
+    // 底部：推導
+    const fl = i === 0 ? '175πa²b = 525 ⇒ πa²b = 3' : i === 1 ? '⅓π(7a)²(5b) = (245/3)πa²b' : '(245/3) × 3 = 245 cm³ ⇒ B';
+    g += hg20(150, 452, 420, i === 2 ? 'hgY' : 'hgG', 34) + tx(360, 450, fl, 'big');
+    return g;
+  },
 });
 
 addX({
@@ -12628,8 +12746,48 @@ addX({
     S('代直線入圓方程', 'Substitute the line', 'y = x + 9<br>x² + (x + 9)² − 6x + c(x + 9) − 7 = 0', '相交 ⇔ 聯立方程有實數解。', 'They intersect when the system has a real solution.'),
     S('展開', 'Expand', 'x² + x² + 18x + 81 − 6x + cx + 9c − 7 = 0<br><b>2x² + (12 + c)x + 74 + 9c = 0</b>', '', ''),
     S('Δ ≥ 0', 'Discriminant', '(12 + c)² − 4(2)(74 + 9c) ≥ 0<br>144 + 24c + c² − 592 − 72c ≥ 0<br><b>c² − 48c − 448 ≥ 0</b>', '相交（兩點或相切）⇒ Δ ≥ 0。', 'Intersect (two points or touching) means Δ ≥ 0.', { key: true }),
-    S('解不等式', 'Solve', '(c + 8)(c − 56) ≥ 0 ⇒ <b>c ≤ −8 或 c ≥ 56</b> ⇒ D', '≥ 0 取兩邊。', 'For ≥ 0 take the two outer parts.'),
+    S('解不等式', 'Solve', '(c + 8)(c − 56) ≥ 0 ⇒ <b>c ≤ −8 或 c ≥ 56</b> ⇒ D', '≥ 0 取兩邊。c = −8 或 56 時剛好相切。', 'For ≥ 0 take the two outer parts; c = −8 or 56 gives a tangent.', { cap: '綠色＝c 的範圍；虛線圓＝c = −8，實線圓＝c = 56（都剛好相切）。' }),
+    S('小技巧：c 愈大或愈細，半徑愈大', 'Shortcut', 'r = √(3² + (−' + FR('c', '2') + ')² + 7)<br>c 愈大或愈細 ⇒ <b>半徑愈大</b> ⇒ 與 y = x + 9 相交機會愈大<br>∴ 答案一定在 C 或 D，再用計數機 prog 試答案',
+      '例如試 c = 10（在 C 內，不在 D 內）：不相交 ⇒ 刪去 C ⇒ D。', 'Try c = 10 (in C but not in D): no intersection, so the answer is D.', { cap: '動畫：c 由 −16 變到 64，留意半徑、圓心及「相交／不相交」。可以自己拖「c」滑桿。' }),
   ],
+  init: () => ({ c: 20 }),
+  controls: [{ type: 'range', k: 'c', label: 'c', min: -20, max: 66, step: 1, fmt: v => 'c = ' + Math.round(v) }],
+  eff(i, st) { return st.user ? st : { ...st, c: i <= 2 ? 20 : i === 3 ? 56 : st.c }; },
+  anim(i) { return i === 4 ? { k: 'c', from: -16, to: 64, ms: 5200, delay: 400 } : null; },
+  capx(i, st) { const c = Math.round(+this.eff(i, st).c), D = c * c - 48 * c - 448; return `<br>c = ${c}：Δ = ${mn(D)} ⇒ ${D >= 0 ? (D === 0 ? '相切' : '相交於兩點') : '不相交'}`; },
+  draw(i, st, at) {
+    const c = Math.round(+this.eff(i, st).c), D = c * c - 48 * c - 448, r = Math.sqrt(9 + c * c / 4 + 7), k = 4.55;
+    const X = x => 176 + x * k, Y = y => 128 - y * k;
+    let g = '';
+    // 坐標軸及格線
+    for (let x = -30; x <= 40; x += 10) g += ln(X(x), Y(24), X(x), Y(-72), 'thin op5');
+    for (let y = -70; y <= 20; y += 10) g += ln(X(-34), Y(y), X(40), Y(y), 'thin op5');
+    g += arrow(X(-34), Y(0), X(41), Y(0), 'axis') + arrow(X(0), Y(-72), X(0), Y(25), 'axis') + tx(X(41) + 4, Y(0) + 5, 'x', 'm', 'start') + tx(X(0) + 8, Y(25) + 4, 'y', 'm', 'start') + tx(X(0) - 6, Y(0) + 16, 'O', 's', 'end');
+    [-30, -20, -10, 10, 20, 30].forEach(x => { g += tx(X(x), Y(0) + 15, x, 's'); });
+    [-60, -40, -20, 20].forEach(y => { g += tx(X(0) - 5, Y(y) + 4, y, 's', 'end'); });
+    // 直線 y = x + 9
+    g += ln(X(-34), Y(-25), X(15), Y(24), 'lb thick') + tx(X(-25), Y(-25), 'y = x + 9', 'm bl', 'start');
+    // c = −8 的圓（第 4 步作比較）
+    if (i === 3) g += at(3, ci(X(3), Y(4), Math.sqrt(32) * k, 'lgn dash') + dt(X(3), Y(4), 'g'));
+    // 圓
+    const hit = D >= 0;
+    g += ci(X(3), Y(-c / 2), r * k, hit ? 'lgn thick' : 'r thick') + dt(X(3), Y(-c / 2), hit ? 'g' : 'r') + ln(X(3), Y(-c / 2), X(3) + r * k, Y(-c / 2), 'thin dash') + tx(X(3) + r * k / 2, Y(-c / 2) - 6, 'r', 'm');
+    if (hit) { const sq = Math.sqrt(D); [(-(12 + c) + sq) / 4, (-(12 + c) - sq) / 4].forEach(x => { g += dt(X(x), Y(x + 9), 'o'); }); }
+    // 右：資料
+    const lines = [['c = ' + c, 'big'], ['圓心 (3, −c/2) = (3, ' + mn(-c / 2) + ')', 's'], ['r = √(3² + (c/2)² + 7) = ' + f1(r), 's'], ['Δ = c² − 48c − 448 = ' + mn(D), 's ' + (hit ? 'g' : 'r')], [hit ? (D === 0 ? '相切 ✓' : '相交 ✓') : '不相交 ✗', 'big ' + (hit ? 'g' : 'r')]];
+    if (i >= 2) g += panel(452, 16, 260, lines, 'boxp', 28);
+    else g += panel(452, 16, 260, [['相交 ⇔ 代直線入圓方程', 's'], ['得到的二次方程 Δ ≥ 0', 'm g'], ['c = ' + c + '：' + (hit ? '相交' : '不相交'), 's ' + (hit ? 'g' : 'r')]], 'boxp', 28);
+    // c 的數線
+    if (i >= 3) {
+      const C = v => 470 + (v + 20) * 2.7, yy = 300;
+      let t = ln(C(-20), yy, C(70), yy, 'axis') + ln(C(-20), yy, C(-8), yy, 'lgn thick') + ln(C(56), yy, C(70), yy, 'lgn thick');
+      t += ci(C(-8), yy, 5, 'dot g') + ci(C(56), yy, 5, 'dot g') + tx(C(-8), yy + 22, '−8', 'm g') + tx(C(56), yy + 22, '56', 'm g') + tx(C(24), yy - 12, '不相交', 's r');
+      t += ln(C(Math.max(-20, Math.min(70, c))), yy - 16, C(Math.max(-20, Math.min(70, c))), yy + 6, 'r') + tx(C(Math.max(-20, Math.min(70, c))), yy - 20, 'c', 's r');
+      t += tx(590, yy + 52, 'c ≤ −8 或 c ≥ 56', 'big g');
+      g += t;
+    }
+    return g;
+  },
 });
 
 addX({
