@@ -6022,8 +6022,8 @@ addQ({
 
 /* ---------- 2026 Q34 ---------- */
 addQ({
-  ...d26(34), group: 'secb', short: '複數：商是實數 ⇒ 分子分母成比例', topic: 'COMPLEX NUMBERS',
-  en: 'β and (i⁴ + 2i³ + 3i² + 4i)/(βi − 1) are real', zh: '複數：分子化簡為 −2 + 2i；商是實數 ⇔ 分子 = 實數 × 分母', ans: 'C', trap: 'B',
+  ...d26(34), group: 'secb', short: '複數：乘共軛，令虛部 = 0', topic: 'COMPLEX NUMBERS',
+  en: 'β and (i⁴ + 2i³ + 3i² + 4i)/(βi − 1) are real', zh: '複數：分子化簡為 −2 + 2i；分子分母同乘共軛，令虛部 = 0', ans: 'C', trap: 'B',
   opts: { A: '−2', B: '−1', C: '1', D: '2' },
   why: {
     A: 'β = −2：商 = (−2 − 6i)/5，虛部不是 0。',
@@ -6033,11 +6033,12 @@ addQ({
   },
   diag: '錯選 B 的同學正負號出錯。先化簡分子 i⁴ + 2i³ + 3i² + 4i = 1 − 2i − 3 + 4i = −2 + 2i。商要是實數，分子就要是分母的實數倍：−2 + 2i = 2(−1 + i)，所以 β = 1。',
   rule: 'i² = −1、i³ = −i、i⁴ = 1。z ÷ w 是實數 ⇔ z = kw（k 是實數）⇔ 在阿根圖上 z、w 與原點共線。',
-  pit: '也可以乘共軛：分子 × (−1 − βi)，令虛部 2β − 2 = 0。',
+  pit: '分母 βi − 1 的共軛是 −βi − 1（實部不變，虛部變號）。',
+  alt: '另解：商是實數 ⇔ 分子 = k × 分母（k 是實數）：−2 + 2i = k(−1 + βi) ⇒ k = 2，kβ = 2 ⇒ β = 1。',
   steps: [
-    S('化簡分子', 'Simplify the numerator', '1 + 2(−<i>i</i>) + 3(−1) + 4<i>i</i> = <b>−2 + 2<i>i</i></b>', 'i³ = −i、i⁴ = 1。', 'i³ = −i, i⁴ = 1.', { key: true, cap: '綠箭咀：分子 −2 + 2i；橙箭咀：分母 −1 + βi。拖動滑桿改變 β。' }),
-    S('商是實數的條件', 'When is the quotient real?', '−2 + 2<i>i</i> = <i>k</i>(−1 + β<i>i</i>)，<i>k</i> 是實數', '兩個箭咀要在同一條過原點的直線上。', 'The two arrows must lie on the same line through O.', { cap: '' }),
-    S('比較實部、虛部', 'Compare parts', '實部：−<i>k</i> = −2 ⇒ <i>k</i> = 2；虛部：<i>k</i>β = 2 ⇒ <b>β = 1</b> ⇒ C', '', '', { cap: '' }),
+    S('化簡分子', 'Simplify the numerator', 'i² = −1、i³ = −i、i⁴ = 1<br>1 − 2<i>i</i> − 3 + 4<i>i</i> = <b>−2 + 2<i>i</i></b>', '', '', { key: true, cap: '綠箭咀：分子 −2 + 2i；橙箭咀：分母 −1 + βi。拖動滑桿改變 β。' }),
+    S('乘共軛', 'Multiply by the conjugate', FR('(−2 + 2<i>i</i>)(−1 − β<i>i</i>)', '(β<i>i</i> − 1)(−β<i>i</i> − 1)') + ' = ' + FR('(2 + 2β) + (2β − 2)<i>i</i>', '1 + β²'), '分子分母同乘分母的共軛 −1 − βi，分母變成實數 1 + β²。', 'Multiply top and bottom by the conjugate −1 − βi; the denominator becomes the real number 1 + β².', { key: true, cap: '' }),
+    S('虛部 = 0', 'Imaginary part = 0', '商是實數 ⇒ ' + FR('2β − 2', '1 + β²') + ' = 0 ⇒ <b>β = 1</b> ⇒ C<br>驗算：' + FR('−2 + 2<i>i</i>', '<i>i</i> − 1') + ' = 2（實數 ✓）', '', '', { cap: '兩個箭咀在同一條過原點的直線上 ⇒ 商是實數。' }),
     S('錯選 B 驗算', 'Check option B', 'β = −1：' + FR('−2 + 2<i>i</i>', '−1 − <i>i</i>') + ' = −2<i>i</i>（純虛數）✗', '兩個箭咀互相垂直，商是純虛數。', 'The arrows are perpendicular, so the quotient is purely imaginary.', { cap: '' }),
   ],
   init: () => ({ b: 1 }),
@@ -6303,6 +6304,394 @@ addQ({
   },
 });
 
+
+
+/* ---------- DSE 2026 Level 4／5（按 mathseasy.hk 題解） ---------- */
+addQ({
+  ...d26(8), group: 'alg', short: '因式定理：g(4) = 0，64h + 4k 整體代入', topic: 'REMAINDER AND FACTOR THEOREMS',
+  en: 'g(x) = hx³ + 2x² + kx − 5 is divisible by x − 4', zh: '因式定理及餘式定理：x = 4 與 x = −4 時奇次項正負相反，把 64h + 4k 整體代入', ans: 'D', trap: 'A',
+  opts: { A: '−27', B: '−10', C: '0', D: '54' },
+  why: {
+    A: '−27 只是 64h + 4k 的值，還未代入 g(−4)。',
+    B: '計算出錯：g(−4) = −(64h + 4k) + 32 − 5 = 27 + 27 = 54。',
+    C: '0 是 g(4)（可被 x − 4 整除），題目要的是除以 x + 4 的餘數 g(−4)。',
+    D: 'g(4) = 0 ⇒ 64h + 4k = −27；g(−4) = −(64h + 4k) + 27 = 54。',
+  },
+  diag: '不用分別求 h 和 k（兩個未知數只有一條方程，也求不到）。x = 4 和 x = −4 代入時，奇次項 hx³、kx 正負相反，偶次項 2x² 和常數不變，所以 g(−4) 可以寫成 −(64h + 4k) + 27，再整體代入 64h + 4k = −27。',
+  rule: '因式定理：x − a 是 g(x) 的因式 ⇔ g(a) = 0。餘式定理：g(x) 除以 x + 4 的餘數 = g(−4)。',
+  pit: '除以 x + 4 ⇒ 代 x = −4（不是 4）。',
+  steps: [
+    S('因式定理', 'Factor theorem', 'g(x) 可被 x − 4 整除 ⇒ <b>g(4) = 0</b><br>64h + 32 + 4k − 5 = 0 ⇒ ' + MK('<b>64h + 4k = −27</b>', 'y'),
+      '一條方程、兩個未知數：不用分別求 h、k。', 'One equation, two unknowns: h and k are not needed separately.', { cap: '左欄：代 x = 4。' }),
+    S('餘式定理', 'Remainder theorem', '餘數 = g(−4) = −64h + 32 − 4k − 5',
+      'x = −4：奇次項 hx³、kx 正負相反；偶次項 2x² 及常數不變。', 'With x = −4 the odd-power terms change sign; the others stay the same.', { key: true, cap: '右欄：代 x = −4，粉紅色＝正負相反的項。' }),
+    S('整體代入', 'Substitute as a whole', 'g(−4) = −(' + MK('64h + 4k', 'y') + ') + 27<br>= −(−27) + 27 = <b>54</b> ⇒ D', '', '', { key: true, cap: '' }),
+  ],
+  draw(i, st, at) {
+    const cx = [150, 340, 560], ry = [70, 130, 190, 250, 310, 380];
+    const rows = [['hx³', '64h', '−64h', true], ['2x²', '32', '32', false], ['kx', '4k', '−4k', true], ['−5', '−5', '−5', false]];
+    let g = '';
+    if (i === 0) g += hg20(cx[1] - 80, ry[1] + 6, 160, 'hgY', 36) + hg20(cx[1] - 80, ry[3] + 6, 160, 'hgY', 36);
+    if (i >= 1) g += at(1, hg20(cx[2] - 90, ry[1] + 6, 180, 'hgP', 36) + hg20(cx[2] - 90, ry[3] + 6, 180, 'hgP', 36));
+    g += rect(40, 34, 640, 380, 'boxp', 12) + ln(40, 92, 680, 92, 'lb') + ln(240, 34, 240, 414, 'lb') + ln(440, 34, 440, 414, 'lb') + ln(40, 340, 680, 340, 'thin');
+    g += tx(cx[0], ry[0], 'g(x) 的項', 'm bl') + tx(cx[1], ry[0], 'x = 4', 'big') + (i >= 1 ? at(1, tx(cx[2], ry[0], 'x = −4', 'big')) : '');
+    rows.forEach(([t, a, b, odd], r) => {
+      const y = ry[r + 1];
+      g += tx(cx[0], y, t, 'big') + tx(cx[1], y, a, 'big' + (i === 0 && odd ? ' o' : ''));
+      if (i >= 1) g += at(1, tx(cx[2], y, b, 'big' + (odd ? ' mg' : '')));
+    });
+    g += tx(cx[0], ry[5], '合計', 'm') + tx(cx[1], ry[5], 'g(4) = 0', 'big g');
+    if (i === 0) g += at(0, tx(360, 450, '64h + 32 + 4k − 5 = 0 ⇒ 64h + 4k = −27', 'm hl'));
+    if (i === 1) g += at(1, tx(cx[2], ry[5], 'g(−4) = ?', 'big mg') + tx(360, 450, '奇次項正負相反：−64h − 4k = −(64h + 4k)', 'm mg'));
+    if (i >= 2) g += at(2, tx(cx[2], ry[5], 'g(−4) = 54', 'big hl') + tx(360, 450, 'g(−4) = −(64h + 4k) + 32 − 5 = 27 + 27 = 54', 'm hl'));
+    return g;
+  },
+});
+
+addQ({
+  ...d26(17), group: 'geo', short: '3D：相似立體，體積比 = (3/4)³', topic: 'SIMILAR SOLIDS', rot3d: true, pitchMin: 0, pitchMax: 85,
+  en: 'A right pyramid cut into a pyramid X and a frustum Y', zh: '3D 模擬：平行底的平面切出相似的小角錐 X；體積比 = 邊長比的立方，Y = 整個 − X', ans: 'B', trap: 'A',
+  opts: { A: '486 cm³', B: '666 cm³', C: '688 cm³', D: '944 cm³' },
+  why: {
+    A: '486 cm³ 是小角錐 X 的體積；題目問的是平截頭體 Y = 1152 − 486。',
+    B: '整個角錐 1152 cm³，X = 1152 × (3/4)³ = 486 cm³，Y = 1152 − 486 = 666 cm³。',
+    C: '688 cm³ 不對：X 與整個角錐的體積比是 (3/4)³ = 27/64，不是 (3/4)²。',
+    D: '944 cm³ 不對：要用邊長比的立方計體積。',
+  },
+  diag: '切面平行於底，所以小角錐 X 與整個角錐相似。闊度 12 : 16 = 3 : 4，體積比 = 3³ : 4³ = 27 : 64。最常見錯誤是算出 X = 486 cm³ 就選了 A，忘記題目問的是平截頭體 Y。',
+  rule: '相似立體：邊長比 = a : b ⇒ 體積比 = a³ : b³。角錐體積 = ⅓ × 底面積 × 高。平截頭體 = 大角錐 − 小角錐。',
+  pit: '比例要用對應邊：X 的闊度 12 對應底的闊度 16（不是長度 18）。',
+  steps: [
+    S('整個角錐', 'The whole pyramid', 'V = ' + FR('1', '3') + ' × 18 × 16 × 12 = <b>1152 cm³</b>', '底是 18 cm × 16 cm 的長方形，高 12 cm。', 'The base is an 18 cm × 16 cm rectangle and the height is 12 cm.', { cap: '用滑鼠或手指拖動圖，可以旋轉。' }),
+    S('相似角錐', 'Similar pyramids', '切面平行於底 ⇒ X 與整個角錐相似<br>闊度比 = 12 : 16 = <b>3 : 4</b>',
+      '看 3D 動畫：切面由頂點向下移，切出的長方形愈來愈大，闊度去到 12 cm 時停下。', 'Watch the cutting plane move down until the section is 12 cm wide.', { key: true, cap: '3D 動畫：切面向下移（可拖「3D 動畫」滑桿）。' }),
+    S('體積比 = 邊長比³', 'Volume ratio', 'V<sub>X</sub> = 1152 × (' + FR('3', '4') + ')³ = 1152 × ' + FR('27', '64') + ' = <b>486 cm³</b>',
+      '看 3D 動畫：小角錐 X 被提起。486 是 X 的體積，不是答案。', 'Watch X lift off. 486 is the volume of X, not the answer.', { key: true, cap: '3D 動畫：黃色小角錐 X 提起，下面是橙色平截頭體 Y。' }),
+    S('平截頭體 Y', 'The frustum Y', 'V<sub>Y</sub> = 1152 − 486 = <b>666 cm³</b> ⇒ B', '平截頭體 = 大角錐 − 小角錐。', 'Frustum = large pyramid − small pyramid.', { cap: '' }),
+  ],
+  init: () => ({ yaw: -30, pitch: 20, t: 100 }),
+  controls: [
+    { type: 'range', k: 'yaw', label: '左右旋轉', min: -180, max: 180, step: 1, fmt: v => Math.round(v) + '°' },
+    { type: 'range', k: 'pitch', label: '上下旋轉', min: 0, max: 85, step: 1, fmt: v => Math.round(v) + '°' },
+    { type: 'range', k: 't', label: '3D 動畫', min: 0, max: 100, step: 1, fmt: v => Math.round(v) + '%' },
+    { type: 'note', text: '電腦：用滑鼠拖動圖旋轉。iPad／手機：手指左右拖動旋轉（上下掃＝捲動頁面，上下旋轉用滑桿）。再按一次步驟圓點可以重播動畫。' },
+  ],
+  eff(i, st) { return st; },
+  anim(i) { return i === 1 || i === 2 ? { k: 't', from: 0, to: 100, ms: 2600, delay: 300 } : null; },
+  draw(i, st, at) {
+    const t = Math.max(0, Math.min(1, (+st.t || 0) / 100));
+    const v = view3(st, 14, 300, 262, [0, 6, 0]);
+    const cut = i === 1 ? 12 - 9 * t : 3, lift = i === 2 ? 5 * t : i > 2 ? 5 : 0;
+    const rectAt = (y, s, dy = 0) => [[-9 * s, y + dy, 8 * s], [9 * s, y + dy, 8 * s], [9 * s, y + dy, -8 * s], [-9 * s, y + dy, -8 * s]];
+    const B = rectAt(0, 1), A = [0, 12, 0];
+    const cen = f => [0, 1, 2].map(k => f.reduce((s, p) => s + p[k], 0) / f.length);
+    const solid = (faces, fill, line) => {
+      const c = cen([].concat(...faces)); let back = '', front = '';
+      for (const f of faces) {
+        let n = v.crs(v.sub(f[1], f[0]), v.sub(f[2], f[0])); if (v.dot(n, v.sub(cen(f), c)) < 0) n = v.mul(n, -1);
+        const P = f.map(v.pr);
+        if (v.facing(n)) front += pg(P, fill) + pl([...P, P[0]], line); else back += pl([...P, P[0]], 'thin dash');
+      }
+      return back + front;
+    };
+    const pyr = (base, apex) => [base].concat(base.map((p, k) => [p, base[(k + 1) % 4], apex]));
+    let g = '<rect x="0" y="0" width="720" height="470" fill="none" stroke="none"/>';
+    g += pg([[-12, 0, 11], [12, 0, 11], [12, 0, -11], [-12, 0, -11]].map(v.pr), 'fsh');
+    if (i === 0) {
+      g += solid(pyr(B, A), 'fc op5', 'ln');
+    } else if (i === 1) {
+      g += solid(pyr(B, A), 'fc op5', 'ln');
+      const s = 1 - cut / 12, C = rectAt(cut, s), Pl = [[-13, cut, 12], [13, cut, 12], [13, cut, -12], [-13, cut, -12]];
+      g += pg(Pl.map(v.pr), 'fcy op5') + pl([...Pl, Pl[0]].map(v.pr), 'lcy') + pg(C.map(v.pr), 'hgY op') + pl([...C, C[0]].map(v.pr), 'lo thick');
+      const e0 = v.pr(C[1]), e1 = v.pr(C[2]);
+      g += tx((e0[0] + e1[0]) / 2 + 14, (e0[1] + e1[1]) / 2, '闊 ' + f1(16 * s) + ' cm', 's o', 'start');
+    } else {
+      const C = rectAt(3, 0.75), Cx = rectAt(3, 0.75, lift), Ax = [0, 12 + lift, 0];
+      const Y = [B, C].concat(B.map((p, k) => [p, B[(k + 1) % 4], C[(k + 1) % 4], C[k]]));
+      g += solid(Y, i === 3 ? 'fb2 op' : 'fb2 op5', i === 3 ? 'lo thick' : 'ln');
+      g += solid(pyr(Cx, Ax), i === 3 ? 'hgY op5' : 'hgY op', i === 2 ? 'lo thick' : 'ln');
+      const e0 = v.pr(Cx[1]), e1 = v.pr(Cx[2]); g += tx((e0[0] + e1[0]) / 2 + 12, (e0[1] + e1[1]) / 2, '12', 'm o', 'start');
+      const h0 = v.pr([0, 3 + lift, 0]), h1 = v.pr(Ax); g += ln(...h0, ...h1, 'thin dash') + tx((h0[0] + h1[0]) / 2 - 8, (h0[1] + h1[1]) / 2, '9', 'm o', 'end');
+      const X = v.pr([0, 12 + lift + 1.5, 0]); g += tx(X[0], X[1] - 4, 'X', 'big');
+      const Yp = v.pr([0, 1.6, 7.1]); g += tx(Yp[0], Yp[1] + 7, 'Y', 'big o');
+    }
+    // 底的尺寸、高
+    { const p0 = v.pr(B[0]), p1 = v.pr(B[1]), p2 = v.pr(B[2]); g += tx((p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2 + 24, '18', 'm bl') + tx((p1[0] + p2[0]) / 2 + 14, (p1[1] + p2[1]) / 2 + 12, '16', 'm bl', 'start'); }
+    if (i === 0) { const h0 = v.pr([0, 0, 0]), h1 = v.pr(A); g += ln(...h0, ...h1, 'thin dash') + tx((h0[0] + h1[0]) / 2 + 8, (h0[1] + h1[1]) / 2, '12', 'm bl', 'start'); }
+    // 右上：體積
+    const rows = [['整個角錐 = 1152 cm³', 'm']];
+    if (i >= 1) rows.push(['闊度比 12 : 16 = 3 : 4', 'm o']);
+    if (i >= 2) rows.push(['X = 1152 × 27/64 = 486 cm³', 'm']);
+    if (i >= 3) rows.push(['Y = 1152 − 486 = 666 cm³', 'big hl']);
+    g += panel(462, 12, 250, rows, 'boxp', 28);
+    return g;
+  },
+});
+
+addQ({
+  ...d26(25), group: 'geo', short: '外角 → 等腰 → 同弓形圓周角', topic: 'CIRCLES',
+  en: 'Find ∠QSR from ∠POT = 82° and ∠PTQ = 104°', zh: '圓的性質：△OPT 外角求 ∠OPT，等腰 △OPQ 求 ∠OPQ，再用同弓形圓周角', ans: 'B', trap: 'A',
+  opts: { A: '22°', B: '27°', C: '30°', D: '49°' },
+  why: {
+    A: '22° 是 ∠OPT（∠OPR），不是 ∠QPR。',
+    B: '∠OPT = 104° − 82° = 22°，∠OPQ = 49°，∠QPR = 49° − 22° = 27° = ∠QSR。',
+    C: '30° 沒有根據。',
+    D: '49° 是等腰三角形 OPQ 的底角 ∠OPQ，還要減去 ∠OPT。',
+  },
+  diag: '∠QSR 與 ∠QPR 對着同一條弦 QR（同弓形圓周角），所以只要求 ∠QPR。∠QPR 是 ∠OPQ（等腰三角形的底角 49°）減去 ∠OPT（外角得 22°）。選 A 或 D 的同學只求到其中一部分。',
+  rule: '三角形外角 = 兩個內對角之和；半徑相等 ⇒ 等腰三角形；同弓形內的圓周角相等。',
+  pit: '∠PTQ 是 △OPT 在 T 的外角：∠PTQ = ∠POT + ∠OPT。',
+  steps: [
+    S('三角形外角', 'Exterior angle', '△OPT：∠PTQ = ∠POT + ∠OPT<br>∠OPT = 104° − 82° = <b>22°</b>', '∠PTQ 是 △OPT 的外角。', '∠PTQ is an exterior angle of △OPT.', { cap: '藍＝82°，橙＝104°，青＝22°。' }),
+    S('等腰三角形', 'Isosceles triangle', 'OP = OQ（半徑）<br>∠OPQ = ' + FR('180° − 82°', '2') + ' = <b>49°</b>', '', '', { cap: '綠色＝等腰三角形 OPQ 的底角。' }),
+    S('求 ∠QPR', 'Find ∠QPR', '∠QPR = ∠OPQ − ∠OPT = 49° − 22° = <b>27°</b>', '', '', { key: true, cap: '紫色＝∠QPR。' }),
+    S('同弓形圓周角', 'Angles in the same segment', '∠QSR = ∠QPR = <b>27°</b> ⇒ B', '∠QSR 與 ∠QPR 都對着弦 QR。', 'Both angles stand on the chord QR.', { key: true, cap: '紫色兩隻角相等。' }),
+  ],
+  draw(i, st, at) {
+    const O = [300, 236], R = 186, Pt = d => [O[0] + R * Math.cos(rad(d)), O[1] - R * Math.sin(rad(d))];
+    const P = Pt(250), Q = Pt(332), Rr = Pt(26), S_ = Pt(174), T = isect(P, Rr, O, Q);
+    let g = '';
+    if (i === 1) g += at(1, pg([O, P, Q], 'hgG op5'));
+    if (i >= 3) g += at(3, pg([S_, Q, Rr], 'fp op5') + pg([P, Q, Rr], 'fp op5'));
+    g += ci(O[0], O[1], R, 'ln') + ln(...S_, ...Rr) + ln(...S_, ...Q) + ln(...O, ...P) + ln(...O, ...Q) + ln(...P, ...Rr);
+    if (i >= 1) g += at(1, ln(...P, ...Q, i === 1 ? 'lgn' : 'thin dash'));
+    if (i >= 3) g += at(3, ln(...Q, ...Rr, 'lp dash'));
+    // 角
+    g += ang20(O, P, T, 30, '82°', 'b', i === 0, 54) + ang20(T, P, Q, 24, '104°', 'o', i === 0, 46, -30);
+    g += ang20(P, O, T, 46, i >= 0 ? '22°' : '', 't', i === 0 || i === 2, 66, -8);
+    if (i >= 1) g += at(1, ang20(Q, O, P, 34, '49°', 'g', i === 1, 54) + (i === 1 ? ang20(P, O, Q, 70, '49°', 'g', true, 92, 10) : ''));
+    if (i >= 2) g += at(2, ang20(P, T, Q, 92, '27°', 'p', true, 112, 4));
+    if (i >= 3) g += at(3, ang20(S_, Q, Rr, 56, '27°', 'p', true, 78));
+    else g += ang20(S_, Q, Rr, 56, '?', 'p', false, 78);
+    g += dt(...O) + tx(O[0] - 4, O[1] - 12, 'O', 'm') + tx(T[0] + 10, T[1] - 8, 'T', 'm', 'start');
+    g += tx(P[0] - 6, P[1] + 24, 'P', 'm') + tx(Q[0] + 14, Q[1] + 14, 'Q', 'm') + tx(Rr[0] + 14, Rr[1] + 2, 'R', 'm') + tx(S_[0] - 16, S_[1] + 4, 'S', 'm');
+    const rows = [['∠OPT = 104° − 82° = 22°', 'm hl']];
+    if (i >= 1) rows.push(['∠OPQ = (180° − 82°) ÷ 2 = 49°', 'm g']);
+    if (i >= 2) rows.push(['∠QPR = 49° − 22° = 27°', 'm pu']);
+    if (i >= 3) rows.push(['∠QSR = ∠QPR = 27°', 'big pu']);
+    g += panel(500, 14, 212, rows, 'boxp', 28);
+    return g;
+  },
+});
+
+addQ({
+  ...d26(26), group: 'coord', short: '軌跡：到兩條相交直線距離相等 ⇒ 兩條角平分線', topic: 'LOCUS',
+  en: 'Locus of P equidistant from two intersecting lines', zh: '軌跡：L₁、L₂ 相交，與兩條直線距離相等的點在兩條角平分線上', ans: 'D', trap: 'A',
+  opts: { A: 'a point.', B: 'a circle.', C: 'a square.', D: 'a pair of straight lines.' },
+  why: {
+    A: '一點只是 L₁、L₂ 的交點；其實兩條角平分線上的每一點都符合。',
+    B: '圓是與「一點」距離相等的軌跡，不是與兩條直線。',
+    C: '正方形不是軌跡；與兩條相交直線距離相等的點組成兩條直線。',
+    D: 'L₁、L₂ 相交，軌跡是兩條互相垂直的角平分線：y = −1/20 及 x = 25/12。',
+  },
+  diag: '與兩條相交直線距離相等的點，就是兩條直線交角的角平分線（共兩條，互相垂直）。L₁、L₂ 的斜率是 −3/5 和 3/5，不平行，一定相交，所以答案是一對直線。',
+  rule: '點 (x₀, y₀) 到 Ax + By + C = 0 的距離 = |Ax₀ + By₀ + C| ÷ √(A² + B²)。到兩條相交直線距離相等 ⇒ 角平分線（兩條）；到兩條平行線距離相等 ⇒ 中間一條平行線。',
+  pit: '|a| = |b| ⇒ a = b 或 a = −b：兩個情況，所以有兩條直線。',
+  alt: '代數法：|3x + 5y − 6| ÷ √34 = |6x − 10y − 13| ÷ √136 ⇒ 2(3x + 5y − 6) = ±(6x − 10y − 13) ⇒ y = −1/20 或 x = 25/12。',
+  steps: [
+    S('兩條直線相交', 'The lines intersect', 'L₁：斜率 = −' + FR('3', '5') + '；L₂：斜率 = ' + FR('3', '5') + '<br>斜率不同 ⇒ <b>L₁、L₂ 相交</b>', '', '', { cap: '藍＝L₁，橙＝L₂。' }),
+    S('軌跡＝角平分線', 'Locus = angle bisectors', '到兩條相交直線距離相等的點 ⇒ <b>兩條角平分線</b> ⇒ D',
+      '看動畫：P 沿紅線移動，P 到 L₁、L₂ 的距離一直相等。', 'Watch P move along the red lines: its distances to L₁ and L₂ stay equal.', { key: true, cap: '動畫：P 沿軌跡移動（可拖「P 的位置」滑桿）。' }),
+    S('代數驗證', 'Check by algebra', FR('|3x + 5y − 6|', '√34') + ' = ' + FR('|6x − 10y − 13|', '√136') + '<br>√136 = 2√34 ⇒ 2|3x + 5y − 6| = |6x − 10y − 13|', '', '', { cap: '' }),
+    S('兩條直線', 'Two lines', '6x + 10y − 12 = ±(6x − 10y − 13)<br>⇒ <b>y = −' + FR('1', '20') + '　或　x = ' + FR('25', '12') + '</b>', '「±」給出兩條互相垂直的直線。', 'The ± gives two perpendicular lines.', { cap: '' }),
+  ],
+  init: () => ({ u: 5 }),
+  controls: [{ type: 'range', k: 'u', label: 'P 的位置', min: 0, max: 100, step: 1, fmt: v => Math.round(v) + '%' }],
+  eff(i, st) { return st.user || i === 1 ? st : { ...st, u: 5 }; },
+  anim(i) { return i === 1 ? { k: 'u', from: 0, to: 100, ms: 6000, delay: 300 } : null; },
+  draw(i, st, at) {
+    const u = Math.max(0, Math.min(100, +this.eff(i, st).u)) / 100, xi = 25 / 12, yi = -1 / 20;
+    const P0 = plane2({ x0: -3, x1: 7, y0: -3.6, y1: 3.6, X0: 40 + 3 * 46, sx: 46, Y0: 236, sy: 46, gx: 1, gy: 1, lx: 2, ly: 2 });
+    const { X, Y } = P0;
+    let g = P0.svg;
+    const L1 = x => (6 - 3 * x) / 5, L2 = x => (6 * x - 13) / 10;
+    g += ln(X(-3), Y(L1(-3)), X(7), Y(L1(7)), 'lb thick') + ln(X(-3), Y(L2(-3)), X(7), Y(L2(7)), 'lo thick');
+    g += tx(X(-2.6), Y(L1(-2.6)) - 10, 'L₁：3x + 5y = 6', 's bl', 'start') + tx(X(6.9), Y(L2(6.9)) - 12, 'L₂：6x − 10y = 13', 's o', 'end');
+    g += dt(X(xi), Y(yi));
+    if (i >= 1) {
+      g += at(1, ln(X(-3), Y(yi), X(7), Y(yi), 'r thick') + ln(X(xi), Y(-3.6), X(xi), Y(3.6), 'r thick'));
+      if (i >= 3) g += at(3, tx(X(6.9), Y(yi) - 10, 'y = −1/20', 'm r', 'end') + tx(X(xi) + 8, Y(3.3), 'x = 25/12', 'm r', 'start'));
+      // P 在軌跡上：前半沿水平線，後半沿垂直線
+      const p = u < 0.5 ? [-2.6 + (6.6 - -2.6) * (u / 0.5), yi] : [xi, 3.2 - 6.4 * ((u - 0.5) / 0.5)];
+      const foot = (a, b, c) => { const k = (a * p[0] + b * p[1] - c) / (a * a + b * b); return [p[0] - a * k, p[1] - b * k]; };
+      const f1_ = foot(3, 5, 6), f2_ = foot(6, -10, 13), d1 = Math.abs(3 * p[0] + 5 * p[1] - 6) / Math.sqrt(34), d2 = Math.abs(6 * p[0] - 10 * p[1] - 13) / Math.sqrt(136);
+      g += ln(X(p[0]), Y(p[1]), X(f1_[0]), Y(f1_[1]), 'lb dash') + ln(X(p[0]), Y(p[1]), X(f2_[0]), Y(f2_[1]), 'lo dash');
+      g += rightMark([X(f1_[0]), Y(f1_[1])], [X(p[0]), Y(p[1])], [X(f1_[0] + 5), Y(f1_[1] - 3)], 9) + rightMark([X(f2_[0]), Y(f2_[1])], [X(p[0]), Y(p[1])], [X(f2_[0] + 10), Y(f2_[1] + 6)], 9);
+      g += dt(X(p[0]), Y(p[1]), 'r') + tx(X(p[0]) + 10, Y(p[1]) - 10, 'P', 'm r', 'start');
+      g += panel(520, 14, 192, [['P 到 L₁ = ' + d1.toFixed(2), 'm bl'], ['P 到 L₂ = ' + d2.toFixed(2), 'm o'], ['相等 ✓', 'm r']], 'boxp', 28);
+    }
+    return g;
+  },
+});
+
+addQ({
+  ...d26(27), group: 'coord', short: '圓心 (5, k)：到兩點距離相等', topic: 'EQUATIONS OF CIRCLES',
+  en: 'Centre on x = 5, circle through (5, 0) and (11, 4)', zh: '圓的方程：設圓心 (5, k)，圓心到兩點的距離都是半徑，列方程求 k', ans: 'A', trap: 'B',
+  opts: { A: '13π', B: '14π', C: '22π', D: '42π' },
+  why: {
+    A: 'k = 6.5，半徑 6.5，周長 = 2π(6.5) = 13π。',
+    B: '14π 對應半徑 7，不符合 k² = 36 + (k − 4)²。',
+    C: '22π 對應半徑 11：把 (11, 4) 的 x 坐標當成半徑。',
+    D: '42π 沒有根據。',
+  },
+  diag: '圓心在直線 x = 5 上，設為 (5, k)。圓心到圓上任何一點的距離都是半徑，所以到 (5, 0) 和到 (11, 4) 的距離相等。列方程 k² = 6² + (k − 4)²，k 的平方項會消去，得 k = 6.5。',
+  rule: '兩點距離公式：√((x₂ − x₁)² + (y₂ − y₁)²)。圓周 = 2πr。',
+  pit: '求到的是半徑 6.5；周長要乘 2π，不是 π。',
+  steps: [
+    S('設圓心', 'Let the centre be (5, k)', '圓心 C 的 x 坐標是 5 ⇒ 設 <b>C(5, k)</b>', '', '', { cap: '拖動滑桿改變 k，看兩條半徑是否相等。' }),
+    S('兩條半徑相等', 'Equal radii', '√(0² + k²) = √(6² + (k − 4)²)',
+      '看動畫：k 改變時，兩段距離一長一短；只有一個 k 令兩段一樣長。', 'As k changes, only one value makes the two distances equal.', { key: true, cap: '動畫：圓心沿 x = 5 移動（可拖「k」滑桿）。' }),
+    S('解方程', 'Solve', 'k² = 36 + k² − 8k + 16<br>8k = 52 ⇒ <b>k = 6.5</b>', 'k² 兩邊消去，變成一次方程。', 'The k² terms cancel.', { cap: '' }),
+    S('周長', 'Circumference', '半徑 = 6.5 ⇒ 周長 = 2π(6.5) = <b>13π</b> ⇒ A', '', '', { cap: '' }),
+  ],
+  init: () => ({ k: 6.5 }),
+  controls: [{ type: 'range', k: 'k', label: 'k', min: 0, max: 11, step: 0.5, fmt: v => 'k = ' + (+v).toFixed(1) }],
+  eff(i, st) { return st.user || i === 1 ? st : { ...st, k: i === 0 ? 3 : 6.5 }; },
+  anim(i) { return i === 1 ? { k: 'k', from: 1, to: 6.5, ms: 4000, delay: 300 } : null; },
+  capx(i, st) { const k = +this.eff(i, st).k, d1 = Math.abs(k), d2 = Math.hypot(6, k - 4); return `<br>k = ${k.toFixed(1)}：到 (5, 0) = ${d1.toFixed(2)}，到 (11, 4) = ${d2.toFixed(2)}`; },
+  draw(i, st, at) {
+    const k = +this.eff(i, st).k, d1 = Math.abs(k), d2 = Math.hypot(6, k - 4), eq = Math.abs(d1 - d2) < 0.01;
+    const P0 = plane2({ x0: -2.5, x1: 13.5, y0: -1.5, y1: 14, X0: 40 + 2.5 * 27, sx: 27, Y0: 430, sy: 27, gx: 1, gy: 1, lx: 5, ly: 5 });
+    const { X, Y } = P0;
+    let g = P0.svg + ln(X(5), Y(-1.5), X(5), Y(14), 'thin dash') + tx(X(5) + 6, Y(13.4), 'x = 5', 's', 'start');
+    g += ci(X(5), Y(k), d1 * 27, eq ? 'lgn thick' : 'thin dash');
+    g += ln(X(5), Y(k), X(5), Y(0), 'lb thick') + ln(X(5), Y(k), X(11), Y(4), 'lo thick');
+    g += dt(X(5), Y(0), 'b') + dt(X(11), Y(4), 'o') + dt(X(5), Y(k), eq ? 'g' : 'r');
+    g += tx(X(5) - 8, Y(0) + 18, '(5, 0)', 'm bl', 'end') + tx(X(11) + 10, Y(4) + 6, '(11, 4)', 'm o', 'start') + tx(X(5) - 10, Y(k) - 6, 'C(5, k)', 'm', 'end');
+    g += tx(X(5) - 8, Y(k / 2) + 5, d1.toFixed(2), 's bl', 'end') + tx((X(5) + X(11)) / 2 + 10, (Y(k) + Y(4)) / 2 - 6, d2.toFixed(2), 's o', 'start');
+    const rows = [['k = ' + k.toFixed(1), 'big'], ['到 (5, 0)：' + d1.toFixed(2), 'm bl'], ['到 (11, 4)：' + d2.toFixed(2), 'm o'], [eq ? '相等 ⇒ 半徑 6.5 ✓' : '不相等', eq ? 'm g' : 'm r']];
+    if (i >= 3) rows.push(['周長 = 2π(6.5) = 13π', 'big hl']);
+    g += panel(500, 14, 212, rows, 'boxp', 28);
+    return g;
+  },
+});
+
+addQ({
+  ...d26(36), group: 'secb', short: 'log y 對 x 是直線：截距 2 ⇒ log a = 2', topic: 'LOGARITHMS',
+  en: 'log y is a linear function of x; y = abˣ', zh: '對數：由截距寫出 log y = 2 − 2x，再化成 y = 100(0.01)ˣ；縱軸截距就是 log a', ans: 'D', trap: 'A',
+  opts: { A: '0.01', B: '0.1', C: '10', D: '100' },
+  why: {
+    A: '0.01 是 b，不是 a。',
+    B: '0.1 沒有根據：斜率 −2 ⇒ log b = −2 ⇒ b = 0.01。',
+    C: '10 是把縱軸截距 2 當成 log a = 1，或者以為 a = 10 × 1。',
+    D: 'log y = 2 − 2x ⇒ y = 10² × (10⁻²)ˣ = 100(0.01)ˣ ⇒ a = 100。',
+  },
+  diag: '縱軸截距 2、橫軸截距 1 ⇒ 直線經過 (0, 2) 和 (1, 0)，斜率 −2，所以 log y = 2 − 2x。化成指數：y = 10²⁻²ˣ = 100 × (0.01)ˣ。選 A 的同學把 b 當成 a。',
+  rule: 'y = abˣ ⇒ log y = log a + (log b)x：縱軸截距 = log a，斜率 = log b。',
+  pit: '縱軸截距是 log a，不是 a：log a = 2 ⇒ a = 10² = 100。',
+  steps: [
+    S('寫出直線', 'Write the line', '經過 (0, 2)、(1, 0)：斜率 = ' + FR('0 − 2', '1 − 0') + ' = −2<br>⇒ <b>log y = 2 − 2x</b>', '', '', { cap: '縱軸是 log y，橫軸是 x。' }),
+    S('化成指數', 'Change to index form', 'y = 10<sup>2 − 2x</sup> = 10² × (10⁻²)ˣ', '10 的冪：先拆開兩部分。', 'Split the power of 10 into two parts.', { key: true, cap: '' }),
+    S('比較 y = abˣ', 'Compare with y = abˣ', 'y = <b>100</b>(0.01)ˣ ⇒ <b>a = 100</b>，b = 0.01 ⇒ D', '0.01 是 b（選項 A 的陷阱）。', '0.01 is b — the trap in option A.', { key: true, cap: '右下：y = 100(0.01)ˣ 的圖像，x = 0 時 y = a = 100。' }),
+  ],
+  draw(i, st, at) {
+    const P0 = plane2({ x0: -0.6, x1: 2.2, y0: -2.6, y1: 3.2, X0: 60 + 0.6 * 140, sx: 140, Y0: 60 + 3.2 * 66, sy: 66, gx: 0.5, gy: 1, lx: 1, ly: 1, xl: 'x', yl: 'log y' });
+    const { X, Y } = P0;
+    let g = P0.svg + ln(X(-0.6), Y(3.2), X(2.2), Y(-2.4), 'lb thick');
+    g += dt(X(0), Y(2), 'r') + dt(X(1), Y(0), 'o') + tx(X(0) + 10, Y(2) - 8, '(0, 2)', 'm r', 'start') + tx(X(1) + 8, Y(0) - 10, '(1, 0)', 'm o', 'start');
+    g += tx(X(1.48), Y(-1.2), 'log y = 2 − 2x', 'm bl', 'end');
+    if (i === 0) g += at(0, ln(X(0), Y(2), X(1), Y(2), 'thin dash') + ln(X(1), Y(2), X(1), Y(0), 'thin dash') + tx(X(0.5), Y(2) - 8, '1', 's') + tx(X(1) + 8, Y(1) + 4, '−2', 's', 'start'));
+    const rows = [['log y = 2 − 2x', 'm bl']];
+    if (i >= 1) rows.push(['y = 10^(2 − 2x)', 'm'], ['= 10² × (10⁻²)ˣ', 'm']);
+    if (i >= 2) rows.push(['= 100(0.01)ˣ', 'big hl'], ['a = 100，b = 0.01', 'm r']);
+    g += panel(470, 14, 242, rows, 'boxp', 28);
+    if (i >= 2) {
+      const x0 = 478, y0 = 450, w = 220, h = 150, Xx = x => x0 + x * w, Yy = y => y0 - y / 100 * h;
+      let t = rect(x0 - 8, y0 - h - 24, w + 20, h + 40, 'boxb', 8) + ln(x0, y0, x0 + w + 6, y0, 'axis') + ln(x0, y0, x0, y0 - h - 10, 'axis');
+      const pts = []; for (let k = 0; k <= 40; k++) { const x = k / 40; pts.push([Xx(x), Yy(100 * Math.pow(0.01, x))]); }
+      t += pl(pts, 'lo thick') + dt(Xx(0), Yy(100), 'r') + tx(x0 + 8, Yy(100) + 4, 'a = 100', 's r', 'start') + tx(x0 + w, y0 + 16, 'x = 1', 's', 'end') + tx(x0 + w - 4, Yy(1) - 6, 'y = 1', 's', 'end');
+      g += at(2, t);
+    }
+    return g;
+  },
+});
+
+addQ({
+  ...d26(38), group: 'geo', short: '外角、錯角、切線與弦的夾角、圓內接四邊形', topic: 'CIRCLES',
+  en: 'Find ∠ADE with a tangent TC parallel to AB', zh: '圓的性質：外角求 ∠ECT；AB ∥ TC 的錯角；切線與弦的夾角；同弓形圓周角；圓內接四邊形對角互補', ans: 'B', trap: 'C',
+  opts: { A: '39°', B: '56°', C: '62°', D: '72°' },
+  why: {
+    A: '39° 沒有根據。',
+    B: '∠ADC = 180° − ∠ABC = 118°，∠ADE = 118° − ∠BDC = 118° − 62° = 56°。',
+    C: '62° 是 ∠ECT、∠BAC、∠ABC、∠BDC，不是 ∠ADE。',
+    D: '72° 沒有根據。',
+  },
+  diag: '62° 在這題出現了四次（∠ECT、∠BAC、∠ABC、∠BDC），很易誤選 C。∠ADE 要用圓內接四邊形 ABCD：∠ADC = 180° − 62° = 118°，再減去 ∠BDC = 62°。',
+  rule: '三角形外角 = 兩個內對角之和；平行線錯角相等；切線與弦的夾角 = 交錯弓形的圓周角；同弓形圓周角相等；圓內接四邊形對角互補。',
+  pit: 'E 在 BD 上，所以 ∠ADE 就是 ∠ADB = ∠ADC − ∠BDC。',
+  steps: [
+    S('三角形外角', 'Exterior angle', '△CET：∠AED = ∠ECT + ∠CTE<br>∠ECT = 85° − 23° = <b>62°</b>', '∠AED 是 △CET 在 E 的外角。', '∠AED is an exterior angle of △CET.', { cap: '藍＝85°，橙＝23°，紅＝62°。' }),
+    S('錯角', 'Alternate angles', 'AB ∥ TC ⇒ <b>∠BAC = ∠ACT = 62°</b>（錯角）', '', '', { cap: '' }),
+    S('切線與弦的夾角', 'Tangent–chord angle', '<b>∠ABC = ∠ACT = 62°</b>（交錯弓形的圓周角）', 'TC 是切線，CA 是弦。', 'TC is a tangent and CA is a chord.', { cap: '' }),
+    S('同弓形圓周角', 'Same segment', '<b>∠BDC = ∠BAC = 62°</b>', '∠BDC 與 ∠BAC 都對着弦 BC。', 'Both stand on chord BC.', { cap: '' }),
+    S('圓內接四邊形', 'Cyclic quadrilateral', '∠ADC = 180° − ∠ABC = 118°<br>∠ADE = 118° − 62° = <b>56°</b> ⇒ B', '對角互補。', 'Opposite angles are supplementary.', { key: true, cap: '綠色＝∠ADE。' }),
+  ],
+  draw(i, st, at) {
+    const O = [222, 222], R = 152, Pt = d => [O[0] + R * Math.cos(rad(d)), O[1] - R * Math.sin(rad(d))];
+    const W = 23, A = Pt(34 + W), B = Pt(146 + W), C = Pt(270 + W), D = Pt(348 + W), E = isect(A, C, B, D), T = isect(B, D, C, [C[0] - (C[1] - O[1]), C[1] + (C[0] - O[0])]);
+    let g = ci(O[0], O[1], R, 'ln') + ln(...A, ...B) + ln(...A, ...C) + ln(...B, ...T) + ln(...C, ...T) + ln(...A, ...D) + ln(...B, ...C) + ln(...C, ...D);
+    if (i === 1) g += at(1, parMark(B, A, 'lb') + parMark(C, T, 'lb'));
+    // 角
+    if (i < 4) g += ang20(E, A, D, 24, '85°', 'b', i === 0, 44);
+    g += ang20(T, C, E, 60, '23°', 'o', i === 0, 84);
+    g += ang20(C, E, T, 34, '62°', 'r', i <= 2, 56);
+    if (i >= 1) g += at(1, ang20(A, B, C, 30, '62°', 'r', i === 1 || i === 3, 52));
+    if (i >= 2) g += at(2, ang20(B, A, C, 34, '62°', 'p', i === 2 || i === 4, 56));
+    if (i >= 3) g += at(3, ang20(D, B, C, 26, '62°', 'r', i === 3, 46, -6));
+    if (i >= 4) g += at(4, ang20(D, A, B, 40, '56°', 'g', true, 62, 8));
+    else g += ang20(D, A, E, 40, '?', 'g', false, 62, 8);
+    g += tx(A[0] + 6, A[1] - 8, 'A', 'm', 'start') + tx(B[0] - 12, B[1] + 4, 'B', 'm', 'end') + tx(C[0] - 4, C[1] + 24, 'C', 'm') + tx(D[0] + 10, D[1] - 8, 'D', 'm', 'start') + tx(E[0] - 6, E[1] + 22, 'E', 'm') + tx(T[0] + 8, T[1] + 6, 'T', 'm', 'start');
+    const rows = [['∠ECT = 85° − 23° = 62°', 'm r']];
+    if (i >= 1) rows.push(['∠BAC = ∠ACT = 62°（錯角）', 's']);
+    if (i >= 2) rows.push(['∠ABC = ∠ACT = 62°（切線）', 's']);
+    if (i >= 3) rows.push(['∠BDC = ∠BAC = 62°', 's']);
+    if (i >= 4) rows.push(['∠ADE = (180° − 62°) − 62° = 56°', 'm g']);
+    g += panel(448, 14, 268, rows, 'boxp', 28);
+    return g;
+  },
+});
+
+addQ({
+  ...d26(45), group: 'secb', short: '+2 唔變、÷5 標準差 ÷5、方差再平方', topic: 'DISPERSION',
+  en: 'Variance of (p + 2)/5, …, (t + 2)/5 when the S.D. of p, …, t is 5', zh: '離差：加減常數不改變標準差；除以 5 令標準差除以 5；方差 = 標準差²', ans: 'A', trap: 'B',
+  opts: { A: '1 .', B: '5 .', C: '9 .', D: '25 .' },
+  why: {
+    A: '標準差 5 → +2 後仍是 5 → ÷5 後是 1 → 方差 = 1² = 1。',
+    B: '5 是把方差 25 除以 5；方差要除以 5² = 25。',
+    C: '9 沒有根據：+2 不影響離差。',
+    D: '25 是原本五個數的方差，未計 ÷5。',
+  },
+  diag: '先追蹤標準差，最後才平方：p + 2（整組平移）標準差仍是 5；再除以 5，標準差變成 5 ÷ 5 = 1；方差 = 1² = 1。選 B 的同學把方差 25 只除以 5，忘記方差要除以 5²。',
+  rule: '每個數 × k 再 + c：平均數 × k + c；標準差 × |k|；方差 × k²。加減常數不影響標準差、方差、分佈域。',
+  pit: '題目給標準差、問方差：最後要平方。',
+  steps: [
+    S('+2：整組平移', 'Adding 2', 'p + 2, …, t + 2：標準差 = <b>5</b>（不變）', '看動畫：五個點一齊向右移 2，距離不變。', 'All five points move right by 2; their spread does not change.', { cap: '例子：2.5、7.5、10、12.5、17.5（標準差 = 5）。紅色橫條＝平均數 ± 標準差。' }),
+    S('÷5：縮小', 'Dividing by 5', FR('p + 2', '5') + ', …：標準差 = 5 ÷ 5 = <b>1</b>', '看動畫：五個點向 0 收縮到原本的 ⅕。', 'The points shrink towards 0 to one fifth of the spread.', { key: true, cap: '' }),
+    S('方差 = 標準差²', 'Variance = S.D.²', '方差 = 1² = <b>1</b> ⇒ A', '選 B：25 ÷ 5 = 5（方差要 ÷ 5²）；選 D：25 是原本的方差。', 'B divides the variance by 5 instead of 25; D is the original variance.', { key: true, cap: '' }),
+  ],
+  init: () => ({ t: 100 }),
+  controls: [{ type: 'range', k: 't', label: '動畫', min: 0, max: 100, step: 1, fmt: v => Math.round(v) + '%' }],
+  eff(i, st) { return st; },
+  anim(i) { return i <= 1 ? { k: 't', from: 0, to: 100, ms: 2400, delay: 300 } : null; },
+  draw(i, st, at) {
+    const t = Math.max(0, Math.min(1, (+st.t || 0) / 100)), d0 = [2.5, 7.5, 10, 12.5, 17.5];
+    const Xv = v => 60 + v * 30, row = (y, vals, cls, lab, show) => {
+      const m = vals.reduce((a, b) => a + b, 0) / 5, sd = Math.sqrt(vals.reduce((a, b) => a + (b - m) ** 2, 0) / 5);
+      let s = ln(Xv(-0.5), y, Xv(20.5), y, 'axis');
+      for (let k = 0; k <= 20; k++) s += ln(Xv(k), y - 4, Xv(k), y + 4, 'thin') + (k % 5 === 0 ? tx(Xv(k), y + 22, k, 's') : '');
+      s += rect(Xv(m - sd), y - 34, Xv(m + sd) - Xv(m - sd), 8, 'fd', 3);
+      vals.forEach(v => { s += ci(Xv(v), y - 12, 7, 'dot ' + cls); });
+      s += tx(Xv(0), y - 48, lab, 'm', 'start') + (show ? tx(Xv(20.5), y - 48, '標準差 = ' + sd.toFixed(2), 'm r', 'end') : '');
+      return s;
+    };
+    const d1 = d0.map(v => v + 2 * (i === 0 ? t : 1)), d2 = d0.map(v => (v + 2) / (i === 1 ? 1 + 4 * t : 5));
+    let g = row(110, d0, '', 'p, q, r, s, t', true);
+    g += row(250, d1, 'hl', i === 0 && t < 1 ? '加 2 中…' : 'p + 2, …, t + 2', true);
+    if (i >= 1) g += row(390, i === 1 ? d2 : d0.map(v => (v + 2) / 5), 'o', i === 1 && t < 1 ? '除以 5 中…' : '(p + 2)/5, …, (t + 2)/5', true);
+    if (i >= 2) g += at(2, hg20(420, 452, 290, 'hgY', 34) + tx(565, 450, '方差 = 1² = 1', 'big hl'));
+    return g;
+  },
+});
 
 /* ================= DSE 2022–2023 lessons (Level 4, 5, 5*, 5**) ================= */
 /* ================= extra helpers for the 2022–2023 lessons ================= */
