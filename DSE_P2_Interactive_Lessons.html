@@ -5633,109 +5633,145 @@ addQ({
     S('III：同一個 x 截距', 'III: same x-intercept', FR('<i>b</i>', '<i>a</i>') + ' = ' + FR('<i>d</i>', '<i>c</i>') + ' ⇒ ' + MK('<i>bc</i> = <i>ad</i>', 'y') + '（III ✓）', '令 y = 0，兩條線的 x 截距相同。', 'Put y = 0: both lines have the same x-intercept.', { key: true, cap: '' }),
     S('I：由 bc = ad 推斷', 'I: use bc = ad', '<i>bc</i> = <i>ad</i>：<i>b</i> 大、<i>d</i> 小 ⇒ <i>a</i> 大、<i>c</i> 小，即 <i>a</i> > <i>c</i><br>斜率：' + MK('−<i>a</i> < −<i>c</i>', 'p') + ' ⇒ <b><i>a</i> > <i>c</i></b>（I ✗）',
       'b 比 d 大，乘積要相等，a 就要比 c 大。L₁ 較斜，斜率 −a 更負，結果一樣。', 'Since b > d and bc = ad, a must exceed c. L₁ is steeper, so −a < −c: same result.', { key: true, cap: '' }),
+    S('用數字看斜率', 'With numbers', '例：L₁ 斜率 −<i>a</i> = <b>−5</b> ⇒ <i>a</i> = 5；L₂ 斜率 −<i>c</i> = <b>−3</b> ⇒ <i>c</i> = 3 ⇒ <b><i>a</i> > <i>c</i></b>（I ✗）<br>x 截距：' + FR('<i>b</i>', '<i>a</i>') + ' = ' + FR('6', '5') + ' = ' + FR('3.6', '3') + ' = ' + FR('<i>d</i>', '<i>c</i>') + ' ⇒ <i>bc</i> = 18 = <i>ad</i> ✓',
+      'L₁ 較斜：斜率是負數，越斜越負，a 越大。', 'L₁ is steeper: the more negative the slope, the larger a.', { key: true, cap: '拖動滑桿：b 改變時 a 跟住變，bc = ad 仍然成立。' }),
     S('結論', 'Conclusion', '只有 II 和 III 正確 ⇒ <b>C</b>', '', '', { cap: '' }),
   ],
   init: () => ({ b: 6 }),
-  controls: [{ type: 'range', k: 'b', label: 'b', min: 3.5, max: 8, step: 0.5, fmt: v => 'b = ' + v }],
+  controls: [{ type: 'range', k: 'b', label: 'b', min: 4.2, max: 8.4, step: 0.6, fmt: v => 'b = ' + f1(+v) }],
   eff(i, st) { return st.user ? st : { ...st, b: 6 }; },
-  capx(i, st) { const b = +this.eff(i, st).b, a = b / 4; return `<br>a = ${f1(a)}、b = ${b}；c = 0.75、d = 3：bc = ${f1(b * 0.75)}，ad = ${f1(a * 3)}`; },
+  capx(i, st) { const b = +this.eff(i, st).b, a = b / 1.2; return `<br>a = ${f1(a)}、b = ${f1(b)}；c = 3、d = 3.6：bc = ${f1(b * 3)}，ad = ${f1(a * 3.6)}`; },
   draw(i, st, at) {
-    const b = +this.eff(i, st).b, a = b / 4, c = 0.75, d = 3, k = 4;
-    const P0 = plane2({ x0: -1, x1: 6, y0: -1.5, y1: 8.5, X0: 120, sx: 62, Y0: 400, sy: 38, gx: 1, gy: 1, lx: 1, ly: 2 });
+    const b = +this.eff(i, st).b, a = b / 1.2, c = 3, d = 3.6, k = 1.2;
+    const P0 = plane2({ x0: -0.4, x1: 2, y0: -1.5, y1: 9, X0: 60 + 0.4 * 170, sx: 170, Y0: 400, sy: 36, gx: 0.2, gy: 1, lx: 0.4, ly: 2 });
     const { X, Y } = P0;
     const band = (P, Q, w, c) => { const u = unit(P, Q), n = [-u[1] * w, u[0] * w]; return pg([[P[0] + n[0], P[1] + n[1]], [Q[0] + n[0], Q[1] + n[1]], [Q[0] - n[0], Q[1] - n[1]], [P[0] - n[0], P[1] - n[1]]], c); };
-    const L1a = [X(-0.4), Y(b + 0.4 * a)], L1b = [X(5.4), Y(b - 5.4 * a)], L2a = [X(-0.4), Y(d + 0.4 * c)], L2b = [X(5.4), Y(d - 5.4 * c)];
+    const seg = (m, q) => { const x0 = Math.max(-0.35, (q - 8.8) / m), x1 = Math.min(1.95, (q + 1.3) / m); return [[X(x0), Y(q - m * x0)], [X(x1), Y(q - m * x1)], x0]; };
+    const [L1a, L1b, s1] = seg(a, b), [L2a, L2b, s2] = seg(c, d);
     let g = P0.svg + band(L1a, L1b, 6, 'fcy') + band(L2a, L2b, 6, 'fb2') + ln(...L1a, ...L1b, 'ln') + ln(...L2a, ...L2b, 'ln');
-    g += tx(X(-0.5), Y(b + 0.5 * a) - 6, 'L₁', 'm', 'end') + tx(X(-0.5), Y(d + 0.5 * c) - 6, 'L₂', 'm', 'end') + dt(X(k), Y(0));
+    g += tx(L1a[0] - 8, L1a[1] + 4, 'L₁', 'm', 'end') + tx(L2a[0] - 8, L2a[1] + 4, 'L₂', 'm', 'end') + dt(X(k), Y(0));
     // 斜率（粉紅）
-    g += tx(X(1.7), Y(b - 1.7 * a) - 16, 'm = −a', 'm mg', 'start') + tx(X(1.2), Y(d - 1.2 * c) + 30, 'm = −c', 'm mg', 'start');
+    const num = i >= 4;
+    const onL = (x, y, t) => { const w = 8.2 * t.length + 14; return rect(x - w / 2, y - 17, w, 24, 'fw', 7) + rect(x - w / 2, y - 17, w, 24, 'thin', 7) + tx(x, y, t, 'm mg'); };
+    const xa = Math.min(0.55, (b - 1.2) / a);
+    g += onL(X(xa), Y(b - xa * a) + 6, num ? 'm = −a = −' + f1(a) : 'm = −a') + onL(X(0.8), Y(d - 0.8 * c) + 6, num ? 'm = −c = −3' : 'm = −c');
     // y 截距
     g += dt(X(0), Y(b), 'cy') + tx(X(0) - 10, Y(b) + 6, 'b', 'm cy', 'end') + dt(X(0), Y(d), 'o') + tx(X(0) - 10, Y(d) + 6, 'd', 'm o', 'end');
-    if (i >= 1) g += at(1, arrow(X(0.32), Y(d) - 8, X(0.32), Y(b) + 8, 'hl') + tx(X(0.42), Y((b + d) / 2) + 5, 'b > d', 'm hl', 'start'));
+    if (i >= 1) g += at(1, arrow(X(0.07), Y(d) - 8, X(0.07), Y(b) + 8, 'hl') + tx(X(0.12), Y(b + 0.9), 'b > d', 'm hl', 'start'));
     // x 截距
     g += tx(X(k) - 10, Y(0) + 26, i >= 2 ? 'b/a = d/c' : 'x 截距', i >= 2 ? 'm hl' : 's', 'end');
     // 右上：正負表
     g += panel(470, 14, 236, [['a　 b　 c　 d', 'm', 'middle'], ['+　 +　 +　 +', 'big g', 'middle']], 'boxp', 30);
     if (i >= 2) g += at(2, rect(470, 98, 236, 46, 'boxt', 10) + hg20(528, 130, 120, 'hgY', 30) + tx(588, 128, 'bc = ad', 'big'));
     if (i >= 3) g += at(3, panel(470, 156, 236, [['b 大 · c 小 = a 大 · d 小', '', 'middle'], ['b > d ⇒ a > c', 'm hl', 'middle'], ['斜率 −a < −c', 'm mg', 'middle']], 'boxp', 28));
-    if (i >= 4) g += at(4, panel(470, 268, 236, [['I ✗　II ✓　III ✓', 'm', 'middle'], ['⇒ C', 'big hl', 'middle']], 'boxt', 30));
+    if (i === 4) g += at(4, panel(470, 268, 236, [['a = ' + f1(a) + '，c = 3 ⇒ a > c', 'm hl', 'middle'], ['bc = ' + f1(b * 3) + ' = ad', 'm', 'middle']], 'boxt', 28));
+    if (i >= 5) g += at(5, panel(470, 268, 236, [['I ✗　II ✓　III ✓', 'm', 'middle'], ['⇒ C', 'big hl', 'middle']], 'boxt', 30));
     return g;
   },
 });
 
 /* ---------- 2026 Q16 ---------- */
 addQ({
-  ...d26(16), group: 'geo', short: '扇形：周界 = 2r + 弧長', topic: 'ARCS & SECTORS',
-  en: 'Sector: perimeter k cm, area 3k cm², radius 14 cm', zh: '扇形：周界要加兩條半徑；面積 = ½ × r × 弧長', ans: 'B', trap: 'C',
+  ...d26(16), group: 'geo', short: '扇形：弧長 ① ÷ 面積 ②，消去 θ', topic: 'ARCS & SECTORS',
+  en: 'The perimeter and the area of a sector are k cm and 3k cm² respectively. If the radius of the sector is 14 cm, then the arc length of the sector is', zh: '扇形：周界 l + 14 + 14 = k ⇒ l = k − 28；弧長 ①、面積 ② 兩式相除消去 θ', ans: 'B', trap: 'D',
   opts: { A: '19 cm', B: '21 cm', C: '28 cm', D: '49 cm' },
   why: {
-    A: 's = 19：k = 47，面積 = 7 × 19 = 133 ≠ 3 × 47 = 141。',
-    B: 'k = 28 + s，面積 ½(14)s = 7s = 3k ⇒ 7s = 84 + 3s ⇒ s = 21。',
-    C: '28 只是兩條半徑之和 2r = 28，不是弧長。',
-    D: '49 是周界 k = 28 + 21，不是弧長。',
+    A: 'l = 19：k = 47，面積 = 7 × 19 = 133 ≠ 3 × 47 = 141。',
+    B: '① ÷ ②：1/7 = (k − 28)/(3k) ⇒ k = 49 ⇒ l = 49 − 28 = 21 cm。',
+    C: '28 只是兩條半徑之和 14 + 14，不是弧長。',
+    D: '49 是周界 k，題目問弧長 l = k − 28 = 21。',
   },
-  diag: '常見錯誤是選 C（28 cm）：28 剛好是兩條半徑之和，題目卻問弧長。正確做法：周界 k = 14 + 14 + s，再與面積 ½ × 14 × s = 3k 聯立。',
-  rule: '扇形周界 = 2r + 弧長；扇形面積 = ½ × r × 弧長（不需要先求圓心角）。',
-  pit: '周界不是弧長。完成後可以驗算：s = 21 時 k = 49，面積 = 147 = 3 × 49 ✓。',
+  diag: '錯選 D 的同學求出 k = 49 就停下。周界 = 弧長 + 兩條半徑，所以弧長 l = k − 28。弧長 ① 和面積 ② 都含 θ/360°，兩式相除就可以消去 θ。',
+  rule: '弧長 = ' + FR('θ', '360°') + ' × 2π<i>r</i>；扇形面積 = ' + FR('θ', '360°') + ' × π<i>r</i>²。',
+  pit: '周界要加兩條半徑：k = l + 14 + 14。',
+  alt: '另解：扇形面積 = ½ × r × 弧長 ⇒ ½ × 14 × l = 3(l + 28) ⇒ 7l = 3l + 84 ⇒ l = 21。',
   steps: [
-    S('周界', 'Perimeter', '<i>k</i> = 14 + 14 + <i>s</i> = <b>28 + <i>s</i></b>', '周界由兩條半徑和一段弧組成。', 'Two radii plus the arc.', { key: true, cap: '橙色：兩條半徑（合共 28）；綠色：弧長 s。' }),
-    S('面積', 'Area', '面積 = ½ × 14 × <i>s</i> = <b>7<i>s</i></b> = 3<i>k</i>', '扇形面積 = ½ × 半徑 × 弧長。', 'Sector area = ½ × radius × arc length.', { cap: '' }),
-    S('聯立', 'Solve', '7<i>s</i> = 3(28 + <i>s</i>) ⇒ 4<i>s</i> = 84 ⇒ <b><i>s</i> = 21</b> ⇒ B', '', '', { cap: '' }),
-    S('驗算', 'Check', '<i>k</i> = 49，面積 = 7 × 21 = 147 = 3 × 49 ✓', '28 是 2r（C），49 是周界 k（D），兩個都不是弧長。', '28 is 2r and 49 is k — neither is the arc length.', { cap: '' }),
+    S('周界', 'Perimeter', '<i>l</i> + 14 + 14 = <i>k</i> ⇒ ' + MK('<i>l</i> = <i>k</i> − 28', 'g'), '周界 = 弧長 + 兩條半徑。', 'Perimeter = arc length + two radii.', { cap: '橙色：兩條半徑；綠色：弧長 l。拖動滑桿改變 θ。' }),
+    S('弧長 ①、面積 ②', 'Equations ① and ②', FR('θ', '360°') + ' × 2π × 14 = <i>k</i> − 28　……①<br>' + FR('θ', '360°') + ' × π × 14² = 3<i>k</i>　……②', '', '', { key: true, cap: '' }),
+    S('① ÷ ②', '① ÷ ②', FR('θ/360° × 2π × 14', 'θ/360° × π × 14²') + ' = ' + FR('<i>k</i> − 28', '3<i>k</i>') + ' ⇒ ' + FR('2', '14') + ' = ' + MK(FR('1', '7'), 'y') + ' = ' + FR('<i>k</i> − 28', '3<i>k</i>'),
+      'θ/360°、π 和一個 14 都約掉了。', 'θ/360°, π and one 14 cancel.', { key: true, cap: '' }),
+    S('求 k 和 l', 'Find k and l', '7<i>k</i> − 196 = 3<i>k</i> ⇒ 4<i>k</i> = 196 ⇒ <i>k</i> = 49<br><i>l</i> = 49 − 28 = <b>21 cm</b> ⇒ B', '驗算：面積 = ½ × 14 × 21 = 147 = 3 × 49 ✓', 'Check: area = ½ × 14 × 21 = 147 = 3 × 49 ✓', { cap: '' }),
   ],
+  init: () => ({ th: 86 }),
+  controls: [{ type: 'range', k: 'th', label: 'θ', min: 30, max: 150, step: 1, fmt: v => Math.round(v) + '°' }],
+  eff(i, st) { return st.user ? st : { ...st, th: 21 / 14 * 180 / Math.PI }; },
+  capx(i, st) {
+    const th = +this.eff(i, st).th, l = th / 360 * 2 * Math.PI * 14, k = l + 28, A = th / 360 * Math.PI * 196;
+    return `<br>θ = ${f1(th)}°：l = ${f1(l)}，周界 k = ${f1(k)}，面積 = ${f1(A)}，3k = ${f1(3 * k)}` + (Math.abs(A - 3 * k) < 1.5 ? '（面積 = 3k ✓）' : '');
+  },
   draw(i, st, at) {
-    const O = [150, 330], R = 250, th = 21 / 14 * 180 / Math.PI, a0 = 8, a1 = a0 + th;
-    const P1 = pol(O[0], O[1], R, a0), P2 = pol(O[0], O[1], R, a1);
-    let g = sector(O[0], O[1], R, a0, a1, 'fc') + ln(O[0], O[1], P1[0], P1[1], 'o') + ln(O[0], O[1], P2[0], P2[1], 'o') + ph(arcD(O[0], O[1], R, a0, a1), 'hl') + dt(O[0], O[1]);
-    const m1 = mid(O, P1), m2 = mid(O, P2), am = pol(O[0], O[1], R + 26, (a0 + a1) / 2);
-    g += tx(m1[0], m1[1] + 26, '14', 'm o') + tx(m2[0] - 22, m2[1], '14', 'm o') + tx(am[0], am[1], 's', 'm hl');
-    const bx = 100, by = 410, u = 9;
-    const sep = ln(bx + 14 * u, by, bx + 14 * u, by + 22, 'thin') + ln(bx + 28 * u, by, bx + 28 * u, by + 22, 'thin');
-    if (i === 0) g += at(0, sep + rect(bx, by, 14 * u, 22, 'fb2', 3) + rect(bx + 14 * u, by, 14 * u, 22, 'fb2', 3) + tx(bx + 14 * u, by - 8, '14 + 14 = 28（只是兩條半徑）', 's o') + rect(bx + 28 * u, by, 21 * u, 22, 'fa', 3) + tx(bx + 38.5 * u, by - 8, 's', 'm hl') + tx(bx + 49 * u + 10, by + 17, '= k', 'm', 'start') + sep);
-    if (i >= 1) g += at(1, panel(430, 60, 270, [['面積 = ½ × 14 × s', 'm'], ['= 7s = 3k', 'm hl']], 'boxt', 28));
-    if (i >= 2) g += at(2, panel(430, 160, 270, [['7s = 3(28 + s)', 'm'], ['4s = 84', 'm'], ['s = 21 cm', 'm hl']], 'boxt', 28));
-    if (i >= 3) g += at(3, rect(bx, by, 14 * u, 22, 'fb2', 3) + rect(bx + 14 * u, by, 14 * u, 22, 'fb2', 3) + rect(bx + 28 * u, by, 21 * u, 22, 'fa', 3) + tx(bx + 14 * u, by + 16, '28', 's') + tx(bx + 38.5 * u, by + 16, '21', 's') + tx(bx + 49 * u + 10, by + 17, 'k = 49', 'm', 'start') + sep);
+    const th = +this.eff(i, st).th, l = th / 360 * 2 * Math.PI * 14, k = l + 28, Ar = th / 360 * Math.PI * 196;
+    const O = [70, 300], R = 230, a0 = -th / 2, a1 = th / 2, P1 = pol(O[0], O[1], R, a0), P2 = pol(O[0], O[1], R, a1);
+    let g = sector(O[0], O[1], R, a0, a1, 'fc') + ln(...O, ...P1, 'o thick') + ln(...O, ...P2, 'o thick') + ph(arcD(O[0], O[1], R, a0, a1), 'lgn thick') + dt(...O);
+    g += ang20(O, P1, P2, 40, 'θ', 't', true, 60);
+    const m1 = mid(O, P1), m2 = mid(O, P2), am = pol(O[0], O[1], R + 22, 0);
+    g += tx(m1[0] + 6, m1[1] + 24, '14 cm', 'm o') + tx(m2[0] - 6, m2[1] - 12, '14 cm', 'm o') + tx(am[0], am[1] + 6, 'l', 'big g', 'start');
+    const rows = [['l + 14 + 14 = k', 'm'], ['l = k − 28', 'm g']];
+    if (i >= 1) rows.push(['θ/360° × 2π × 14 = k − 28 …①', 's'], ['θ/360° × π × 14² = 3k …②', 's']);
+    if (i >= 2) rows.push(['① ÷ ②：1/7 = (k − 28)/3k', 'm hl']);
+    if (i >= 3) rows.push(['7k − 196 = 3k ⇒ k = 49', 'm'], ['l = 49 − 28 = 21 cm', 'big hl']);
+    g += panel(410, 14, 302, rows, i >= 3 ? 'boxt' : 'boxp', 28);
+    // 數值驗證
+    const ok = Math.abs(Ar - 3 * k) < 1.5;
+    g += panel(410, 330, 302, [[`l = ${f1(l)}，k = ${f1(k)}`, 's'], [`面積 = ${f1(Ar)}，3k = ${f1(3 * k)}`, 'm ' + (ok ? 'hl' : 'r')], [ok ? '面積 = 3k ✓' : '面積 ≠ 3k', 'm ' + (ok ? 'hl' : 'r')]], ok ? 'boxt' : 'boxr', 26);
     return g;
   },
 });
 
 /* ---------- 2026 Q18 ---------- */
 addQ({
-  ...d26(18), group: 'geo', short: '梯形：相似三角形求面積', topic: 'SIMILAR TRIANGLES & AREAS',
-  en: 'Trapezium ABCD: area of trapezium CDEF', zh: '相似三角形：△BEF ~ △BAD，比 2 : 5；再用梯形面積公式', ans: 'C', trap: 'A',
+  ...d26(18), group: 'geo', short: '梯形：延長 BF 至 G，相似三角形求 EF 和高', topic: 'SIMILAR TRIANGLES & AREAS',
+  en: 'ABCD is a trapezium with AB // DC and AB : CD = 3 : 5. E lies on BD with BE : ED = 2 : 3, AB // EF and AD // BF. The area of △ABD is 225 cm². Find the area of the trapezium CDEF.', zh: '相似三角形：延長 BF 至 G，△BEF ~ △BDG ⇒ EF = 6a/5；△ABD 求 ah = 150；△DEI ~ △DBH ⇒ 高 3h/5', ans: 'C', trap: 'A',
   opts: { A: '222 cm²', B: '260 cm²', C: '279 cm²', D: '285 cm²' },
   why: {
-    A: '222 不吻合任何正確的分拆：CDEF = ½(EF + DC) × (E 到 DC 的距離) = 279。',
-    B: '260 是比例用錯所致，例如把邊長比當成面積比。',
-    C: 'ah = 150；EF = 6a/5，高 = 3h/5；CDEF = ½(6a/5 + 5a)(3h/5) = 93ah/50 = 279。',
-    D: '285 = 375 − 90：把 △BEF 當成 225 × 2/5 = 90（邊長比當面積比），又漏減 △BFC。',
+    A: '222 不對：CDEF = ½(6a/5 + 5a) × 3h/5 = 93ah/50 = 279。',
+    B: '260 是比例用錯所致，例如 BE : BD 用了 2 : 3（應是 2 : 5）。',
+    C: 'EF = 6a/5，高 DI = 3h/5，ah = 150 ⇒ 面積 = (93/50) × 150 = 279 cm²。',
+    D: '285 不對：把邊長比當成面積比，或漏減了某部分。',
   },
-  diag: '錯選 A 或 B，多數是步驟多、比例用錯。逐步做：先用 △ABD 求 ah，再由相似三角形求 EF，最後求 E 到 DC 的高。',
-  rule: '相似三角形：邊長比 k ⇒ 面積比 k²。同高三角形：面積比 = 底邊比。',
-  pit: 'BE : ED = 2 : 3，所以 BE : BD = 2 : 5（不是 2 : 3）。',
+  diag: '錯選 A 的同學多數是比例用錯。設 AB = 3a、DC = 5a，梯形的高 h。延長 BF 至 DC 上的 G：ABGD 是平行四邊形，DG = 3a；△BEF ~ △BDG 得 EF。再由 △ABD 的面積求 ah，由 △DEI ~ △DBH 求梯形 CDEF 的高。',
+  rule: '相似三角形：對應邊成比例；梯形面積 = ½(上底 + 下底) × 高。',
+  pit: 'BE : ED = 2 : 3 ⇒ BE : BD = 2 : 5，DE : DB = 3 : 5。',
   steps: [
-    S('由 △ABD 求 ah', 'Use the area of △ABD', '設 <i>AB</i> = 3<i>a</i>、<i>CD</i> = 5<i>a</i>，梯形高 <i>h</i><br>½(3<i>a</i>)<i>h</i> = 225 ⇒ <b><i>ah</i> = 150</b>', '', '', { cap: '藍色：△ABD = 225 cm²。' }),
-    S('相似三角形求 EF', 'Similar triangles give EF', 'EF ∥ AB、BF ∥ AD ⇒ △BEF ~ △BAD<br>BE : BD = 2 : 5 ⇒ <b><i>EF</i> = ⅖ × 3<i>a</i> = 6<i>a</i>/5</b>', 'BE : ED = 2 : 3，所以 BE : BD = 2 : 5。', 'BE : ED = 2 : 3 gives BE : BD = 2 : 5.', { key: true, cap: '橙色：△BEF，與 △BAD 相似。' }),
-    S('梯形 CDEF 的高', 'Height of CDEF', 'E 到 DC 的距離 = ' + FR('ED', 'BD') + ' × <i>h</i> = <b>3<i>h</i>/5</b>', '', '', { cap: '' }),
-    S('梯形面積', 'Area of the trapezium', '½(6<i>a</i>/5 + 5<i>a</i>)(3<i>h</i>/5) = ' + FR('93', '50') + '<i>ah</i> = <b>279 cm²</b> ⇒ C', '', '', { cap: '綠色：梯形 CDEF。' }),
-    S('驗算', 'Check', '△BCD = 375 = △BEF 36 + △BFC 60 + CDEF 279 ✓', '△BCD 與 △ABD 同高，面積比 5 : 3。', '△BCD and △ABD share the same height: ratio 5 : 3.', { cap: '' }),
+    S('題目資料', 'Given', '設 <i>AB</i> = 3<i>a</i>、<i>DC</i> = 5<i>a</i>；<i>DE</i> : <i>EB</i> = 3 : 2；△<i>ABD</i> = 225 cm²', '', '', { cap: '拖動滑桿改變梯形的形狀：答案不變。' }),
+    S('步驟 1：求 EF', 'Step 1: EF', '延長 <i>BF</i> 至 <i>G</i>：<i>ABGD</i> 是平行四邊形 ⇒ <i>DG</i> = 3<i>a</i><br>△<i>BEF</i> ~ △<i>BDG</i>：' + FR('<i>EF</i>', '<i>DG</i>') + ' = ' + FR('<i>BE</i>', '<i>BD</i>') + ' ⇒ ' + FR('<i>EF</i>', '3<i>a</i>') + ' = ' + FR('2', '2 + 3') + ' ⇒ ' + MK('<i>EF</i> = ' + FR('6<i>a</i>', '5'), 'y'),
+      'EF // DG，所以 △BEF 與 △BDG 相似。', 'EF // DG, so △BEF ~ △BDG.', { key: true, cap: '啡色：△BDG；藍色：DG = 3a。' }),
+    S('步驟 2：求 ah', 'Step 2: ah', '<i>h</i> 為 △<i>ABD</i> 的高：' + FR('(3<i>a</i>)(<i>h</i>)', '2') + ' = 225 ⇒ ' + MK('<i>ah</i> = 150', 'y'), '', '', { cap: '啡色：△ABD；藍色：高 h（DH ⊥ BA 的延線）。' }),
+    S('步驟 3：求 DI', 'Step 3: DI', '△<i>DEI</i> ~ △<i>DBH</i>：' + FR('<i>DI</i>', '<i>DH</i>') + ' = ' + FR('<i>DE</i>', '<i>DB</i>') + ' ⇒ ' + FR('<i>DI</i>', '<i>h</i>') + ' = ' + FR('3', '3 + 2') + ' ⇒ ' + MK('<i>DI</i> = ' + FR('3<i>h</i>', '5'), 'y'),
+      'DI 就是 E 到 DC 的距離，即梯形 CDEF 的高。', 'DI is the distance from E to DC: the height of CDEF.', { key: true, cap: '啡色：△DBH；虛線 IE // HB。' }),
+    S('步驟 4：CDEF 面積', 'Step 4: area of CDEF', '面積 = ' + FR('(' + FR('6<i>a</i>', '5') + ' + 5<i>a</i>) × ' + FR('3<i>h</i>', '5'), '2') + ' = ' + FR('93', '50') + ' × <i>ah</i> = ' + FR('93', '50') + ' × 150 = <b>279 cm²</b> ⇒ C', '', '', { key: true, cap: '啡色：梯形 CDEF。' }),
   ],
+  init: () => ({ p: 1.2 }),
+  controls: [{ type: 'range', k: 'p', label: 'A 的位置', min: 0.4, max: 2, step: 0.1, fmt: v => f1(+v) }],
   draw(i, st, at) {
-    const p = 1.2, P = (x, y) => [120 + 72 * x, 400 - 270 * y];
-    const D = P(0, 0), C = P(5, 0), A = P(p, 1), B = P(p + 3, 1), E = P(0.6 * p + 1.8, 0.6), F = P(0.6 * p + 3, 0.6);
-    let g = '';
-    if (i === 0) g += pg([A, B, D], 'fc');
-    if (i === 1) g += pg([A, B, D], 'fc') + pg([B, E, F], 'fb2');
-    if (i >= 3) g += pg([C, D, E, F], 'fa');
-    if (i >= 4) g += pg([B, E, F], 'fb2') + pg([B, F, C], 'fc');
-    g += pg([A, B, C, D]) + ln(B[0], B[1], D[0], D[1]) + ln(E[0], E[1], F[0], F[1]) + ln(B[0], B[1], F[0], F[1]) + ln(F[0], F[1], C[0], C[1]);
-    [[A, 'A', -10, -10], [B, 'B', 10, -10], [C, 'C', 12, 18], [D, 'D', -12, 18], [E, 'E', -14, 22], [F, 'F', 12, 22]].forEach(([Q, n, dx, dy]) => { g += dt(Q[0], Q[1]) + tx(Q[0] + dx, Q[1] + dy, n, 'm'); });
-    g += tx((A[0] + B[0]) / 2, A[1] - 12, '3a', 'm') + tx((D[0] + C[0]) / 2, D[1] + 26, '5a', 'm');
-    if (i === 0) g += tx(250, 210, '225', 'm big');
-    if (i >= 1) g += at(1, parMark(A, B) + parMark(E, F) + parMark(A, D, 'thin', 2) + parMark(B, F, 'thin', 2) + tx((E[0] + F[0]) / 2 + 8, E[1] + 30, 'EF = 6a/5', 'm o'));
-    if (i >= 2) g += at(2, ln(E[0], E[1], E[0], D[1], 'hl dash') + tx(E[0] - 8, (E[1] + D[1]) / 2, '3h/5', 'm hl', 'end') + ln(D[0] - 34, A[1], D[0] - 34, D[1], 'thin dash') + tx(D[0] - 42, (A[1] + D[1]) / 2, 'h', 'm', 'end'));
-    if (i === 3) g += at(3, tx(300, 345, '279', 'm big'));
-    if (i >= 4) g += at(4, tx((B[0] + E[0] + F[0]) / 3, (B[1] + E[1] + F[1]) / 3 + 5, '36', 's') + tx((B[0] + F[0] + C[0]) / 3 + 6, (B[1] + F[1] + C[1]) / 3 + 4, '60', 's') + tx(300, 345, '279', 'm big'));
+    const p = +st.p, P = (x, y) => [70 + 78 * x, 420 - 320 * y];
+    const D = P(0, 0), C = P(5, 0), A = P(p, 1), B = P(p + 3, 1), E = P(0.6 * (p + 3), 0.6), F = P(0.6 * p + 3, 0.6), G = P(3, 0), H = P(0, 1), I = P(0, 0.6);
+    let g = i === 0 ? at(0, pg([A, B, D], 'fc op')) : '';
+    if (i === 1) g += at(1, pg([B, D, G], 'fb2 op') + ln(...B, ...G, 'o thick') + ln(...D, ...G, 'lcy thick'));
+    if (i === 2) g += at(2, pg([A, B, D], 'fb2 op') + ln(...H, ...A, 'thin dash') + ln(...D, ...H, 'lcy thick') + rightMark(H, D, B, 12));
+    if (i === 3) g += at(3, pg([D, B, H], 'fb2 op') + ln(...H, ...A, 'thin dash') + ln(...D, ...H, 'lcy thick') + ln(...I, ...E, 'thin dash') + rightMark(H, D, B, 12));
+    if (i >= 4) g += at(4, pg([C, D, E, F], 'fb2 op') + ln(...I, ...E, 'thin dash') + ln(...D, ...I, 'lcy thick'));
+    g += pg([A, B, C, D]) + ln(...B, ...D) + ln(...E, ...F) + ln(...B, ...F) + ln(...F, ...C);
+    g += parMark(A, D, 'ln') + parMark(B, F, 'ln');
+    if (i === 1) g += at(1, parMark(E, F, 'hl') + parMark(D, G, 'hl'));
+    const pts = [[A, 'A', 0, -12], [B, 'B', 10, -10], [C, 'C', 12, 18], [D, 'D', -12, 18], [E, 'E', -12, -10], [F, 'F', 14, -6]];
+    if (i === 1) pts.push([G, 'G', 6, 22]);
+    if (i === 2 || i === 3) pts.push([H, 'H', -12, -8]);
+    if (i >= 3) pts.push([I, 'I', -14, 6]);
+    pts.forEach(([Q, n, dx, dy]) => { g += dt(...Q) + tx(Q[0] + dx, Q[1] + dy, n, 'm'); });
+    g += tx((A[0] + B[0]) / 2, A[1] - 12, '3a', 'm') + tx((D[0] + C[0]) / 2, D[1] + 28, '5a', 'm');
+    if (i === 0) g += at(0, tx((A[0] + B[0] + D[0]) / 3, (A[1] + B[1] + D[1]) / 3 + 6, '225', 'big'));
+    if (i === 1) g += at(1, tx((D[0] + G[0]) / 2, D[1] + 28, '3a', 'm cy') + tx((E[0] + F[0]) / 2, E[1] - 10, 'EF = 6a/5', 'm hl'));
+    if (i === 2) g += at(2, tx(D[0] - 14, (D[1] + H[1]) / 2, 'h', 'big cy', 'end') + tx((A[0] + B[0] + D[0]) / 3, (A[1] + B[1] + D[1]) / 3 + 6, '225', 'big'));
+    if (i === 3) g += at(3, tx(D[0] - 14, (D[1] + I[1]) / 2, '3h/5', 'm cy', 'end') + tx(D[0] - 14, (I[1] + H[1]) / 2, '2h/5', 's', 'end'));
+    if (i >= 4) g += at(4, tx(D[0] - 14, (D[1] + I[1]) / 2, '3h/5', 'm cy', 'end') + tx((E[0] + F[0]) / 2, E[1] - 10, '6a/5', 'm hl'));
+    g += tx(560, 40, 'DE : EB = 3 : 2', 'big');
+    const rows = [];
+    if (i >= 1) rows.push(['EF = 6a/5', 'm']);
+    if (i >= 2) rows.push(['ah = 150', 'm']);
+    if (i >= 3) rows.push(['DI = 3h/5', 'm']);
+    if (i >= 4) rows.push(['½(6a/5 + 5a)(3h/5)', 's'], ['= 93/50 × 150 = 279', 'm hl']);
+    if (rows.length) g += panel(500, 300, 212, rows, i >= 4 ? 'boxt' : 'boxp', 27);
     return g;
   },
 });
@@ -6050,8 +6086,10 @@ addQ({
     S('I：第 2 項', 'I: the 2nd term', '第 2 項 = <i>S</i>(2) − <i>S</i>(1) = [3² − 1] − [3¹ − 1] = 8 − 2 = <b>6</b> ≠ 8（I ✗）', '8 是首兩項之和 S(2)。', '8 is S(2), the sum of the first two terms.', { key: true, cap: '每條柱 = S(n)；柱入面每一格 = 每一項。' }),
     S('II：通項', 'II: general term', '<i>T</i>(<i>n</i>) = <i>S</i>(<i>n</i>) − <i>S</i>(<i>n</i> − 1) = (3ⁿ − 1) − (3ⁿ⁻¹ − 1)<br>= 3ⁿ − 3ⁿ⁻¹ = 3ⁿ⁻¹(3 − 1) = ' + MK('2 × 3ⁿ⁻¹', 'y'),
       '兩個 −1 互相抵消。', 'The two −1 terms cancel.', { key: true, cap: '' }),
-    S('驗算第 3 項', 'Check T(3)', '<i>T</i>(3) = <i>S</i>(3) − <i>S</i>(2) = [3³ − 1] − 8 = 26 − 8 = 18<br>2、6、18、…：首項 2、公比 3 ⇒ 等比數列（II ✓）', '', '', { cap: '' }),
-    S('III：偶數', 'III: even terms', '<i>T</i>(<i>n</i>) = 2 × 3ⁿ⁻¹ 有因數 2 ⇒ 所有項都是偶數（III ✓）⇒ <b>C</b>', '', '', { cap: '' }),
+    S('驗算第 3 項', 'Check T(3)', '<i>T</i>(3) = <i>S</i>(3) − <i>S</i>(2) = [3³ − 1] − 8 = 26 − 8 = 18<br>' + FR('第 2 項', '第 1 項') + ' = ' + FR('6', '2') + ' = 3，' + FR('第 3 項', '第 2 項') + ' = ' + FR('18', '6') + ' = 3 ⇒ 公比 3 ⇒ 等比數列（II ✓）', '', '', { cap: '' }),
+    S('III：偶數', 'III: even terms', '<i>T</i>(<i>n</i>) = 2 × 3ⁿ⁻¹ 有因數 2 ⇒ 所有項都是偶數（III ✓）', '', '', { cap: '' }),
+    S('另一個看法：奇偶', 'Another view: odd and even', '第 <i>n</i> 項 = (3ⁿ − 1) − (3ⁿ⁻¹ − 1)<br>3 的任何次方都是' + MK('奇數', 'y') + '（個位數 3、9、7、1 循環）⇒ 奇數 − 1 = 偶數<br>⇒ 偶數 − 偶數 = <b>偶數</b>（III ✓）⇒ <b>C</b>',
+      '不用找通項公式也可以判斷 III。', 'III can be decided without the general term.', { key: true, cap: '右面：3 的次方，個位數都是奇數。' }),
   ],
   draw(i, st, at) {
     const base = 432, u = 13.5, w = 104, xs = [40, 182, 324], T = [2, 6, 18], cls = ['fa', 'fb2', 'fc'];
@@ -6072,7 +6110,14 @@ addQ({
     if (i >= 1) rows.push(['= (3ⁿ − 1) − (3ⁿ⁻¹ − 1)', 'm'], ['= 3ⁿ − 3ⁿ⁻¹', 'm'], ['= 3ⁿ⁻¹(3 − 1)', 'm'], ['= 2 × 3ⁿ⁻¹', 'm hl']);
     if (i >= 2) rows.push(['2、6、18、…（× 3）', 'm o']);
     if (i >= 3) rows.push(['2 × 3ⁿ⁻¹ 必是偶數', 'm g']);
-    g += panel(470, 14, 238, rows, i >= 1 ? 'boxt' : 'boxp', 28);
+    if (i >= 4) {
+      const P3 = [3, 9, 27, 81, 243, 729, 2187, 6561], sp = '¹²³⁴⁵⁶⁷⁸';
+      const pr = P3.map((v, k) => [`3${sp[k]} = ${String(v).slice(0, -1)}`, String(v).slice(-1)]);
+      let h = rect(440, 14, 272, 300, 'boxt', 12) + tx(576, 42, '3 的次方：個位數', 'ttl');
+      pr.forEach(([t, d], k) => { const x = 462 + (k % 2) * 128, y = 76 + Math.floor(k / 2) * 34; h += tx(x, y, t + `<tspan style="fill:var(--teal);font-weight:700;text-decoration:underline">${d}</tspan>`, 'm', 'start'); });
+      h += tx(576, 228, '全是奇數', 'm hl') + tx(576, 258, '(3ⁿ − 1)：奇 − 1 = 偶', 's') + tx(576, 284, '偶 − 偶 = 偶 ✓', 'm g');
+      g += at(4, h);
+    } else g += panel(470, 14, 238, rows, i >= 1 ? 'boxt' : 'boxp', 28);
     return g;
   },
 });
@@ -6096,11 +6141,13 @@ addQ({
     S('化簡分子', 'Simplify the numerator', 'i² = −1、i³ = −i、i⁴ = 1<br>1 − 2<i>i</i> − 3 + 4<i>i</i> = <b>−2 + 2<i>i</i></b>', '', '', { key: true, cap: '綠箭咀：分子 −2 + 2i；橙箭咀：分母 −1 + βi。拖動滑桿改變 β。' }),
     S('乘共軛', 'Multiply by the conjugate', FR('(−2 + 2<i>i</i>)(−1 − β<i>i</i>)', '(β<i>i</i> − 1)(−β<i>i</i> − 1)') + ' = ' + FR('(2 + 2β) + (2β − 2)<i>i</i>', '1 + β²'), '分子分母同乘分母的共軛 −1 − βi，分母變成實數 1 + β²。', 'Multiply top and bottom by the conjugate −1 − βi; the denominator becomes the real number 1 + β².', { key: true, cap: '' }),
     S('虛部 = 0', 'Imaginary part = 0', '商是實數 ⇒ ' + FR('2β − 2', '1 + β²') + ' = 0 ⇒ <b>β = 1</b> ⇒ C<br>驗算：' + FR('−2 + 2<i>i</i>', '<i>i</i> − 1') + ' = 2（實數 ✓）', '', '', { cap: '兩個箭咀在同一條過原點的直線上 ⇒ 商是實數。' }),
+    S('另一個做法：乘 (βi + 1)', 'Another way: multiply by (βi + 1)', FR('−2 + 2<i>i</i>', 'β<i>i</i> − 1') + ' × ' + FR('β<i>i</i> + 1', 'β<i>i</i> + 1') + ' = ' + FR('−2β<i>i</i> − 2 + 2β<i>i</i>² + 2<i>i</i>', '(β<i>i</i>)² − 1') + '<br>= ' + FR('(−2 − 2β) + ' + MK('(2 − 2β)<i>i</i>', 'c'), '−β² − 1') + ' ⇒ 2 − 2β = 0 ⇒ <b>β = 1</b>（C）',
+      '(βi − 1)(βi + 1) = (βi)² − 1 = −β² − 1，分母一樣變成實數；i² = −1 要記得代入。', '(βi − 1)(βi + 1) = (βi)² − 1 = −β² − 1 is real too; remember i² = −1.', { key: true, cap: '' }),
     S('錯選 B 驗算', 'Check option B', 'β = −1：' + FR('−2 + 2<i>i</i>', '−1 − <i>i</i>') + ' = −2<i>i</i>（純虛數）✗', '兩個箭咀互相垂直，商是純虛數。', 'The arrows are perpendicular, so the quotient is purely imaginary.', { cap: '' }),
   ],
   init: () => ({ b: 1 }),
   controls: [{ type: 'range', k: 'b', label: 'β', min: -3, max: 3, step: 0.5, fmt: v => 'β = ' + v }],
-  eff(i, st) { return st.user ? st : { ...st, b: i <= 1 ? 2 : i === 2 ? 1 : -1 }; },
+  eff(i, st) { return st.user ? st : { ...st, b: i <= 1 ? 2 : i <= 3 ? 1 : -1 }; },
   capx(i, st) {
     const b = +this.eff(i, st).b, d = 1 + b * b, re = (2 + 2 * b) / d, im = (2 * b - 2) / d;
     return `<br>β = ${b}：商 = ${Math.abs(im) < 1e-9 ? f1(re) + '（實數 ✓）' : Math.abs(re) < 1e-9 ? f1(im) + 'i（純虛數）' : `${f1(re)} ${im < 0 ? '−' : '+'} ${f1(Math.abs(im))}i`}`;
@@ -6114,8 +6161,9 @@ addQ({
     g += arrow(X(0), Y(0), X(-2), Y(2), 'hl') + tx(X(-2) - 6, Y(2) - 10, '−2 + 2i', 'm hl', 'end');
     const im = b === 0 ? '' : ` ${b > 0 ? '+' : '−'} ${Math.abs(b) === 1 ? '' : Math.abs(b)}i`;
     g += arrow(X(0), Y(0), X(-1), Y(b), 'o') + tx(X(-1) + 10, Y(b) + (b >= 0 ? -10 : 22), `−1${im}`, 'm o', 'start');
-    if (Math.abs(b - 1) < 1e-9 && i >= 2) g += at(2, tx(X(1.2), Y(2.6), '共線 ⇒ 商 = 2', 'm hl'));
-    if (Math.abs(b + 1) < 1e-9 && i >= 3) g += at(3, rightMark([X(0), Y(0)], [X(-2), Y(2)], [X(-1), Y(-1)], 14, 'r') + tx(X(1.2), Y(2.6), '垂直 ⇒ 商是純虛數', 'm r'));
+    if (Math.abs(b - 1) < 1e-9 && i >= 2) g += at(2, tx(X(1.7), Y(-0.45), '共線 ⇒ 商 = 2', 'm hl'));
+    if (Math.abs(b + 1) < 1e-9 && i >= 4) g += at(4, rightMark([X(0), Y(0)], [X(-2), Y(2)], [X(-1), Y(-1)], 14, 'r') + tx(X(1.7), Y(-0.45), '垂直 ⇒ 商是純虛數', 'm r'));
+    if (i === 3) g += at(3, panel(452, 12, 260, [['× (βi + 1)/(βi + 1)', 'm'], ['分母 = (βi)² − 1 = −β² − 1', 's'], ['虛部 (2 − 2β) = 0', 'm hl'], ['⇒ β = 1', 'big hl']], 'boxt', 27));
     return g;
   },
 });
